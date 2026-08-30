@@ -1,111 +1,259 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Login - KajianHub</title>
+    <title>Masuk - KajianKu</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root{
+            --parchment:#F4EEDC;
+            --parchment-deep:#E9DFC2;
+            --paper:#FBF7EC;
+            --ink:#152A20;
+            --ink-soft:#4B5D52;
+            --jade-950:#0A2B20;
+            --jade-900:#0C3B2A;
+            --jade-800:#0F5137;
+            --gold:#B8863B;
+            --gold-soft:#E7C77E;
+            --gold-pale:#F3E3B8;
+            --line:rgba(21,42,32,.14);
+        }
+        *{box-sizing:border-box}
+        html, body{
+            margin:0;
+            padding:0;
+            width:100%;
+            height:100%;
+            overflow:hidden;
+        }
+        body{
+            font-family:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;
+            color:var(--ink);
+            background:var(--jade-950);
+            line-height:1.6;
+            -webkit-font-smoothing:antialiased;
+        }
+        a{color:inherit;text-decoration:none}
+        .container{max-width:1180px;margin:0 auto;padding:0 28px}
+        
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:14px 26px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:14px;
+            border:1px solid transparent;
+            cursor:pointer;
+            transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+        }
+        .btn:hover{transform:translateY(-2px)}
+        .btn-solid{
+            background:var(--jade-900);
+            color:var(--parchment);
+            box-shadow:0 14px 30px rgba(10,43,32,.28);
+        }
+        .btn-solid:hover{background:var(--jade-800)}
+        .btn-outline{
+            border-color:var(--gold);
+            color:var(--ink);
+            background:transparent;
+        }
+        .btn-outline:hover{background:var(--gold-pale)}
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://unpkg.com/lucide@latest"></script>
-    </head>
-    <body class="font-sans antialiased text-brand-ink" style="background-color: #17211c;">
-        <div class="min-h-screen flex items-center justify-center p-4 sm:p-8">
-            <div class="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[600px]">
-                
-                <!-- Left Image Area -->
-                <div class="w-full md:w-1/2 h-64 md:h-full relative hidden md:block">
-                    <!-- Menggunakan gambar placeholder masjid yang cantik dari Unsplash -->
-                    <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?q=80&w=1470&auto=format&fit=crop" alt="Mosque" class="absolute inset-0 w-full h-full object-cover">
-                </div>
+        .hero{
+            position:relative;
+            background:
+                radial-gradient(ellipse 900px 500px at 82% -10%, rgba(184,134,59,.20), transparent 60%),
+                linear-gradient(180deg,var(--jade-950) 0%, var(--jade-900) 55%, var(--jade-800) 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+        .hero-lattice{
+            position:absolute;inset:0;
+            opacity:.16;
+            pointer-events:none;
+            width: 100%;
+            height: 100%;
+        }
+        .hero-grid{
+            position:relative;
+            display:grid;
+            grid-template-columns: 1fr;
+            max-width: 520px;
+            margin: 0 auto;
+            gap:20px;
+            align-items:center;
+            width: 100%;
+        }
+        
+        .login-input:focus {
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 0 3px rgba(184,134,59, 0.15) !important;
+        }
+        
+        @media (max-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
 
-                <!-- Right Form Area -->
-                <div class="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center bg-white relative">
-                    <!-- Session Status -->
-                    <x-auth-session-status class="mb-4" :status="session('status')" />
+<header class="hero">
+  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+        <g stroke="#E7C77E" stroke-width="1" fill="none">
+          <path d="M43 4 L57 22 L79 22 L64 40 L79 58 L57 58 L43 78 L29 58 L7 58 L22 40 L7 22 L29 22 Z"/>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#star8)"/>
+  </svg>
 
-                    <div class="mb-8">
-                        <div class="font-bold text-xl text-brand-ink tracking-tight flex items-center mb-6">
-                            KajianHub
-                        </div>
-                        <h1 class="text-3xl font-bold text-brand-ink mb-2 tracking-tight">Masuk ke Akun</h1>
-                        <p class="text-sm text-gray-500">Silakan masuk untuk menyimpan jadwal dan tiket kajian Anda.</p>
-                    </div>
+  <div style="width: 100%; max-width: 520px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10;">
+    
+    <!-- Bagian Form Login -->
+    <div style="background: var(--parchment); border-radius: 32px; padding: 36px 48px; box-shadow: 0 40px 80px rgba(6,26,19,0.4); position: relative; z-index: 10; border: 1px solid rgba(231,199,126,0.3); max-height: 90vh; overflow-y: auto;">
+        
+        <x-auth-session-status style="margin-bottom: 16px;" :status="session('status')" />
 
-                    <form method="POST" action="{{ route('login') }}" class="space-y-5">
-                        @csrf
-
-                        <!-- Email Address -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="admin@kajianhub.com" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-brand-ink focus:border-brand-emerald-900 focus:ring-1 focus:ring-brand-emerald-900 transition shadow-sm outline-none">
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                        </div>
-
-                        <!-- Password -->
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label for="password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
-                                @if (Route::has('password.request'))
-                                    <a class="text-xs text-brand-emerald-900 hover:text-brand-emerald-950 font-medium" href="{{ route('password.request') }}">
-                                        Lupa sandi?
-                                    </a>
-                                @endif
-                            </div>
-                            <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-gray-50 text-brand-ink focus:border-brand-emerald-900 focus:ring-1 focus:ring-brand-emerald-900 transition shadow-sm outline-none">
-                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                        </div>
-
-                        <!-- Remember Me -->
-                        <div class="flex items-center">
-                            <input id="remember_me" type="checkbox" name="remember" class="w-4 h-4 text-brand-emerald-900 bg-white border-gray-300 rounded focus:ring-brand-emerald-900 focus:ring-offset-0">
-                            <label for="remember_me" class="ml-2 block text-sm text-gray-600">
-                                Ingat saya
-                            </label>
-                        </div>
-
-                        <div class="pt-2">
-                            <!-- Tombol Google -->
-                            <button type="button" class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 shadow-sm rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200">
-                                <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                                </svg>
-                                Lanjutkan dengan Google
-                            </button>
-                        </div>
-                        
-                        <div class="relative flex items-center py-2">
-                            <div class="flex-grow border-t border-gray-200"></div>
-                            <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">atau</span>
-                            <div class="flex-grow border-t border-gray-200"></div>
-                        </div>
-
-                        <!-- Login Button -->
-                        <div>
-                            <button type="submit" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#0f9f6e] hover:bg-[#087957] transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0f9f6e]">
-                                Masuk dengan Email
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="mt-8 text-center text-sm text-gray-600">
-                        Belum punya akun? <a href="{{ route('register') }}" class="font-medium text-brand-emerald-900 hover:text-brand-emerald-950 transition">Daftar sekarang</a>
-                    </div>
-                </div>
-            </div>
+        <div style="text-align: left; margin-bottom: 16px;">
+            <a href="{{ url('/') }}" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:var(--jade-900); text-transform:uppercase; letter-spacing:1px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Kembali
+            </a>
         </div>
 
-        <script>
-            lucide.createIcons();
-        </script>
-    </body>
+        <div style="margin-bottom: 28px; text-align: center;">
+            <div style="font-family:'Amiri',serif; font-size:22px; color:var(--gold); margin-bottom: 12px; font-weight:700;">
+                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
+            </div>
+            <div style="margin-bottom:8px;">
+                <h1 style="font-family:'Fraunces',serif; font-size:32px; font-weight:700; margin:0; color:var(--jade-950);">Kajian<em style="color:var(--gold); font-style:normal;">Ku</em></h1>
+            </div>
+            <p style="color:var(--ink-soft); font-size:14px; margin:0;">Ahlan wa sahlan, silakan masuk ke akun Anda</p>
+        </div>
+
+        <form method="POST" action="{{ route('login') }}" style="display:flex; flex-direction:column; gap:12px;">
+            @csrf
+
+            <!-- Email Address -->
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <label for="email" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Alamat Email</label>
+                <div style="position:relative;">
+                    <svg style="position:absolute; top:50%; left:16px; transform:translateY(-50%); width:18px; height:18px; color:var(--ink-soft); pointer-events:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="Alamat Email" class="login-input" style="width:100%; padding:12px 18px 12px 42px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
+                    <x-input-error :messages="$errors->get('email')" style="margin-top:6px; color:#dc2626; font-size:12px;" />
+                </div>
+            </div>
+
+            <!-- Password Group -->
+            <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <label for="password" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Kata Sandi</label>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" style="font-size:12px; font-weight:600; color:var(--gold); transition:color 0.2s; text-decoration:none;" onmouseover="this.style.color='var(--jade-900)'" onmouseout="this.style.color='var(--gold)'">
+                            Lupa sandi?
+                        </a>
+                    @endif
+                </div>
+
+                <div style="position:relative;">
+                    <svg style="position:absolute; top:50%; left:16px; transform:translateY(-50%); width:18px; height:18px; color:var(--ink-soft); pointer-events:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="login-input" style="width:100%; padding:12px 42px 12px 42px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
+                    <button type="button" onclick="togglePassword('password', 'eyeIcon')" style="position:absolute; top:50%; right:16px; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--ink-soft); padding:0; display:flex; align-items:center; justify-content:center; transition:color 0.2s;" onmouseover="this.style.color='var(--jade-900)'" onmouseout="this.style.color='var(--ink-soft)'">
+                        <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                    <x-input-error :messages="$errors->get('password')" style="margin-top:6px; color:#dc2626; font-size:12px;" />
+                </div>
+            </div>
+
+            <!-- Remember Me -->
+            <div style="display:flex; align-items:center; margin-top:2px;">
+                <div style="display:flex; align-items:center;">
+                    <input id="remember_me" type="checkbox" name="remember" style="width:16px; height:16px; accent-color:var(--jade-900); cursor:pointer;">
+                    <label for="remember_me" style="margin-left:8px; font-size:13px; font-weight:500; color:var(--ink); cursor:pointer;">
+                        Ingat saya
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top:6px;">
+                <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:14px;">
+                    Masuk Sekarang
+                </button>
+            </div>
+            
+            <div style="position:relative; display:flex; align-items:center; margin:10px 0;">
+                <div style="flex-grow:1; border-top:1px solid var(--line);"></div>
+                <span style="margin:0 16px; color:var(--ink-soft); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Atau</span>
+                <div style="flex-grow:1; border-top:1px solid var(--line);"></div>
+            </div>
+
+            <!-- Tombol Google -->
+            <div>
+                <button type="button" class="btn btn-outline" style="width:100%; justify-content:center; padding:12px; font-size:14px; border-radius:14px; background:var(--paper); border-color:var(--line);">
+                    <svg style="width:18px; height:18px; margin-right:10px;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Lanjutkan dengan Google
+                </button>
+            </div>
+
+        </form>
+
+        <div style="margin-top:24px; text-align:center; font-size:13px; font-weight:500; color:var(--ink-soft);">
+            Belum punya akun? <a href="{{ route('register') }}" style="font-weight:700; color:var(--jade-900); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--jade-900)'">Daftar sekarang</a>
+        </div>
+    </div>
+
+
+
+  </div>
+</header>
+
+</body>
+<script>
+function togglePassword(inputId, iconId) {
+    var input = document.getElementById(inputId);
+    var icon = document.getElementById(iconId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+    } else {
+        input.type = 'password';
+        icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+    }
+}
+</script>
 </html>

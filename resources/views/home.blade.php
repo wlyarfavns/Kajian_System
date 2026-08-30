@@ -1,101 +1,227 @@
-@extends('layouts.app')
+@extends('layouts.landing')
 
 @section('content')
-<div class="p-4 md:p-6">
-    <!-- Header Lokasi Aktif -->
-    <div class="mb-6 mt-2">
-        @if(!$lat || !$lng)
-            <div class="bg-brand-emerald-50 border border-brand-emerald-100 rounded-xl p-4 flex items-start space-x-3 mb-6">
-                <div class="text-brand-emerald-600 mt-0.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <h3 class="text-sm font-bold text-brand-emerald-950 mb-1">Temukan Kajian Terdekat</h3>
-                    <p class="text-xs text-brand-ink-soft mb-3">Aktifkan lokasi untuk melihat kajian yang ada di sekitar Anda.</p>
-                    <button onclick="requestLocation()" class="text-xs font-semibold bg-brand-emerald-900 text-white px-3 py-1.5 rounded-lg hover:bg-brand-emerald-950 transition">
-                        Aktifkan Lokasi
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Script Geolocation -->
-            <script>
-                function requestLocation() {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function(position) {
-                            let lat = position.coords.latitude;
-                            let lng = position.coords.longitude;
-                            window.location.href = `/?lat=${lat}&lng=${lng}`;
-                        }, function(error) {
-                            alert('Gagal mendapatkan lokasi. Pastikan izin lokasi diaktifkan pada browser/device Anda.');
-                        });
-                    } else {
-                        alert('Browser Anda tidak mendukung Geolocation.');
-                    }
-                }
-            </script>
-        @else
-            <h2 class="text-2xl md:text-3xl font-bold text-brand-emerald-950 tracking-tight">Kajian di sekitar,<br/>lebih dekat dengan ilmu.</h2>
-            <p class="text-brand-ink-soft text-sm mt-3 leading-relaxed">Menampilkan kajian dalam radius terdekat dari lokasi Anda.</p>
-        @endif
-    </div>
+<header class="hero">
+  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+        <g stroke="#E7C77E" stroke-width="1" fill="none">
+          <path d="M43 4 L57 22 L79 22 L64 40 L79 58 L57 58 L43 78 L29 58 L7 58 L22 40 L7 22 L29 22 Z"/>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#star8)"/>
+  </svg>
 
-    <!-- Search Bar -->
-    <form action="{{ url('/kajian') }}" method="GET" class="relative mb-8 shadow-sm">
-        @if($lat) <input type="hidden" name="lat" value="{{ $lat }}"> @endif
-        @if($lng) <input type="hidden" name="lng" value="{{ $lng }}"> @endif
-        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-            <svg class="w-5 h-5 text-brand-nav-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-        </div>
-        <input type="search" name="q" class="block w-full p-4 pl-12 text-sm text-brand-ink bg-white border border-brand-border-light rounded-xl focus:ring-brand-emerald-500 focus:border-brand-emerald-500 transition-colors" placeholder="Cari ustadz, masjid, atau tema..." required>
-        <button type="submit" class="absolute right-2.5 bottom-2.5 bg-brand-emerald-900 hover:bg-brand-emerald-950 text-white focus:ring-4 focus:outline-none focus:ring-brand-emerald-300 font-medium rounded-lg text-sm px-4 py-2 transition">Cari</button>
-    </form>
-
-    <!-- Categories -->
-    @if($categories->count() > 0)
-    <div class="mb-8">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="font-bold text-brand-emerald-950">Kategori Pilihan</h3>
-            <a href="{{ url('/kajian') }}" class="text-xs font-semibold text-brand-emerald-600 hover:text-brand-emerald-700 transition">Lihat Semua</a>
-        </div>
-        <div class="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:-mx-0 md:px-0">
-            @foreach($categories as $category)
-                <x-category-chip :category="$category" />
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-    <!-- Kajian List -->
+  <div class="container hero-grid">
     <div>
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="font-bold text-brand-emerald-950">{{ ($lat && $lng) ? 'Kajian Terdekat' : 'Kajian Akan Datang' }}</h3>
+      <p class="ayat arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
+      <h2>Menuntun Langkah<span class="accent">menuju majelis ilmu.</span></h2>
+      <p class="lede">KajianKu menghubungkan Anda dengan kajian, ustadz, dan masjid terdekat — dirawat dengan data yang akurat, bukan sekadar daftar alamat.</p>
+      <div class="hero-actions">
+        <a href="{{ route('register') }}" class="btn btn-solid">Daftar Sekarang</a>
+        <a href="{{ url('/kajian') }}" class="btn btn-ghost-light">Cari Kajian →</a>
+      </div>
+    </div>
+
+    <div class="hero-visual-wrap">
+      <div class="hero-visual-bg" style="background-image: url('{{ asset('images/hero_reading.jpg') }}');"></div>
+    </div>
+  </div>
+</header>
+
+
+<section id="about" style="padding: 60px 0;">
+  <div class="container about-grid" style="align-items: center;">
+    <div class="about-visual" style="position:relative;">
+      <div class="about-frame" style="background-image: url('{{ asset('images/about_mosque.jpg') }}'); border-radius: 32px; aspect-ratio: 4/5; width: 100%; max-width: 450px; background-size: cover; background-position: center; box-shadow: 0 40px 80px rgba(6,26,19,0.3); border: 1px solid rgba(231,199,126,0.3);"></div>
+      
+    </div>
+    
+    <div class="about-content">
+      <span class="eyebrow">Tentang KajianKu</span>
+      <h3 style="font-family:'Amiri',serif; font-size: 44px; line-height: 1.3; margin-bottom: 20px;">Membangun generasi rabbani lewat <em style="color:var(--gold-deep)">akses ilmu yang mudah.</em></h3>
+      <p style="color: var(--ink-soft); line-height: 1.8; margin-bottom: 40px; font-size: 16px;">Misi kami menggabungkan pencarian ilmu syar'i yang otentik dengan kemudahan teknologi modern — menghubungkan jamaah dan penyelenggara agar tetap terhubung, dengan data yang valid dan jadwal yang akurat.</p>
+      
+      
+      <div class="feature-boxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        <div style="background: var(--paper); box-shadow: 0 15px 40px rgba(6,26,19,0.08); border: none; border-radius: 20px; padding: 40px; min-height: 280px; display: flex; flex-direction: column; justify-content: flex-start; transition: transform 0.3s, box-shadow 0.3s; cursor: default; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
+          <div style="position: absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(90deg, var(--gold-pale), var(--gold-deep));"></div>
+          <img src="{{ asset('images/feat_1.png') }}" alt="Kajian Terdekat" style="width:75px; height:75px; object-fit:contain; margin-bottom:20px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.15));">
+          <h4 style="margin:0 0 12px; font-family:'Amiri',serif; font-size:26px; color:var(--jade-950);">Kajian Terdekat</h4>
+          <p style="margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.7;">Temukan jadwal kajian di sekitar lokasi Anda secara real-time. Dilengkapi dengan deteksi lokasi otomatis, Anda tidak perlu bingung mencari majelis ilmu terdekat saat sedang bepergian atau berada di luar kota.</p>
+        </div>
+
+        <div style="background: var(--paper); box-shadow: 0 15px 40px rgba(6,26,19,0.08); border: none; border-radius: 20px; padding: 40px; min-height: 280px; display: flex; flex-direction: column; justify-content: flex-start; transition: transform 0.3s, box-shadow 0.3s; cursor: default; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
+          <div style="position: absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(90deg, var(--gold-pale), var(--gold-deep));"></div>
+          <img src="{{ asset('images/feat_2.png') }}" alt="Kajian Rutin" style="width:75px; height:75px; object-fit:contain; margin-bottom:20px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.15));">
+          <h4 style="margin:0 0 12px; font-family:'Amiri',serif; font-size:26px; color:var(--jade-950);">Kajian Rutin</h4>
+          <p style="margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.7;">Info kajian harian, mingguan, dan bulanan yang selalu terupdate. Kami menyajikan jadwal dari berbagai masjid mitra yang terverifikasi, sehingga Anda bisa merencanakan waktu luang untuk memperdalam ilmu secara konsisten.</p>
+        </div>
+
+        <div style="background: var(--paper); box-shadow: 0 15px 40px rgba(6,26,19,0.08); border: none; border-radius: 20px; padding: 40px; min-height: 280px; display: flex; flex-direction: column; justify-content: flex-start; transition: transform 0.3s, box-shadow 0.3s; cursor: default; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
+          <div style="position: absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(90deg, var(--gold-pale), var(--gold-deep));"></div>
+          <img src="{{ asset('images/feat_3.png') }}" alt="Tabligh Akbar" style="width:75px; height:75px; object-fit:contain; margin-bottom:20px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.15));">
+          <h4 style="margin:0 0 12px; font-family:'Amiri',serif; font-size:26px; color:var(--jade-950);">Tabligh Akbar</h4>
+          <p style="margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.7;">Dapatkan informasi eksklusif mengenai kajian skala besar dan kehadiran ustadz nasional favorit Anda. Kami memastikan Anda mendapat notifikasi sejak jauh hari agar dapat menyiapkan waktu untuk hadir.</p>
+        </div>
+
+        <div style="background: var(--paper); box-shadow: 0 15px 40px rgba(6,26,19,0.08); border: none; border-radius: 20px; padding: 40px; min-height: 280px; display: flex; flex-direction: column; justify-content: flex-start; transition: transform 0.3s, box-shadow 0.3s; cursor: default; position: relative; overflow: hidden;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
+          <div style="position: absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(90deg, var(--gold-pale), var(--gold-deep));"></div>
+          <img src="{{ asset('images/feat_4.png') }}" alt="Fitur Simpan" style="width:75px; height:75px; object-fit:contain; margin-bottom:20px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.15));">
+          <h4 style="margin:0 0 12px; font-family:'Amiri',serif; font-size:26px; color:var(--jade-950);">Fitur Simpan</h4>
+          <p style="margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.7;">Tandai dan jadwalkan kajian favorit Anda ke dalam daftar personal agar tidak terlewat. Aplikasi akan menyimpannya dengan rapi, lengkap dengan catatan khusus yang bisa Anda akses kapan saja.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section id="cara-kerja" style="background:var(--parchment-deep); padding: 60px 0 40px;">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:60px;">
+      <span style="color:var(--gold-deep); letter-spacing:3px; font-weight:800; font-size:15px; text-transform:uppercase; display:block; margin-bottom:8px;">CARA KERJA</span>
+      <h3 style="font-family:'Amiri',serif; font-size:clamp(32px, 5vw, 48px); color:var(--jade-950); margin-top:0; line-height:1.1;">3 Langkah mudah mengikuti kajian terdekat.</h3>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px;">
+      
+      <!-- Box 1 -->
+      <div style="background:var(--paper); border-radius:24px; box-shadow: 0 20px 50px rgba(6,26,19,0.06); padding:40px; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+        <img src="{{ asset('images/icon_cari.png') }}" alt="Cari Kajian" style="width:100px; height:100px; object-fit:contain; margin-bottom:24px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.2));">
+        <h4 style="font-family:'Amiri',serif; font-size:28px; color:var(--jade-950); margin-bottom:16px; font-weight:700;">Cari Kajian</h4>
+        <p style="color:var(--ink); font-size:16px; line-height:1.7; margin:0; font-weight:500;">Gunakan fitur pencarian atau deteksi lokasi saat ini untuk menemukan jadwal kajian terdekat dengan sangat akurat.</p>
+      </div>
+
+      <!-- Box 2 -->
+      <div style="background:var(--paper); border-radius:24px; box-shadow: 0 20px 50px rgba(6,26,19,0.06); padding:40px; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+        <img src="{{ asset('images/icon_simpan.png') }}" alt="Cek & Simpan" style="width:100px; height:100px; object-fit:contain; margin-bottom:24px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.2));">
+        <h4 style="font-family:'Amiri',serif; font-size:28px; color:var(--jade-950); margin-bottom:16px; font-weight:700;">Cek & Simpan</h4>
+        <p style="color:var(--ink); font-size:16px; line-height:1.7; margin:0; font-weight:500;">Lihat detail ustadz, waktu, dan rute lokasi masjid. Anda juga bisa menyimpan jadwal agar mendapat pengingat dari sistem.</p>
+      </div>
+
+      <!-- Box 3 -->
+      <div style="background:var(--paper); border-radius:24px; box-shadow: 0 20px 50px rgba(6,26,19,0.06); padding:40px; transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+        <img src="{{ asset('images/icon_hadir.png') }}" alt="Hadir di Majelis" style="width:100px; height:100px; object-fit:contain; margin-bottom:24px; filter:drop-shadow(0 10px 15px rgba(184,134,59,0.2));">
+        <h4 style="font-family:'Amiri',serif; font-size:28px; color:var(--jade-950); margin-bottom:16px; font-weight:700;">Hadir di Majelis</h4>
+        <p style="color:var(--ink); font-size:16px; line-height:1.7; margin:0; font-weight:500;">Gunakan fitur peta panduan rute navigasi dari dalam aplikasi untuk tiba di lokasi majelis dengan tenang tanpa kebingungan.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="container stats-grid">
+    <div><div class="stat-value">5.000+</div><div class="stat-label">Jamaah Terdaftar</div></div>
+    <div><div class="stat-value">200+</div><div class="stat-label">Masjid Mitra</div></div>
+    <div><div class="stat-value">15+</div><div class="stat-label">Kota Terjangkau</div></div>
+    <div><div class="stat-value">100%</div><div class="stat-label">Gratis untuk Jamaah</div></div>
+  </div>
+</div>
+
+<section id="jadwal" style="padding: 60px 0;">
+  <div class="container">
+    <div class="schedule-head" style="display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:50px; gap:24px;">
+      <div class="section-head" style="margin-bottom:0">
+        <span class="eyebrow" style="justify-content:center; color:var(--gold-deep); letter-spacing:2px; font-weight:800; font-size:15px; text-transform:uppercase; margin-bottom:12px;">JADWAL TERKINI</span>
+        <h3 class="arabic" style="font-size:clamp(32px, 5vw, 46px); color:var(--jade-950); margin-top:0; line-height:1.2;">Kajian yang <em style="color:var(--gold-deep); font-style:italic;">tersedia minggu ini.</em></h3>
+      </div>
+      <a href="{{ url('/kajian') }}" class="btn btn-outline" style="border-width:2px; font-weight:700; font-size:16px; padding:12px 28px;">Lihat Semua Kajian</a>
+    </div>
+
+    <div class="kajian-grid">
+      @forelse($kajians as $kajian)
+      <div class="kcard" style="background:var(--paper);border-radius:20px;overflow:hidden;border:none;box-shadow:0 15px 40px rgba(6,26,19,0.08);transition:transform 0.3s, box-shadow 0.3s; display:flex; flex-direction:column;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
+        
+        <div class="kcard-media" style="height:150px; background: linear-gradient(rgba(15, 81, 55, 0.7), rgba(15, 81, 55, 0.9)), url('{{ asset('images/about_mosque.jpg') }}') center/cover; position:relative; display:flex; align-items:flex-end; padding:16px;">
+          <span class="ribbon" style="background:var(--gold); color:var(--paper); padding:4px 12px; border-radius:8px; font-size:12px; font-weight:700; position:absolute; top:16px; left:16px; letter-spacing:1px; text-transform:uppercase;">{{ $kajian->category->name ?? 'Kajian' }}</span>
+          <div class="kcard-save" style="position:absolute; top:16px; right:16px; width:32px; height:32px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer;">♥</div>
         </div>
         
-        <div class="space-y-4">
-            @forelse($kajians as $kajian)
-                <x-kajian-card :kajian="$kajian" />
-            @empty
-                <div class="bg-white border border-brand-border-light rounded-xl p-8 text-center shadow-sm">
-                    <div class="w-16 h-16 bg-brand-cream rounded-full flex items-center justify-center mx-auto mb-4 text-brand-emerald-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    </div>
-                    <h4 class="font-bold text-brand-emerald-950 mb-2">Belum Ada Kajian</h4>
-                    <p class="text-brand-ink-soft text-sm">
-                        @if($lat && $lng)
-                            Tidak ditemukan kajian di sekitar lokasi Anda saat ini. Coba perbesar radius atau cari di area lain.
-                        @else
-                            Saat ini belum ada jadwal kajian yang akan datang.
-                        @endif
-                    </p>
-                </div>
-            @endforelse
+        <div class="kcard-body" style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
+          <h4 style="margin:0 0 8px; font-family:'Amiri',serif; font-size:24px; color:var(--jade-950); line-height:1.3;">{{ Str::limit($kajian->title, 40) }}</h4>
+          <div class="ustadz" style="font-family:'Amiri',serif; font-size:16px; color:var(--jade-800); font-weight:700; margin-bottom:16px;">
+              {{ $kajian->speaker->name ?? 'Ustadz' }}
+          </div>
+          
+          <div class="kcard-meta" style="display:flex; flex-direction: column; gap:10px; font-size:14px; font-weight:600; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:16px; margin-bottom: 24px; margin-top: auto;">
+              @php
+                $cDate = \Carbon\Carbon::parse($kajian->start_at);
+                $hari = ['Sunday'=>'Ahad','Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu','Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu'];
+                $bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+                $strHari = $hari[$cDate->format('l')];
+                $strBulan = $bulan[$cDate->format('n') - 1];
+                $tglIndo = $strHari . ', ' . $cDate->format('d') . ' ' . $strBulan;
+              @endphp
+              <div style="display: flex; gap: 8px; align-items: center;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <span style="color:var(--jade-950);">{{ $tglIndo }}</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span style="color:var(--jade-950);">{{ \Carbon\Carbon::parse($kajian->start_at)->format('H:i') }} WIB</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 2px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <span style="line-height: 1.4; color:var(--jade-950);">{{ $kajian->mosque->name ?? 'Masjid' }}<br><span style="font-size: 13px; font-weight: 500; color:var(--ink-soft);">{{ Str::limit($kajian->mosque->address ?? '', 40) }}</span></span>
+              </div>
+          </div>
+          
+          <a href="{{ route('kajian.show', $kajian->slug) }}" style="display: block; text-align: center; background: var(--gold-pale); color: var(--gold-deep); padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 15px; transition: background 0.2s;" onmouseover="this.style.background='var(--gold)'; this.style.color='white';" onmouseout="this.style.background='var(--gold-pale)'; this.style.color='var(--gold-deep)';">Lihat Detail</a>
         </div>
+      </div>
+      @empty
+      <div class="kcard" style="grid-column: 1 / -1; padding: 40px; text-align: center; background:var(--paper); border-radius:20px;">
+          <p style="font-family:'Amiri',serif; font-size:20px; color:var(--jade-950);">Belum ada kajian minggu ini.</p>
+      </div>
+      @endforelse
     </div>
-</div>
+  </div>
+</section>
+
+<section id="testimoni">
+  <div class="container">
+    <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;max-width:800px; margin-bottom:60px;">
+      <span class="eyebrow" style="justify-content:center; color:var(--gold-deep); letter-spacing:2px; font-weight:800; font-size:15px; text-transform:uppercase; margin-bottom:12px;">TESTIMONI JAMAAH</span>
+      <h3 style="font-family:'Amiri',serif; font-size:clamp(32px, 5vw, 46px); color:var(--jade-950); margin-top:0; line-height:1.1;">Cerita asli dari <em style="color:var(--gold-deep); font-style:italic;">jamaah kami.</em></h3>
+    </div>
+    <div class="testi-grid">
+      <div class="tcard">
+        <span class="mark">”</span>
+        <div class="stars">★★★★★</div>
+        <p>Sangat terbantu dengan aplikasi ini. Saya yang baru hijrah bisa dengan mudah mencari kajian terdekat dari rumah tanpa harus bingung jadwal.</p>
+        <div class="tperson"><div class="tavatar">A</div><div><div class="name">Ahmad Fauzi</div><div class="loc">Jakarta Selatan</div></div></div>
+      </div>
+      <div class="tcard">
+        <span class="mark">”</span>
+        <div class="stars">★★★★★</div>
+        <p>Fitur rute peta sangat akurat. Dulu sering nyasar kalau cari masjid untuk tabligh akbar, sekarang tinggal klik langsung diarahkan.</p>
+        <div class="tperson"><div class="tavatar">B</div><div><div class="name">Budi Santoso</div><div class="loc">Bandung</div></div></div>
+      </div>
+      <div class="tcard">
+        <span class="mark">”</span>
+        <div class="stars">★★★★★</div>
+        <p>Alhamdulillah antarmukanya mudah digunakan, informasinya update. Cocok bagi akhwat yang mencari kajian khusus perempuan.</p>
+        <div class="tperson"><div class="tavatar">S</div><div><div class="name">Siti Rahma</div><div class="loc">Yogyakarta</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="container">
+    <div class="cta-band">
+      <div>
+        <h4>Mulai langkahmu mengikuti kajian.</h4>
+        <p>Pendaftaran gratis. Mulai tingkatkan keimanan Anda hari ini.</p>
+      </div>
+      <div style="display:flex;gap:12px">
+        <a href="{{ route('register') }}" class="btn btn-solid" style="color:var(--gold-pale)">Daftar Sekarang</a>
+        <a href="{{ url('/kajian') }}" class="btn btn-outline">Cari Kajian</a>
+      </div>
+    </div>
+  </div>
+</section>
 @endsection

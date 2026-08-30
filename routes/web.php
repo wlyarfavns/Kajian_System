@@ -32,8 +32,8 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 */
 Route::get('/', [HomeController::class, 'index']);
 
-Route::get('/kajian', [KajianController::class, 'index']);
-Route::get('/kajian/{kajian:slug}', [KajianController::class, 'show']);
+Route::get('/kajian', [KajianController::class, 'index'])->name('kajian.index');
+Route::get('/kajian/{kajian:slug}', [KajianController::class, 'show'])->name('kajian.show');
 
 Route::middleware('auth')->group(function () {
     Route::post('/kajian/{kajian}/join', [AttendanceController::class, 'store']);

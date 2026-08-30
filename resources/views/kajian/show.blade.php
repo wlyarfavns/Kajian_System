@@ -1,166 +1,184 @@
-<x-app-layout>
-    <x-slot name="header">
-        Detail Kajian
-    </x-slot>
+@extends('layouts.landing')
 
-    <div class="pb-24">
-        <!-- Poster -->
-        <div class="w-full aspect-video bg-gray-200 relative">
-            @if($kajian->poster)
-                <img src="{{ Storage::url($kajian->poster) }}" alt="{{ $kajian->title }}" class="w-full h-full object-cover">
-            @else
-                <div class="w-full h-full flex flex-col items-center justify-center bg-brand-emerald-900 text-white">
-                    <i data-lucide="book-open" class="w-16 h-16 mb-4 opacity-50"></i>
-                    <span class="text-lg font-bold opacity-75">Kajian Islami</span>
+@section('content')
+<style>
+    footer { display: none !important; }
+</style>
+<div style="background:var(--parchment); min-height:100vh; padding-bottom:120px;">
+    
+    <!-- Mobile Container Wrapper -->
+    <div style="max-width: 480px; margin: 0 auto; position: relative;">
+        
+        <div style="padding: 24px 20px;">
+            <a href="{{ url()->previous() !== url()->current() ? url()->previous() : url('/kajian') }}" class="btn btn-outline" style="border-color:var(--line); padding:8px 16px; font-size:13px; background:var(--paper); border-radius: 99px;">
+                <svg style="width:18px; height:18px; margin-right:6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                Kembali
+            </a>
+        </div>
+
+        <!-- Poster Section -->
+        <div style="padding: 0 20px;">
+            <div style="position:relative; width:100%; aspect-ratio: 4/5; max-height: 480px; border-radius:32px; overflow:hidden; box-shadow:0 20px 50px rgba(10,43,32,0.2); margin-bottom:32px;">
+                @php
+                  $bgImage = $kajian->poster ? Storage::url($kajian->poster) : asset('images/about_mosque.jpg');
+                @endphp
+                <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(10,43,32,0.95) 0%, rgba(10,43,32,0.3) 50%, rgba(10,43,32,0.1) 100%), url('{{ $bgImage }}') center/cover;"></div>
+                
+                <div style="position:absolute; bottom:0; left:0; width:100%; padding:30px 24px;">
+                    <span style="display:inline-block; padding:6px 14px; background:var(--gold); color:var(--paper); font-size:11px; font-weight:700; border-radius:99px; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">
+                        {{ $kajian->category->name }}
+                    </span>
+                    <h1 style="font-family:'Fraunces',serif; font-size:28px; font-weight:700; color:#fff; line-height:1.25; margin:0;">{{ $kajian->title }}</h1>
                 </div>
-            @endif
-            
-            <!-- Category Badge -->
-            <div class="absolute top-4 left-4">
-                <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-brand-emerald-900 text-xs font-bold rounded-full shadow-sm">
-                    {{ $kajian->category->name }}
-                </span>
             </div>
         </div>
 
-        <div class="px-4 py-6">
-            <!-- Header Info -->
-            <div class="mb-6">
-                <h1 class="text-2xl font-bold text-brand-ink leading-tight mb-2">{{ $kajian->title }}</h1>
-                <div class="flex items-center text-brand-emerald-700 font-medium">
-                    <div class="w-8 h-8 rounded-full overflow-hidden mr-3 border border-brand-emerald-200 bg-brand-emerald-50">
-                        @if($kajian->speaker->photo)
-                            <img src="{{ Storage::url($kajian->speaker->photo) }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center text-xs font-bold">
-                                {{ substr($kajian->speaker->name, 0, 1) }}
-                            </div>
-                        @endif
-                    </div>
-                    <span>{{ $kajian->speaker->name }}</span>
-                </div>
-            </div>
-
+        <!-- Main Content -->
+        <div style="padding: 0 20px;">
+            
             <!-- Status Alerts (For Admin) -->
             @if(Auth::check() && Auth::user()->role === 'admin')
                 @if(!$kajian->is_verified && $kajian->status !== 'cancelled')
-                    <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                        <div class="flex items-start">
-                            <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0"></i>
-                            <div class="w-full">
-                                <h4 class="text-sm font-bold text-yellow-800">Menunggu Moderasi</h4>
-                                <p class="text-sm text-yellow-700 mt-1">Kajian ini belum dipublikasikan ke Jamaah. Silakan tinjau dan berikan keputusan.</p>
-                                <div class="mt-4 flex gap-3">
-                                    <form action="{{ route('admin.kajian.verify', $kajian->id) }}" method="POST" class="flex-1">
-                                        @csrf
-                                        <button type="submit" class="w-full px-4 py-2 bg-brand-emerald-900 text-white text-sm font-bold rounded-lg hover:bg-brand-emerald-950 transition shadow-sm">
-                                            Setujui
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.kajian.reject', $kajian->id) }}" method="POST" class="flex-1">
-                                        @csrf
-                                        <button type="submit" class="w-full px-4 py-2 bg-red-100 text-red-700 border border-red-200 text-sm font-bold rounded-lg hover:bg-red-200 transition">
-                                            Tolak
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                    <div style="background:var(--gold-soft); border:1px solid var(--gold); border-radius:24px; padding:20px; margin-bottom:28px; display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <svg style="width:20px; height:20px; color:var(--gold-text);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <h4 style="font-size:15px; font-weight:700; color:var(--ink); margin:0;">Menunggu Moderasi</h4>
+                        </div>
+                        <p style="font-size:13px; color:var(--ink-soft); margin:0 0 8px; line-height:1.5;">Kajian ini belum dipublikasikan ke Jamaah. Silakan tinjau dan berikan keputusan.</p>
+                        <div style="display:flex; gap:10px;">
+                            <form action="{{ route('admin.kajian.verify', $kajian->id) }}" method="POST" style="flex:1;">
+                                @csrf
+                                <button type="submit" class="btn btn-solid" style="width:100%; padding:10px; font-size:13px; justify-content:center;">Setujui</button>
+                            </form>
+                            <form action="{{ route('admin.kajian.reject', $kajian->id) }}" method="POST" style="flex:1;">
+                                @csrf
+                                <button type="submit" class="btn btn-outline" style="width:100%; padding:10px; font-size:13px; justify-content:center; border-color:var(--terracotta); color:var(--terracotta);">Tolak</button>
+                            </form>
                         </div>
                     </div>
                 @elseif($kajian->status === 'cancelled')
-                    <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center text-red-700 text-sm">
-                        <i data-lucide="x-circle" class="w-5 h-5 mr-2"></i> Kajian ini telah ditolak / dibatalkan.
+                    <div style="background:#FEE2E2; border:1px solid var(--terracotta); border-radius:20px; padding:16px; margin-bottom:28px; display:flex; align-items:center; gap:12px; color:var(--terracotta); font-size:13px; font-weight:600;">
+                        <svg style="width:20px; height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Kajian dibatalkan / ditolak.
                     </div>
                 @endif
             @endif
 
+            <!-- Speaker Info -->
+            <div style="background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; margin-bottom:28px; display:flex; align-items:center; gap:16px; box-shadow:0 10px 30px rgba(10,43,32,0.05);">
+                <div style="width:56px; height:56px; border-radius:50%; overflow:hidden; background:var(--parchment-deep); border:2px solid var(--parchment); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    @if($kajian->speaker->photo)
+                        <img src="{{ Storage::url($kajian->speaker->photo) }}" style="width:100%; height:100%; object-fit:cover;">
+                    @else
+                        <span style="font-size:20px; font-weight:700; color:var(--ink-soft); font-family:'Fraunces',serif;">
+                            {{ substr($kajian->speaker->name, 0, 1) }}
+                        </span>
+                    @endif
+                </div>
+                <div>
+                    <span class="eyebrow" style="margin-bottom:4px; font-size:10px;">Pemateri</span>
+                    <p style="font-family:'Amiri',serif; font-size:22px; font-weight:700; color:var(--jade-950); margin:0;">{{ $kajian->speaker->name }}</p>
+                </div>
+            </div>
+
             <!-- Detail Grid -->
-            <div class="grid grid-cols-1 gap-4 mb-8">
-                <!-- Waktu -->
-                <div class="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <i data-lucide="calendar-clock" class="w-6 h-6 text-brand-emerald-700 mt-1 mr-3 flex-shrink-0"></i>
-                    <div>
-                        <p class="text-xs text-brand-ink-soft uppercase font-bold tracking-wider mb-1">Waktu</p>
-                        <p class="text-sm font-semibold text-brand-ink">{{ $kajian->start_at->translatedFormat('l, d F Y') }}</p>
-                        <p class="text-sm text-brand-ink-soft mt-0.5">{{ $kajian->start_at->format('H:i') }} - {{ $kajian->end_at->format('H:i') }} WIB</p>
+            <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:32px;">
+                
+                <div style="display:flex; gap:16px;">
+                    <!-- Waktu -->
+                    <div style="flex:1; background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05);">
+                        <svg style="width:22px; height:22px; color:var(--jade-800); margin-bottom:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <p style="font-size:15px; font-weight:700; color:var(--ink); margin:0 0 2px;">{{ $kajian->start_at->translatedFormat('d M Y') }}</p>
+                        <p style="font-size:13px; color:var(--ink-soft); margin:0;">{{ $kajian->start_at->format('H:i') }} WIB</p>
                     </div>
-                </div>
 
-                <!-- Lokasi -->
-                <div class="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <i data-lucide="map-pin" class="w-6 h-6 text-brand-emerald-700 mt-1 mr-3 flex-shrink-0"></i>
-                    <div>
-                        <p class="text-xs text-brand-ink-soft uppercase font-bold tracking-wider mb-1">Lokasi</p>
-                        <p class="text-sm font-semibold text-brand-ink">{{ $kajian->mosque->name }}</p>
-                        <p class="text-sm text-brand-ink-soft mt-0.5">{{ $kajian->address }}</p>
-                    </div>
-                </div>
-
-                <!-- Peserta -->
-                <div class="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <i data-lucide="users" class="w-6 h-6 text-brand-emerald-700 mt-1 mr-3 flex-shrink-0"></i>
-                    <div>
-                        <p class="text-xs text-brand-ink-soft uppercase font-bold tracking-wider mb-1">Jamaah</p>
-                        <p class="text-sm font-semibold text-brand-ink">
-                            @if($kajian->audience === 'umum') Umum (Ikhwan & Akhwat)
-                            @elseif($kajian->audience === 'ikhwan') Khusus Ikhwan
-                            @elseif($kajian->audience === 'akhwat') Khusus Akhwat
-                            @endif
-                        </p>
+                    <!-- Peserta -->
+                    <div style="flex:1; background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05);">
+                        <svg style="width:22px; height:22px; color:var(--jade-800); margin-bottom:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <p style="font-size:15px; font-weight:700; color:var(--ink); margin:0 0 2px; text-transform:capitalize;">{{ $kajian->audience }}</p>
                         @if($kajian->is_family_friendly)
-                            <span class="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-[10px] font-bold rounded">Ramah Anak/Keluarga</span>
+                            <p style="font-size:12px; font-weight:600; color:var(--gold); margin:0;">Ramah Keluarga</p>
                         @endif
                     </div>
                 </div>
 
                 <!-- Biaya -->
-                <div class="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <i data-lucide="wallet" class="w-6 h-6 text-brand-emerald-700 mt-1 mr-3 flex-shrink-0"></i>
+                <div style="background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05); display:flex; align-items:center; justify-content:space-between;">
                     <div>
-                        <p class="text-xs text-brand-ink-soft uppercase font-bold tracking-wider mb-1">Biaya</p>
+                        <span class="eyebrow" style="margin-bottom:4px; font-size:10px;">Biaya Pendaftaran</span>
                         @if($kajian->is_free)
-                            <p class="text-sm font-bold text-green-600">Gratis (Free)</p>
+                            <p style="font-size:16px; font-weight:800; color:var(--jade-700); margin:0;">Gratis (Free)</p>
                         @else
-                            <p class="text-sm font-semibold text-brand-ink">Rp {{ number_format($kajian->price, 0, ',', '.') }}</p>
+                            <p style="font-size:16px; font-weight:800; color:var(--ink); margin:0;">Rp {{ number_format($kajian->price, 0, ',', '.') }}</p>
                         @endif
+                    </div>
+                    <svg style="width:28px; height:28px; color:var(--gold);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+            </div>
+
+            <!-- Lokasi -->
+            <div style="margin-bottom:32px;">
+                <h3 style="font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--jade-950); margin:0 0 16px;">Lokasi Pelaksanaan</h3>
+                <div style="background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05); display:flex; align-items:flex-start; gap:16px;">
+                    <div style="width:40px; height:40px; border-radius:50%; background:var(--parchment-deep); display:flex; align-items:center; justify-content:center; color:var(--jade-800); flex-shrink:0;">
+                        <svg style="width:20px; height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <div>
+                        <p style="font-size:16px; font-weight:700; color:var(--ink); margin:0 0 4px;">{{ $kajian->mosque->name }}</p>
+                        <p style="font-size:14px; color:var(--ink-soft); line-height:1.5; margin:0;">{{ $kajian->address }}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Deskripsi -->
-            <div class="mb-8">
-                <h3 class="text-lg font-bold text-brand-ink mb-3 border-b border-gray-100 pb-2">Deskripsi Kajian</h3>
-                <div class="prose prose-sm max-w-none text-brand-ink-soft">
+            <div style="margin-bottom:40px;">
+                <h3 style="font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--jade-950); margin:0 0 16px;">Deskripsi Kajian</h3>
+                <div style="font-size:15px; color:var(--ink-soft); line-height:1.7;">
                     {!! nl2br(e($kajian->description ?: 'Tidak ada deskripsi tambahan untuk kajian ini.')) !!}
                 </div>
             </div>
 
             <!-- Penyelenggara Info -->
-            <div class="bg-brand-cream/30 border border-brand-border-light rounded-xl p-4 flex items-center mb-8">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-4 border border-brand-border-light shadow-sm flex-shrink-0">
-                    <i data-lucide="shield" class="w-6 h-6 text-brand-emerald-700"></i>
+            <div style="background:var(--parchment-deep); border-radius:24px; padding:20px; display:flex; align-items:center; gap:16px;">
+                <div style="width:48px; height:48px; background:var(--paper); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:var(--shadow);">
+                    <svg style="width:24px; height:24px; color:var(--jade-800);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 </div>
                 <div>
-                    <p class="text-xs text-brand-ink-soft">Penyelenggara</p>
-                    <p class="text-sm font-bold text-brand-ink">{{ $kajian->organizer->name }}</p>
+                    <span class="eyebrow" style="margin-bottom:4px; font-size:10px;">Penyelenggara</span>
+                    <p style="font-size:16px; font-weight:700; color:var(--ink); margin:0;">{{ $kajian->organizer->name }}</p>
                 </div>
             </div>
+
         </div>
     </div>
 
     <!-- Floating Action Bar -->
-    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200 p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-40">
-        <div class="flex gap-2">
-            <button class="flex items-center justify-center w-12 h-12 bg-gray-50 border border-gray-200 text-gray-500 hover:text-red-500 hover:bg-red-50 hover:border-red-200 rounded-xl transition flex-shrink-0">
-                <i data-lucide="heart" class="w-6 h-6"></i>
-            </button>
-            <a href="https://maps.google.com/?q={{ $kajian->latitude }},{{ $kajian->longitude }}" target="_blank" class="flex-[1] flex items-center justify-center bg-white border-2 border-brand-emerald-900 text-brand-emerald-900 font-bold rounded-xl hover:bg-brand-emerald-50 transition text-sm">
-                <i data-lucide="navigation" class="w-4 h-4 mr-1"></i> Rute
-            </a>
-            <button class="flex-[1.5] flex items-center justify-center bg-brand-emerald-900 text-white font-bold rounded-xl hover:bg-brand-emerald-950 transition shadow-sm text-sm">
-                Saya Mau Hadir
-            </button>
+    <div style="position:fixed; bottom:0; left:0; width:100%; z-index:50; pointer-events:none;">
+        <div style="max-width:480px; margin:0 auto; padding:16px 20px; pointer-events:auto;">
+            <div style="background:rgba(244,238,220,0.95); backdrop-filter:blur(14px); border:1px solid var(--line); border-radius:28px; padding:12px; box-shadow:0 -10px 40px rgba(10,43,32,0.1); display:flex; gap:8px;">
+                
+                <form action="{{ url('/kajian/'.$kajian->id.'/favorite') }}" method="POST" style="flex-shrink:0;">
+                    @csrf
+                    <button type="submit" style="width:52px; height:52px; border-radius:18px; background:var(--paper); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--ink); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='var(--terracotta)'; this.style.borderColor='var(--terracotta)'; this.style.background='#FEE2E2';" onmouseout="this.style.color='var(--ink)'; this.style.borderColor='var(--line)'; this.style.background='var(--paper)';">
+                        <svg style="width:22px; height:22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </button>
+                </form>
+                
+                <a href="https://maps.google.com/?q={{ $kajian->latitude }},{{ $kajian->longitude }}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--paper); border:1px solid var(--line); color:var(--jade-900); font-size:14px; font-weight:700; text-decoration:none; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--parchment-deep)';" onmouseout="this.style.background='var(--paper)';">
+                    <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    Arahkan
+                </a>
+                
+                <form action="{{ url('/kajian/'.$kajian->id.'/join') }}" method="POST" style="flex:1.5;">
+                    @csrf
+                    <button type="submit" class="btn btn-solid" style="width:100%; height:52px; border-radius:18px; font-size:14px; justify-content:center; padding:0;">
+                        Saya Hadir
+                    </button>
+                </form>
+
+            </div>
         </div>
     </div>
 
-</x-app-layout>
+</div>
+@endsection

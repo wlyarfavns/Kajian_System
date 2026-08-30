@@ -1,55 +1,50 @@
 @props(['kajian'])
+<div class="kcard" style="background:var(--paper);border-radius:20px;overflow:hidden;border:none;box-shadow:0 15px 40px rgba(6,26,19,0.08);transition:transform 0.3s, box-shadow 0.3s; display:flex; flex-direction:column;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
+  
+  @php
+    $bgImage = $kajian->poster ? Storage::url($kajian->poster) : asset('images/about_mosque.jpg');
+  @endphp
 
-<div class="bg-white rounded-xl border border-brand-border-card p-4 shadow-sm relative">
-    @if($kajian->status_label === 'Sedang Berlangsung')
-        <span class="absolute top-4 right-4 bg-brand-badge-live text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide z-10">
-            {{ $kajian->status_label }}
-        </span>
-    @elseif($kajian->status_label !== 'Tidak Diketahui')
-        <span class="absolute top-4 right-4 bg-brand-emerald-100 text-brand-emerald-900 border border-brand-emerald-300 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide z-10">
-            {{ $kajian->status_label }}
-        </span>
-    @endif
-    
-    <div class="flex gap-4">
-        <!-- Poster -->
-        <div class="w-20 h-20 md:w-24 md:h-24 shrink-0 bg-brand-cream rounded-lg overflow-hidden border border-brand-border-light relative mt-6">
-            @if($kajian->poster)
-                <img src="{{ Storage::url($kajian->poster) }}" alt="{{ $kajian->title }}" class="w-full h-full object-cover">
-            @else
-                <div class="w-full h-full flex items-center justify-center text-brand-emerald-300 bg-brand-emerald-50">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                </div>
-            @endif
-        </div>
-        
-        <!-- Info -->
-        <div class="flex-1 min-w-0">
-            <h4 class="font-bold text-brand-emerald-950 mb-1 truncate pr-16" title="{{ $kajian->title }}">{{ $kajian->title }}</h4>
-            <div class="text-brand-emerald-700 text-sm font-medium mb-2 truncate">{{ $kajian->speaker->name ?? 'Ustadz Belum Ditentukan' }}</div>
-            
-            <div class="flex items-start text-xs text-brand-ink-soft mb-1">
-                <svg class="w-3.5 h-3.5 mr-1 flex-none text-brand-nav-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span class="truncate">{{ $kajian->mosque->name ?? 'Masjid Belum Ditentukan' }} 
-                @if(isset($kajian->distance))
-                    <span class="font-semibold text-brand-ink">({{ number_format($kajian->distance, 1) }} KM)</span>
-                @endif
-                </span>
-            </div>
-            
-            <div class="flex items-start text-xs text-brand-ink-soft">
-                <svg class="w-3.5 h-3.5 mr-1 flex-none text-brand-nav-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span>{{ $kajian->start_at->translatedFormat('l, d M Y - H:i') }} WIB</span>
-            </div>
-        </div>
+  <div class="kcard-media" style="height:150px; background: linear-gradient(rgba(15, 81, 55, 0.7), rgba(15, 81, 55, 0.9)), url('{{ $bgImage }}') center/cover; position:relative; display:flex; align-items:flex-end; padding:16px;">
+    <span class="ribbon" style="background:var(--gold); color:var(--paper); padding:4px 12px; border-radius:8px; font-size:12px; font-weight:700; position:absolute; top:16px; left:16px; letter-spacing:1px; text-transform:uppercase;">{{ $kajian->category->name ?? 'Kajian' }}</span>
+    <div class="kcard-save" style="position:absolute; top:16px; right:16px; width:32px; height:32px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer;">♥</div>
+  </div>
+  
+  <div class="kcard-body" style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
+    <h4 style="margin:0 0 8px; font-family:'Amiri',serif; font-size:24px; color:var(--jade-950); line-height:1.3;">{{ Str::limit($kajian->title, 40) }}</h4>
+    <div class="ustadz" style="font-family:'Amiri',serif; font-size:16px; color:var(--jade-800); font-weight:700; margin-bottom:16px;">
+        {{ $kajian->speaker->name ?? 'Ustadz' }}
     </div>
     
-    <div class="flex space-x-2 mt-4">
-        <a href="{{ url('/kajian/'.$kajian->slug) }}" class="flex-1 bg-brand-emerald-100 text-brand-emerald-900 font-semibold text-sm py-2 rounded-lg text-center transition hover:bg-brand-emerald-300">
-            Lihat Detail
-        </a>
-        <button class="flex-none p-2 border border-brand-border-light rounded-lg text-brand-ink-soft hover:bg-brand-cream hover:text-brand-emerald-900 transition focus:outline-none" title="Simpan">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-        </button>
+    <div class="kcard-meta" style="display:flex; flex-direction: column; gap:10px; font-size:14px; font-weight:600; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:16px; margin-bottom: 24px; margin-top: auto;">
+        @php
+          $cDate = \Carbon\Carbon::parse($kajian->start_at);
+          $hari = ['Sunday'=>'Ahad','Monday'=>'Senin','Tuesday'=>'Selasa','Wednesday'=>'Rabu','Thursday'=>'Kamis','Friday'=>'Jumat','Saturday'=>'Sabtu'];
+          $bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+          $strHari = $hari[$cDate->format('l')];
+          $strBulan = $bulan[$cDate->format('n') - 1];
+          $tglIndo = $strHari . ', ' . $cDate->format('d') . ' ' . $strBulan;
+        @endphp
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span style="color:var(--jade-950);">{{ $tglIndo }}</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span style="color:var(--jade-950);">{{ \Carbon\Carbon::parse($kajian->start_at)->format('H:i') }} WIB</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 2px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span style="line-height: 1.4; color:var(--jade-950);">{{ $kajian->mosque->name ?? 'Masjid' }}<br><span style="font-size: 13px; font-weight: 500; color:var(--ink-soft);">{{ Str::limit($kajian->mosque->address ?? '', 40) }}</span></span>
+        </div>
+        @if(isset($kajian->distance))
+        <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 2px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span style="line-height: 1.4; color:var(--jade-950);">Jarak: {{ number_format($kajian->distance, 1) }} KM</span>
+        </div>
+        @endif
     </div>
+    
+    <a href="{{ route('kajian.show', $kajian->slug) }}" style="display: block; text-align: center; background: var(--gold-pale); color: var(--gold-deep); padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 15px; transition: background 0.2s;" onmouseover="this.style.background='var(--gold)'; this.style.color='white';" onmouseout="this.style.background='var(--gold-pale)'; this.style.color='var(--gold-deep)';">Lihat Detail</a>
+  </div>
 </div>
