@@ -150,6 +150,58 @@
   .nav-cta{display:flex;align-items:center;gap:20px;font-size:13px}
   .nav-admin{color:var(--ink-soft)}
   .nav-admin b{color:var(--ink)}
+  
+  .user-menu {
+    position: relative;
+    display: inline-block;
+  }
+  .user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--paper);
+    min-width: 180px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(10,43,32,0.15);
+    border: 1px solid var(--line);
+    padding: 8px 0;
+    margin-top: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 100;
+  }
+  .user-menu:hover .user-dropdown,
+  .user-menu.active .user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .user-dropdown a, .user-dropdown button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    font-family: inherit;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  .user-dropdown a:hover, .user-dropdown button:hover {
+    background: var(--parchment);
+    color: var(--jade-900);
+  }
+  .user-dropdown hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 4px 0;
+  }
 
   /* ============ HERO ============ */
   .hero{
@@ -528,16 +580,33 @@
       </div>
       <div class="nav-cta">
           @auth
-              @if(auth()->user()->role === 'admin' || auth()->user()->role === 'organizer')
-                  <a href="{{ url('/'.auth()->user()->role) }}" class="nav-admin" hx-boost="false">Dashboard <b>{{ ucfirst(auth()->user()->role) }}</b></a>
-              @else
-                  <a href="{{ route('profile.edit') }}" class="nav-admin" hx-boost="false">Halo, <b>{{ auth()->user()->name }}</b></a>
-              @endif
-              
-              <form method="POST" action="{{ route('logout') }}" style="display:inline; margin-left:8px;">
-                  @csrf
-                  <button type="submit" class="btn btn-outline" style="padding:8px 16px; font-size:13px; border-width:1px;">Keluar</button>
-              </form>
+              <div class="user-menu" id="userMenu">
+                  <button type="button" class="nav-admin" style="background:none;border:none;font-family:inherit;font-size:14px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:0;color:var(--ink);">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--jade-900);">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <b style="font-weight:600;">{{ auth()->user()->name }}</b>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-soft); margin-left:-2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="user-dropdown">
+                      @if(auth()->user()->role === 'user')
+                          <a href="{{ url('/kajian-saya') }}" hx-boost="false">Kajian Saya</a>
+                          <a href="{{ url('/tersimpan') }}" hx-boost="false">Favorit Kajian</a>
+                      @elseif(auth()->user()->role === 'organizer')
+                          <a href="{{ url('/organizer') }}" hx-boost="false">Dashboard Penyelenggara</a>
+                      @elseif(auth()->user()->role === 'admin')
+                          <a href="{{ url('/admin') }}" hx-boost="false">Dashboard Admin</a>
+                      @endif
+                      
+                      <a href="{{ route('profile.edit') }}" hx-boost="false">Pengaturan Akun</a>
+                      <hr>
+                      <form method="POST" action="{{ route('logout') }}" style="margin:0;padding:0;">
+                          @csrf
+                          <button type="submit">Keluar</button>
+                      </form>
+                  </div>
+              </div>
           @else
               <a href="{{ route('login') }}" class="btn btn-outline" style="padding:10px 20px" hx-boost="false">Masuk</a>
               <a href="{{ route('register') }}" class="btn btn-solid" style="padding:10px 20px" hx-boost="false">Daftar Sekarang</a>
@@ -622,6 +691,21 @@
             const allLinks = document.querySelectorAll('.navlinks a');
             allLinks.forEach(l => l.classList.remove('active'));
             navLink.classList.add('active');
+        }
+        
+        // 3. User Menu Toggle
+        const userMenuBtn = e.target.closest('#userMenu > button');
+        if (userMenuBtn) {
+            e.preventDefault();
+            const userMenu = document.getElementById('userMenu');
+            if (userMenu) userMenu.classList.toggle('active');
+            return;
+        }
+        
+        // Close user dropdown if clicked outside
+        if (!e.target.closest('#userMenu')) {
+            const userMenu = document.getElementById('userMenu');
+            if (userMenu) userMenu.classList.remove('active');
         }
     });
 

@@ -37,6 +37,7 @@ Route::get('/kajian/{kajian:slug}', [KajianController::class, 'show'])->name('ka
 
 Route::middleware('auth')->group(function () {
     Route::post('/kajian/{kajian}/join', [AttendanceController::class, 'store']);
+    Route::delete('/kajian/{kajian}/join', [AttendanceController::class, 'destroy']);
     Route::post('/kajian/{kajian}/favorite', [FavoriteController::class, 'toggle']);
     
     Route::get('/kajian-saya', [AttendanceController::class, 'index']);

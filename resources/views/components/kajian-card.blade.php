@@ -1,4 +1,4 @@
-@props(['kajian'])
+@props(['kajian', 'attendanceStatus' => null])
 <div class="kcard" style="background:var(--paper);border-radius:20px;overflow:hidden;border:none;box-shadow:0 15px 40px rgba(6,26,19,0.08);transition:transform 0.3s, box-shadow 0.3s; display:flex; flex-direction:column;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 25px 50px rgba(6,26,19,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 15px 40px rgba(6,26,19,0.08)'">
   
   @php
@@ -7,7 +7,25 @@
 
   <div class="kcard-media" style="height:150px; background: linear-gradient(rgba(15, 81, 55, 0.7), rgba(15, 81, 55, 0.9)), url('{{ $bgImage }}') center/cover; position:relative; display:flex; align-items:flex-end; padding:16px;">
     <span class="ribbon" style="background:var(--gold); color:var(--paper); padding:4px 12px; border-radius:8px; font-size:12px; font-weight:700; position:absolute; top:16px; left:16px; letter-spacing:1px; text-transform:uppercase;">{{ $kajian->category->name ?? 'Kajian' }}</span>
-    <div class="kcard-save" style="position:absolute; top:16px; right:16px; width:32px; height:32px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer;">♥</div>
+    
+    @if($attendanceStatus)
+        @php
+            $bg = $attendanceStatus === 'registered' ? 'var(--jade-600)' : ($attendanceStatus === 'attended' ? 'var(--jade-900)' : 'var(--terracotta)');
+            $label = $attendanceStatus === 'registered' ? 'Akan Hadir' : ($attendanceStatus === 'attended' ? 'Hadir' : 'Dibatalkan');
+        @endphp
+        <span style="background:{{ $bg }}; color:white; padding:4px 12px; border-radius:8px; font-size:11px; font-weight:700; position:absolute; top:16px; right:16px; letter-spacing:1px; text-transform:uppercase;">{{ $label }}</span>
+    @else
+        @php
+            $isFavorited = false;
+            if(auth()->check()) {
+                $isFavorited = \App\Models\Favorite::where('user_id', auth()->id())->where('kajian_id', $kajian->id)->exists();
+            }
+        @endphp
+        <form action="{{ url('/kajian/'.$kajian->id.'/favorite') }}" method="POST" style="position:absolute; top:16px; right:16px; z-index:10;">
+            @csrf
+            <button type="submit" class="kcard-save" style="width:32px; height:32px; background:{{ $isFavorited ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.2)' }}; backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:{{ $isFavorited ? 'var(--terracotta)' : '#fff' }}; border:none; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.9)'; this.style.color='var(--terracotta)';" onmouseout="this.style.background='{{ $isFavorited ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.2)' }}'; this.style.color='{{ $isFavorited ? 'var(--terracotta)' : '#fff' }}';">♥</button>
+        </form>
+    @endif
   </div>
   
   <div class="kcard-body" style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">

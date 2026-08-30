@@ -1,39 +1,37 @@
-@extends('layouts.app')
+@extends('layouts.landing')
 
 @section('content')
-<div class="px-4 md:px-6 pt-6 pb-20 bg-brand-cream min-h-screen">
+<div class="container" style="padding-top:40px; padding-bottom:40px; min-height: 40vh;">
     
-    <div class="mb-8 border-b border-brand-border-light pb-4">
-        <h2 class="text-3xl font-serif text-brand-ink leading-tight mb-2">
-            Kajian <span class="italic text-brand-gold-text">Tersimpan</span>
+    <div style="margin-bottom:40px; text-align:center;">
+        <h2 style="font-family:'Fraunces',serif; font-size:36px; font-weight:600; color:var(--jade-950); margin:0 0 10px;">
+            Kajian <em style="color:var(--gold); font-style:italic;">Tersimpan</em>
         </h2>
-        <p class="text-brand-ink-soft text-sm">Daftar kajian yang telah Anda simpan untuk dilihat nanti.</p>
+        <p style="color:var(--ink-soft); font-size:15px; margin:0;">Daftar kajian yang telah Anda simpan untuk dilihat nanti.</p>
     </div>
 
     <!-- Results List -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        @forelse($kajians as $kajian)
-            <x-kajian-card :kajian="$kajian" />
+    <div class="kajian-grid">
+        @forelse($favorites as $favorite)
+            <x-kajian-card :kajian="$favorite->kajian" />
         @empty
-            <div class="col-span-full bg-white border border-brand-border-light rounded-3xl p-8 text-center shadow-sm">
-                <div class="w-16 h-16 bg-brand-cream rounded-full flex items-center justify-center mx-auto mb-4 text-brand-gold">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            <div style="grid-column: 1 / -1; text-align:center; padding:60px 20px; background:var(--paper); border:1px solid var(--line); border-radius:24px; box-shadow:var(--shadow);">
+                <div style="width:64px; height:64px; background:rgba(184,134,59,.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:var(--gold);">
+                    <svg style="width:32px; height:32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                 </div>
-                <h4 class="font-bold text-brand-emerald-950 mb-2">Belum Ada Kajian Tersimpan</h4>
-                <p class="text-brand-ink-soft text-sm mb-4">Anda belum menyimpan kajian apapun. Jelajahi kajian dan simpan yang Anda sukai.</p>
-                <a href="{{ url('/kajian') }}" class="inline-block bg-brand-emerald-900 text-white font-semibold text-sm px-5 py-2.5 rounded-full hover:bg-brand-emerald-950 transition">
+                <h4 style="font-family:'Fraunces',serif; font-size:22px; color:var(--jade-950); margin:0 0 10px;">Belum Ada Kajian Tersimpan</h4>
+                <p style="color:var(--ink-soft); font-size:14px; margin:0 0 24px;">Anda belum menyimpan kajian apapun. Jelajahi kajian dan simpan yang Anda sukai.</p>
+                <a href="{{ url('/kajian') }}" class="btn btn-solid">
                     Jelajahi Kajian
                 </a>
             </div>
         @endforelse
     </div>
     
-    @if(method_exists($kajians, 'links'))
     <!-- Pagination -->
-    <div class="mt-4">
-        {{ $kajians->links() }}
+    <div style="margin-top:50px;">
+        {{ $favorites->links() }}
     </div>
-    @endif
 
 </div>
 @endsection

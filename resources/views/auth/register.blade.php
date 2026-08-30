@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="darkreader-lock">
 
     <title>Daftar - KajianKu</title>
 
@@ -13,103 +14,139 @@
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        :root{
-            --parchment:#F4EEDC;
-            --parchment-deep:#E9DFC2;
-            --paper:#FBF7EC;
-            --ink:#152A20;
-            --ink-soft:#4B5D52;
-            --jade-950:#0A2B20;
-            --jade-900:#0C3B2A;
-            --jade-800:#0F5137;
-            --gold:#B8863B;
-            --gold-soft:#E7C77E;
-            --gold-pale:#F3E3B8;
-            --line:rgba(21,42,32,.14);
+        :root {
+            --parchment: #F4EEDC;
+            --parchment-deep: #E9DFC2;
+            --paper: #FBF7EC;
+            --ink: #152A20;
+            --ink-soft: #4B5D52;
+            --jade-950: #0A2B20;
+            --jade-900: #0C3B2A;
+            --jade-800: #0F5137;
+            --gold: #B8863B;
+            --gold-soft: #E7C77E;
+            --gold-pale: #F3E3B8;
+            --line: rgba(21,42,32,0.14);
         }
-        *{box-sizing:border-box}
-        html, body{
-            margin:0;
-            padding:0;
-            width:100%;
-            height:100%;
-            overflow:hidden;
+        * {
+            box-sizing: border-box;
         }
-        body{
-            font-family:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;
-            color:var(--ink);
-            background:var(--jade-950);
-            line-height:1.6;
-            -webkit-font-smoothing:antialiased;
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
-        a{color:inherit;text-decoration:none}
-        .container{max-width:1180px;margin:0 auto;padding:0 28px}
+        body {
+            font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+            color: var(--ink);
+            background: var(--jade-950);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
         
-        .btn{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            padding:14px 26px;
-            border-radius:999px;
-            font-weight:700;
-            font-size:14px;
-            border:1px solid transparent;
-            cursor:pointer;
-            transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 26px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
         }
-        .btn:hover{transform:translateY(-2px)}
-        .btn-solid{
-            background:var(--jade-900);
-            color:var(--parchment);
-            box-shadow:0 14px 30px rgba(10,43,32,.28);
+        .btn:hover {
+            transform: translateY(-2px);
         }
-        .btn-solid:hover{background:var(--jade-800)}
+        .btn-solid {
+            background: var(--jade-900);
+            color: var(--parchment);
+            box-shadow: 0 14px 30px rgba(10,43,32,0.28);
+        }
+        .btn-solid:hover {
+            background: var(--jade-800);
+        }
+        .btn-outline {
+            border-color: var(--gold);
+            color: var(--ink);
+            background: transparent;
+        }
+        .btn-outline:hover {
+            background: var(--gold-pale);
+        }
 
-        .hero{
-            position:relative;
-            background:
-                radial-gradient(ellipse 900px 500px at 82% -10%, rgba(184,134,59,.20), transparent 60%),
-                linear-gradient(180deg,var(--jade-950) 0%, var(--jade-900) 55%, var(--jade-800) 100%);
+        .hero {
+            position: relative;
+            background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, var(--jade-950) 0%, var(--jade-900) 55%, var(--jade-800) 100%);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px 0;
         }
-        .hero-lattice{
-            position:absolute;inset:0;
-            opacity:.16;
-            pointer-events:none;
+        .hero-lattice {
+            position: absolute;
+            inset: 0;
+            opacity: 0.16;
+            pointer-events: none;
             width: 100%;
             height: 100%;
-        }
-        .hero-grid{
-            position:relative;
-            display:grid;
-            grid-template-columns: 1fr;
-            max-width: 520px;
-            margin: 0 auto;
-            gap:20px;
-            align-items:center;
-            width: 100%;
         }
         
         .login-input:focus {
             border-color: var(--gold) !important;
             box-shadow: 0 0 0 3px rgba(184,134,59, 0.15) !important;
         }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .auth-card {
+            background: var(--parchment);
+            border-radius: 32px;
+            padding: 36px 48px;
+            box-shadow: 0 40px 80px rgba(6,26,19,0.4);
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(231,199,126,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 100%;
+        }
         
-        @media (max-width: 992px) {
-            .hero-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 576px) {
+            .auth-card {
+                padding: 32px 24px;
+                border-radius: 28px;
+            }
+            .auth-wrapper {
+                padding: 0 16px;
             }
         }
     </style>
 </head>
 <body>
 
-<header class="hero">
-  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice">
+<header class="hero" style="position: relative; height: 100vh; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 0; background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%); width: 100%;">
+  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; opacity: 0.16; pointer-events: none; width: 100%; height: 100%;">
     <defs>
       <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
         <g stroke="#E7C77E" stroke-width="1" fill="none">
@@ -120,10 +157,10 @@
     <rect width="100%" height="100%" fill="url(#star8)"/>
   </svg>
 
-  <div style="width: 100%; max-width: 520px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10;">
+  <div class="auth-wrapper" style="width: 100%; max-width: 520px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10;">
     
     <!-- Bagian Form Register -->
-    <div style="background: var(--parchment); border-radius: 32px; padding: 36px 48px; box-shadow: 0 40px 80px rgba(6,26,19,0.4); position: relative; z-index: 10; border: 1px solid rgba(231,199,126,0.3); max-height: 90vh; overflow-y: auto;">
+    <div class="auth-card" style="background: #F4EEDC !important; border-radius: 32px; padding: 36px 48px; box-shadow: 0 40px 80px rgba(6,26,19,0.4); position: relative; z-index: 10; border: 1px solid rgba(231,199,126,0.3); max-height: 90vh; overflow-y: auto; width: 100%;">
         
         <div style="text-align: left; margin-bottom: 12px;">
             <a href="{{ url('/') }}" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:var(--jade-900); text-transform:uppercase; letter-spacing:1px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
@@ -212,7 +249,7 @@
             </div>
 
             <div style="margin-top:8px;">
-                <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:14px;">
+                <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:14px; background: var(--jade-900); color: var(--parchment); border: none; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">
                     Daftar Sekarang
                 </button>
             </div>

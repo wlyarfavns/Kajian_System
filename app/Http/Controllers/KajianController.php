@@ -74,10 +74,43 @@ class KajianController extends Controller
         return view('kajian.index', compact('kajians', 'categories'));
     }
 
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
         $kajian = Kajian::with(['organizer', 'speaker', 'mosque', 'category'])->where('slug', $slug)->firstOrFail();
         
-        return view('kajian.show', compact('kajian'));
+        $isAttending = false;
+        $isFavorited = false;
+
+        if (auth()->check()) {
+            $isAttending = \App\Models\KajianAttendee::where('user_id', auth()->id())
+                ->where('kajian_id', $kajian->id)
+                ->where('status', '!=', 'cancelled')
+                ->exists();
+                
+            $isFavorited = \App\Models\Favorite::where('user_id', auth()->id())
+                ->where('kajian_id', $kajian->id)
+                ->exists();
+        }
+
+        $attendeesCount = \App\Models\KajianAttendee::where('kajian_id', $kajian->id)
+                ->where('status', '!=', 'cancelled')
+                ->count();
+                
+        $distance = null;
+        if ($request->filled('lat') && $request->filled('lng')) {
+            $lat = (float) $request->lat;
+            $lng = (float) $request->lng;
+            $kLat = (float) $kajian->latitude;
+            $kLng = (float) $kajian->longitude;
+            
+            $earthRadius = 6371;
+            $dLat = deg2rad($kLat - $lat);
+            $dLng = deg2rad($kLng - $lng);
+            $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat)) * cos(deg2rad($kLat)) * sin($dLng/2) * sin($dLng/2);
+            $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+            $distance = $earthRadius * $c;
+        }
+
+        return view('kajian.show', compact('kajian', 'isAttending', 'isFavorited', 'attendeesCount', 'distance'));
     }
 }

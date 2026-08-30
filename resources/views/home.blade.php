@@ -22,6 +22,7 @@
         <a href="{{ route('register') }}" class="btn btn-solid">Daftar Sekarang</a>
         <a href="{{ url('/kajian') }}" class="btn btn-ghost-light">Cari Kajian →</a>
       </div>
+      
     </div>
 
     <div class="hero-visual-wrap">
@@ -221,7 +222,25 @@
         <a href="{{ route('register') }}" class="btn btn-solid" style="color:var(--gold-pale)">Daftar Sekarang</a>
         <a href="{{ url('/kajian') }}" class="btn btn-outline">Cari Kajian</a>
       </div>
-    </div>
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    // Don't auto-request if we already have lat/lng or if user explicitly declined (we can use sessionStorage)
+    if (!urlParams.has('lat') && !urlParams.has('lng') && !sessionStorage.getItem('location_declined')) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                window.location.href = `/?lat=${lat}&lng=${lng}`;
+            }, function(error) {
+                console.log("Geolocation error:", error);
+                sessionStorage.setItem('location_declined', 'true');
+            });
+        }
+    }
+});
+</script>
 @endsection
