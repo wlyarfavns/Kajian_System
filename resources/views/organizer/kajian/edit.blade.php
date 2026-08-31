@@ -116,10 +116,16 @@
                         @error('address') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <!-- Dummy for Lat/Lng -->
-                    <div class="hidden">
-                        <input type="text" name="latitude" value="{{ $kajian->latitude }}" required>
-                        <input type="text" name="longitude" value="{{ $kajian->longitude }}" required>
+                    <!-- Latitude & Longitude -->
+                    <div>
+                        <label for="latitude" class="block text-sm font-medium text-brand-ink mb-1">Latitude</label>
+                        <input type="text" name="latitude" id="latitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('latitude', $kajian->latitude) }}" required>
+                        @error('latitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label for="longitude" class="block text-sm font-medium text-brand-ink mb-1">Longitude</label>
+                        <input type="text" name="longitude" id="longitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('longitude', $kajian->longitude) }}" required>
+                        @error('longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -141,24 +147,28 @@
                     </div>
 
                     <div>
-                        <label for="quota" class="block text-sm font-medium text-brand-ink mb-1">Kuota Peserta</label>
-                        <input type="number" name="quota" id="quota" min="1" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('quota', $kajian->quota) }}">
+                        <label for="quota" class="block text-sm font-medium text-brand-ink mb-1">Kuota</label>
+                        <input type="number" name="quota" id="quota" min="1" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" placeholder="Kosongkan jika tidak terbatas" value="{{ old('quota', $kajian->quota) }}">
                         @error('quota') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     
-                    <div class="flex flex-col justify-center space-y-4">
+                    <div class="flex flex-col space-y-4">
                         <label class="inline-flex items-center mt-6">
                             <input type="checkbox" name="is_family_friendly" value="1" class="rounded border-gray-300 text-brand-emerald-900 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" {{ old('is_family_friendly', $kajian->is_family_friendly) ? 'checked' : '' }}>
-                            <span class="ml-2 text-sm text-brand-ink">Ramah Keluarga (Family Friendly)</span>
-                        </label>
-                        <label class="inline-flex items-center">
-                            <input type="checkbox" name="is_free" id="is_free" value="1" class="rounded border-gray-300 text-brand-emerald-900 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" {{ old('is_free', $kajian->is_free) ? 'checked' : '' }}>
-                            <span class="ml-2 text-sm text-brand-ink">Kajian Gratis</span>
+                            <span class="ml-2 text-sm text-brand-ink">Ramah Keluarga: Ya</span>
                         </label>
                     </div>
 
+                    <div>
+                        <label for="is_free" class="block text-sm font-medium text-brand-ink mb-1">Biaya <span class="text-brand-danger">*</span></label>
+                        <select name="is_free" id="is_free" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required>
+                            <option value="1" {{ old('is_free', $kajian->is_free) == true ? 'selected' : '' }}>Gratis</option>
+                            <option value="0" {{ old('is_free', $kajian->is_free) == false ? 'selected' : '' }}>Berbayar</option>
+                        </select>
+                    </div>
+
                     <div id="price_container" style="display: none;">
-                        <label for="price" class="block text-sm font-medium text-brand-ink mb-1">Harga Tiket</label>
+                        <label for="price" class="block text-sm font-medium text-brand-ink mb-1">Harga</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <span class="text-gray-500 sm:text-sm">Rp</span>
@@ -208,18 +218,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const isFreeCheckbox = document.getElementById('is_free');
+            const isFreeSelect = document.getElementById('is_free');
             const priceContainer = document.getElementById('price_container');
 
             function togglePrice() {
-                if (isFreeCheckbox.checked) {
+                if (isFreeSelect.value === '1') {
                     priceContainer.style.display = 'none';
                 } else {
                     priceContainer.style.display = 'block';
                 }
             }
 
-            isFreeCheckbox.addEventListener('change', togglePrice);
+            isFreeSelect.addEventListener('change', togglePrice);
             // Run once on load
             togglePrice();
         });

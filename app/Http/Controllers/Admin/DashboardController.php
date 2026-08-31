@@ -13,7 +13,10 @@ class DashboardController extends Controller
         $kajianHariIni = \App\Models\Kajian::whereDate('start_at', today())->count();
         $totalUser = \App\Models\User::where('role', 'user')->count();
         $totalOrganizer = \App\Models\User::where('role', 'organizer')->count();
+        $totalMosque = \App\Models\Mosque::count();
+        
+        $recentKajians = \App\Models\Kajian::with(['mosque', 'category'])->withCount('attendees')->latest()->take(5)->get();
 
-        return view('admin.dashboard', compact('totalKajian', 'kajianHariIni', 'totalUser', 'totalOrganizer'));
+        return view('admin.dashboard', compact('totalKajian', 'kajianHariIni', 'totalUser', 'totalOrganizer', 'totalMosque', 'recentKajians'));
     }
 }

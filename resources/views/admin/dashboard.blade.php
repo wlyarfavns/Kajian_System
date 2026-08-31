@@ -22,11 +22,11 @@
 
             <!-- Card 2 -->
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1">
-                <p class="text-sm text-gray-500 font-medium mb-1">Penyelenggara Aktif</p>
+                <p class="text-sm text-gray-500 font-medium mb-1">Total Masjid</p>
                 <div class="flex items-end justify-between mt-4">
-                    <h3 class="text-2xl font-bold text-gray-900">{{ $totalOrganizer ?? 18 }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-900">{{ $totalMosque ?? 0 }}</h3>
                 </div>
-                <p class="text-xs text-gray-400 font-medium mt-2">Masjid, Yayasan, Edukasi, Remaja</p>
+                <p class="text-xs text-gray-400 font-medium mt-2">Lokasi pelaksanaan kajian</p>
             </div>
 
             <!-- Card 3 -->
@@ -54,13 +54,16 @@
                 </p>
             </div>
 
-            <!-- Card 5: System Status / Jam -->
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 flex flex-col justify-center text-center">
-                <p class="text-xs text-gray-500 font-bold tracking-wider mb-2 uppercase">Waktu Sistem</p>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1" x-data="{ time: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) }" x-init="setInterval(() => time = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), 60000)" x-text="time">
-                    12:30
-                </h3>
-                <p class="text-sm font-medium text-gray-900">{{ now()->translatedFormat('d F Y') }}</p>
+            <!-- Card 5: Total Organizer -->
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1">
+                <p class="text-sm text-gray-500 font-medium mb-1">Total Organizer</p>
+                <div class="flex items-end justify-between mt-4">
+                    <h3 class="text-2xl font-bold text-gray-900">{{ $totalOrganizer ?? 0 }}</h3>
+                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-indigo-500 font-medium mt-2">Terdaftar di sistem</p>
             </div>
         </div>
 
@@ -201,38 +204,43 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50 text-sm">
+                        @forelse($recentKajians as $k)
                         <tr>
-                            <td class="py-4 text-gray-900 font-bold">Kajian Tafsir Al-Baqarah</td>
-                            <td class="py-4 text-gray-600 font-medium">Sep 27, 2026 - 08:00 AM</td>
-                            <td class="py-4 text-gray-600 font-medium">Masjid Al-Akbar</td>
-                            <td class="py-4"><span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md flex items-center w-max"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div> Approved</span></td>
-                            <td class="py-4 text-gray-600 font-medium">Tafsir</td>
-                            <td class="py-4 text-gray-900 font-bold text-right">450</td>
+                            <td class="py-4 text-gray-900 font-bold">{{ $k->title }}</td>
+                            <td class="py-4 text-gray-600 font-medium">{{ $k->start_at ? $k->start_at->format('M d, Y - H:i') : '-' }}</td>
+                            <td class="py-4 text-gray-600 font-medium">{{ $k->mosque->name ?? '-' }}</td>
+                            <td class="py-4">
+                                @php
+                                    $label = $k->status_label;
+                                    $colorClass = 'text-orange-600 bg-orange-50';
+                                    $dotClass = 'bg-orange-500';
+
+                                    if ($label === 'Sedang Berlangsung') {
+                                        $colorClass = 'text-emerald-600 bg-emerald-50';
+                                        $dotClass = 'bg-emerald-500';
+                                    } elseif ($label === 'Selesai') {
+                                        $colorClass = 'text-gray-600 bg-gray-50';
+                                        $dotClass = 'bg-gray-500';
+                                    } elseif ($label === 'Dibatalkan') {
+                                        $colorClass = 'text-red-600 bg-red-50';
+                                        $dotClass = 'bg-red-500';
+                                    } elseif ($label === 'Akan Datang') {
+                                        $colorClass = 'text-blue-600 bg-blue-50';
+                                        $dotClass = 'bg-blue-500';
+                                    }
+                                @endphp
+                                <span class="text-xs font-bold {{ $colorClass }} px-2 py-1 rounded-md flex items-center w-max">
+                                    <div class="w-1.5 h-1.5 rounded-full {{ $dotClass }} mr-1.5"></div> {{ $label }}
+                                </span>
+                            </td>
+                            <td class="py-4 text-gray-600 font-medium">{{ $k->category->name ?? '-' }}</td>
+                            <td class="py-4 text-gray-900 font-bold text-right">{{ $k->attendees_count }}</td>
                         </tr>
+                        @empty
                         <tr>
-                            <td class="py-4 text-gray-900 font-bold">Sirah Nabawiyah</td>
-                            <td class="py-4 text-gray-600 font-medium">Sep 28, 2026 - 16:00 PM</td>
-                            <td class="py-4 text-gray-600 font-medium">Masjid An-Nur</td>
-                            <td class="py-4"><span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md flex items-center w-max"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div> Approved</span></td>
-                            <td class="py-4 text-gray-600 font-medium">Sejarah</td>
-                            <td class="py-4 text-gray-900 font-bold text-right">120</td>
+                            <td colspan="6" class="py-4 text-center text-gray-500 font-medium">Belum ada kajian</td>
                         </tr>
-                        <tr>
-                            <td class="py-4 text-gray-900 font-bold">Fiqih Muamalah Kontemporer</td>
-                            <td class="py-4 text-gray-600 font-medium">Oct 01, 2026 - 09:00 AM</td>
-                            <td class="py-4 text-gray-600 font-medium">Aula Yayasan Peduli</td>
-                            <td class="py-4"><span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-md flex items-center w-max"><div class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></div> Pending</span></td>
-                            <td class="py-4 text-gray-600 font-medium">Fiqih</td>
-                            <td class="py-4 text-gray-900 font-bold text-right">250</td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 text-gray-900 font-bold">Bedah Buku Akhlak</td>
-                            <td class="py-4 text-gray-600 font-medium">Oct 05, 2026 - 13:00 PM</td>
-                            <td class="py-4 text-gray-600 font-medium">Masjid Kampus ITB</td>
-                            <td class="py-4"><span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md flex items-center w-max"><div class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></div> Draft</span></td>
-                            <td class="py-4 text-gray-600 font-medium">Akhlak</td>
-                            <td class="py-4 text-gray-900 font-bold text-right">0</td>
-                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

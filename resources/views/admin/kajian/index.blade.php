@@ -52,6 +52,9 @@
                                     - 
                                     {{ $kajian->end_at ? $kajian->end_at->format('H:i') : '-' }} WIB
                                 </div>
+                                <div class="mt-2 text-[11px] font-bold px-2 py-0.5 rounded w-max bg-gray-100 text-gray-700">
+                                    {{ $kajian->status_label }}
+                                </div>
                             </td>
                             <td class="px-6 py-4">
                                 @if($kajian->is_verified)
@@ -76,6 +79,7 @@
                                     'category' => $kajian->category->name ?? '-',
                                     'is_verified' => $kajian->is_verified,
                                     'status' => $kajian->status,
+                                    'execution_status' => $kajian->status_label,
                                     'verify_url' => route('admin.kajian.verify', $kajian->id),
                                     'reject_url' => route('admin.kajian.reject', $kajian->id)
                                 ]) }})" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Lihat Detail & Moderasi">
@@ -185,6 +189,7 @@
                                     <p class="text-xs text-gray-500 font-bold uppercase">Waktu</p>
                                     <p class="text-sm font-bold text-brand-ink mt-1" x-text="activeKajian ? activeKajian.date : '-'"></p>
                                     <p class="text-xs text-gray-600 mt-0.5" x-text="activeKajian ? activeKajian.time : '-'"></p>
+                                    <p class="text-xs font-bold text-gray-700 mt-2" x-text="activeKajian ? activeKajian.execution_status : '-'"></p>
                                 </div>
                             </div>
                             <div class="flex-[1.5] bg-white border border-gray-200 rounded-xl p-4 flex items-start gap-3">
