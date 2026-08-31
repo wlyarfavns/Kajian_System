@@ -7,59 +7,68 @@ use Illuminate\Http\Request;
 
 class MosqueController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $mosques = \App\Models\Mosque::where('organizer_id', auth()->user()->organizer->id)->get();
+        return view('organizer.mosque.index', compact('mosques'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('organizer.mosque.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'google_maps_url' => 'nullable|url',
+        ]);
+
+        $validated['organizer_id'] = auth()->user()->organizer->id;
+        
+        \App\Models\Mosque::create($validated);
+
+        return redirect()->route('organizer.mosque.index')->with('success', 'Masjid berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(\App\Models\Mosque $mosque)
     {
-        //
+        if ($mosque->organizer_id !== auth()->user()->organizer->id) {
+            abort(403);
+        }
+        return view('organizer.mosque.edit', compact('mosque'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, \App\Models\Mosque $mosque)
     {
-        //
+        if ($mosque->organizer_id !== auth()->user()->organizer->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'google_maps_url' => 'nullable|url',
+        ]);
+
+        $mosque->update($validated);
+
+        return redirect()->route('organizer.mosque.index')->with('success', 'Masjid berhasil diperbarui.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(\App\Models\Mosque $mosque)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($mosque->organizer_id !== auth()->user()->organizer->id) {
+            abort(403);
+        }
+        
+        $mosque->delete();
+        return redirect()->route('organizer.mosque.index')->with('success', 'Masjid berhasil dihapus.');
     }
 }

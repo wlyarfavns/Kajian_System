@@ -37,3 +37,18 @@
         color: var(--ink);
     }
 }
+
+/* Animasi Progress Bar Turbo */
+.turbo-progress-bar {
+    height: 4px;
+    background-color: var(--emerald-500) !important;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 10px var(--emerald-500);
+}
+
+/* Smooth Page Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}

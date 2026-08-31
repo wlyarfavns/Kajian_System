@@ -35,8 +35,9 @@ class KajianController extends Controller
             'mosque_id' => 'required|exists:mosques,id',
             'speaker_id' => 'required|exists:speakers,id',
             'category_id' => 'required|exists:categories,id',
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after_or_equal:start_at',
+            'tanggal' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
             'address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
@@ -45,7 +46,9 @@ class KajianController extends Controller
             'quota' => 'nullable|integer|min:1',
             'price' => 'nullable|numeric|min:0',
             'status' => 'required|in:draft,published',
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'facilities' => 'nullable|array',
+            'facilities.*' => 'string'
         ]);
 
         $organizerId = auth()->user()->organizer->id;
@@ -54,7 +57,12 @@ class KajianController extends Controller
             'organizer_id' => $organizerId,
             'is_family_friendly' => $request->has('is_family_friendly'),
             'is_free' => $request->has('is_free'),
+            'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
+            'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
+            'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
         ]);
+        
+        unset($data['tanggal'], $data['start_time'], $data['end_time']);
 
         if ($request->hasFile('poster')) {
             $data['poster'] = $request->file('poster')->store('posters', 'public');
@@ -64,7 +72,7 @@ class KajianController extends Controller
 
         Kajian::create($data);
 
-        return redirect()->route('kajian.index')->with('success', 'Kajian created successfully.');
+        return redirect()->route('organizer.kajian.index')->with('success', 'Kajian created successfully.');
     }
 
     public function show(Kajian $kajian)
@@ -92,8 +100,9 @@ class KajianController extends Controller
             'mosque_id' => 'required|exists:mosques,id',
             'speaker_id' => 'required|exists:speakers,id',
             'category_id' => 'required|exists:categories,id',
-            'start_at' => 'required|date',
-            'end_at' => 'required|date|after_or_equal:start_at',
+            'tanggal' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
             'address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
@@ -102,13 +111,20 @@ class KajianController extends Controller
             'quota' => 'nullable|integer|min:1',
             'price' => 'nullable|numeric|min:0',
             'status' => 'required|in:draft,published',
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'facilities' => 'nullable|array',
+            'facilities.*' => 'string'
         ]);
 
         $data = array_merge($validated, [
             'is_family_friendly' => $request->has('is_family_friendly'),
             'is_free' => $request->has('is_free'),
+            'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
+            'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
+            'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
         ]);
+        
+        unset($data['tanggal'], $data['start_time'], $data['end_time']);
 
         if ($request->hasFile('poster')) {
             // Delete old poster if exists
@@ -120,7 +136,7 @@ class KajianController extends Controller
 
         $kajian->update($data);
 
-        return redirect()->route('kajian.index')->with('success', 'Kajian updated successfully.');
+        return redirect()->route('organizer.kajian.index')->with('success', 'Kajian updated successfully.');
     }
 
     public function destroy(Kajian $kajian)

@@ -18,13 +18,19 @@ class DummyDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create Jamaah User
+        // 1. Create Admin User
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@kajianku.test'],
+            ['name' => 'Administrator', 'password' => Hash::make('password'), 'role' => 'admin']
+        );
+
+        // 2. Create Jamaah User
         $jamaah = User::firstOrCreate(
             ['email' => 'jamaah@kajianku.test'],
             ['name' => 'Fulan bin Fulan', 'password' => Hash::make('password'), 'role' => 'user']
         );
 
-        // 2. Create Organizer User
+        // 3. Create Organizer User
         $orgUser = User::firstOrCreate(
             ['email' => 'organizer@kajianku.test'],
             ['name' => 'Takmir Masjid', 'password' => Hash::make('password'), 'role' => 'organizer']

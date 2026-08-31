@@ -2,10 +2,12 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ config('app.name', 'KajianKu') }} — Temukan Ilmu Terdekat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="view-transition" content="same-origin" />
+<meta name="layout" content="landing" data-turbo-track="reload">
+<title>{{ config('app.name', 'Laravel') }} - Cari Kajian Terdekat</title>
 @vite(['resources/css/app.css', 'resources/js/app.js'])
-<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,7 +37,7 @@
     margin:0;
     padding:0;
     width:100%;
-    overflow-x:clip;
+    overflow-x:hidden;
   }
   body{
     font-family:"Plus Jakarta Sans",ui-sans-serif,system-ui,sans-serif;
@@ -552,7 +554,7 @@
   }
 </style>
 </head>
-<body hx-boost="true">
+<body>
 
 <nav class="mainnav">
   <div class="container nav-inner">
@@ -576,7 +578,6 @@
         <a href="{{ url('/#about') }}" data-path="/#about">Tentang Kami</a>
         <a href="{{ url('/kajian') }}" data-path="/kajian">Jadwal Kajian</a>
         <a href="{{ url('/#cara-kerja') }}" data-path="/#cara-kerja">Cara Kerja</a>
-        <a href="{{ url('/#testimoni') }}" data-path="/#testimoni">Testimoni</a>
       </div>
       <div class="nav-cta">
           @auth
@@ -591,15 +592,15 @@
                   </button>
                   <div class="user-dropdown">
                       @if(auth()->user()->role === 'user')
-                          <a href="{{ url('/kajian-saya') }}" hx-boost="false">Kajian Saya</a>
-                          <a href="{{ url('/tersimpan') }}" hx-boost="false">Favorit Kajian</a>
+                          <a href="{{ url('/kajian-saya') }}">Kajian Saya</a>
+                          <a href="{{ url('/tersimpan') }}">Favorit Kajian</a>
                       @elseif(auth()->user()->role === 'organizer')
-                          <a href="{{ url('/organizer') }}" hx-boost="false">Dashboard Penyelenggara</a>
+                          <a href="{{ url('/organizer') }}">Dashboard Penyelenggara</a>
                       @elseif(auth()->user()->role === 'admin')
-                          <a href="{{ url('/admin') }}" hx-boost="false">Dashboard Admin</a>
+                          <a href="{{ url('/admin') }}">Dashboard Admin</a>
                       @endif
                       
-                      <a href="{{ route('profile.edit') }}" hx-boost="false">Pengaturan Akun</a>
+                      <a href="{{ route('profile.edit') }}">Pengaturan Akun</a>
                       <hr>
                       <form method="POST" action="{{ route('logout') }}" style="margin:0;padding:0;">
                           @csrf
@@ -608,8 +609,8 @@
                   </div>
               </div>
           @else
-              <a href="{{ route('login') }}" class="btn btn-outline" style="padding:10px 20px" hx-boost="false">Masuk</a>
-              <a href="{{ route('register') }}" class="btn btn-solid" style="padding:10px 20px" hx-boost="false">Daftar Sekarang</a>
+              <a href="{{ route('login') }}" class="btn btn-outline" style="padding:10px 20px">Masuk</a>
+              <a href="{{ route('register') }}" class="btn btn-solid" style="padding:10px 20px">Daftar Sekarang</a>
           @endauth
       </div>
     </div>
@@ -710,7 +711,7 @@
     });
 
     window.addEventListener('hashchange', updateActiveState);
-    document.addEventListener('htmx:afterSettle', updateActiveState);
+    document.addEventListener('turbo:render', updateActiveState);
 })();
 </script>
 </body>

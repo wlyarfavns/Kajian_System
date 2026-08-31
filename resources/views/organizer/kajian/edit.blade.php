@@ -34,7 +34,7 @@
                             </div>
                         @endif
                         <input type="file" name="poster" id="poster" accept="image/*" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50">
-                        <p class="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengubah. Format: JPG, PNG, WEBP. Maks 2MB.</p>
+                        <p class="text-xs text-gray-500 mt-1">Biarkan kosong jika tidak ingin mengubah. Format: JPG, PNG, WEBP. Maks 5MB.</p>
                         @error('poster') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -74,16 +74,29 @@
                     <i data-lucide="map-pin" class="w-5 h-5 mr-2 text-brand-emerald-900"></i> Waktu & Lokasi
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="start_at" class="block text-sm font-medium text-brand-ink mb-1">Waktu Mulai <span class="text-brand-danger">*</span></label>
-                        <input type="datetime-local" name="start_at" id="start_at" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required value="{{ old('start_at', \Carbon\Carbon::parse($kajian->start_at)->format('Y-m-d\TH:i')) }}">
-                        @error('start_at') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label for="end_at" class="block text-sm font-medium text-brand-ink mb-1">Waktu Selesai <span class="text-brand-danger">*</span></label>
-                        <input type="datetime-local" name="end_at" id="end_at" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required value="{{ old('end_at', \Carbon\Carbon::parse($kajian->end_at)->format('Y-m-d\TH:i')) }}">
-                        @error('end_at') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @php
+                        $startAt = \Carbon\Carbon::parse($kajian->start_at);
+                        $endAt = \Carbon\Carbon::parse($kajian->end_at);
+                        $tgl = $startAt->format('Y-m-d');
+                        $sTime = $startAt->format('H:i');
+                        $eTime = $endAt->format('H:i');
+                    @endphp
+                    <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="tanggal" class="block text-sm font-medium text-brand-ink mb-1">Tanggal <span class="text-brand-danger">*</span></label>
+                            <input type="date" name="tanggal" id="tanggal" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required value="{{ old('tanggal', $tgl) }}">
+                            @error('tanggal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="start_time" class="block text-sm font-medium text-brand-ink mb-1">Jam Mulai <span class="text-brand-danger">*</span></label>
+                            <input type="time" name="start_time" id="start_time" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required value="{{ old('start_time', $sTime) }}">
+                            @error('start_time') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="end_time" class="block text-sm font-medium text-brand-ink mb-1">Jam Selesai <span class="text-brand-danger">*</span></label>
+                            <input type="time" name="end_time" id="end_time" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required value="{{ old('end_time', $eTime) }}">
+                            @error('end_time') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <div class="md:col-span-2">
@@ -154,15 +167,36 @@
                         </div>
                         @error('price') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
+
+                    <!-- Fasilitas -->
+                    <div class="md:col-span-3 mt-4 pt-4 border-t border-gray-100">
+                        <label class="block text-sm font-medium text-brand-ink mb-3">Fasilitas <span class="text-gray-400 text-xs font-normal">(Opsional)</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            @php
+                                $facilityOptions = ['Area Parkir', 'Tempat Wudhu', 'Toilet Bersih', 'Ruang Full AC', 'Bazar/Camilan', 'Area Bermain Anak'];
+                                $currentFacilities = is_string($kajian->facilities) ? json_decode($kajian->facilities, true) : (is_array($kajian->facilities) ? $kajian->facilities : []);
+                                if (!is_array($currentFacilities)) $currentFacilities = [];
+                                $oldFacilities = old('facilities', $currentFacilities);
+                            @endphp
+                            @foreach($facilityOptions as $facility)
+                                <label class="inline-flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                    <input type="checkbox" name="facilities[]" value="{{ $facility }}" class="rounded border-gray-300 text-brand-emerald-900 shadow-sm focus:border-brand-emerald-900" 
+                                    {{ is_array($oldFacilities) && in_array($facility, $oldFacilities) ? 'checked' : '' }}>
+                                    <span class="ml-2 text-sm text-brand-ink">{{ $facility }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('facilities') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-4 pt-4 border-t border-gray-200">
+            <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-4 pt-4 border-t border-gray-200 mt-6">
                 <a href="{{ route('organizer.kajian.index') }}" class="mt-3 sm:mt-0 px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-brand-ink bg-white hover:bg-gray-50 focus:outline-none text-center">
                     Batal
                 </a>
-                <button type="submit" name="status" value="draft" class="mt-3 sm:mt-0 px-6 py-2 border border-brand-border-light shadow-sm text-sm font-medium rounded-lg text-white bg-white hover:bg-gray-600 focus:outline-none text-center">
+                <button type="submit" name="status" value="draft" class="mt-3 sm:mt-0 px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none text-center">
                     Simpan Draft
                 </button>
                 <button type="submit" name="status" value="published" class="px-6 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-brand-emerald-900 hover:bg-brand-emerald-950 focus:outline-none text-center">

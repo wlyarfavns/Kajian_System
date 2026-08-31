@@ -1,107 +1,199 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="view-transition" content="same-origin" />
+    <meta name="layout" content="admin" data-turbo-track="reload">
 
-        <title>{{ config('app.name', 'Laravel') }} - Admin</title>
+    <title>KajianKu - Admin</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://unpkg.com/lucide@latest"></script>
-    </head>
-    <body class="font-sans antialiased text-brand-ink bg-gray-50" x-data="{ sidebarOpen: false }">
-        <div class="flex h-screen overflow-hidden">
-            <!-- Sidebar -->
-            <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto">
-                <div class="flex items-center justify-center h-16 border-b border-gray-200 px-4">
-                    <span class="text-xl font-bold text-brand-ink">Super<span class="text-brand-emerald-900">Admin</span></span>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .sidebar-bg {
+            background-color: #0A2B20;
+            background-image: radial-gradient(400px 400px at 50% -10%, rgba(184,134,59,.20), transparent 60%),
+                              linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%);
+            position: relative;
+        }
+        .sidebar-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800 bg-[#F8F9FA]" x-data="{ sidebarOpen: false }">
+    <div class="h-screen overflow-hidden flex w-full">
+    <!-- Sidebar -->
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 sidebar-bg text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:relative flex flex-col h-full shrink-0 overflow-hidden">
+        
+        <!-- Pattern SVG -->
+        <svg class="sidebar-pattern" viewBox="0 0 256 1000" preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+                    <g stroke="#E7C77E" stroke-width="1.5" fill="none">
+                        <path d="M43 4 L57 22 L79 22 L64 40 L79 58 L57 58 L43 78 L29 58 L7 58 L22 40 L7 22 L29 22 Z"/>
+                    </g>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#star8)"/>
+        </svg>
+
+        <div class="relative z-10 flex flex-col h-full">
+            <!-- Logo Area -->
+            <div class="h-16 flex items-center px-6 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-white text-[#0A2B20] flex items-center justify-center font-bold text-xl shadow-md">
+                        K
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-[#E7C77E]">KajianKu</h1>
                 </div>
-                <nav class="p-4 space-y-1 overflow-y-auto h-[calc(100vh-4rem)]">
-                    <a href="{{ url('/admin') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->is('admin') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
-                    </a>
-                    
-                    <div class="pt-4 pb-2">
-                        <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Moderasi</p>
-                    </div>
-                    <a href="{{ route('admin.kajian.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.kajian.*') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="shield-check" class="w-5 h-5 mr-3"></i> Kelola Kajian
-                    </a>
-                    <a href="{{ route('admin.organizer.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.organizer.*') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="user-check" class="w-5 h-5 mr-3"></i> Verifikasi Organizer
-                    </a>
-                    <a href="{{ route('admin.user.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.user.*') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="users" class="w-5 h-5 mr-3"></i> Kelola User
-                    </a>
-
-                    <div class="pt-4 pb-2">
-                        <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Data Master</p>
-                    </div>
-                    <a href="{{ route('admin.category.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.category.*') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="grid" class="w-5 h-5 mr-3"></i> Kategori
-                    </a>
-                    <a href="{{ route('admin.mosque.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.mosque.*') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="map-pin" class="w-5 h-5 mr-3"></i> Kelola Masjid
-                    </a>
-                    <a href="{{ route('admin.speaker.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg {{ request()->routeIs('admin.speaker.*') ? 'bg-brand-emerald-100 text-brand-emerald-950' : 'text-brand-ink-soft hover:bg-gray-100 hover:text-brand-ink' }}">
-                        <i data-lucide="mic" class="w-5 h-5 mr-3"></i> Pemateri / Ustadz
-                    </a>
-                </nav>
             </div>
 
-            <!-- Mobile overlay -->
-            <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-gray-900 bg-opacity-50 lg:hidden" style="display: none;"></div>
+            <!-- Navigation -->
+            <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-3">
+                <a href="{{ url('/admin') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->is('admin') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 {{ request()->is('admin') ? 'text-[#E7C77E]' : '' }}"></i> Dashboard
+                </a>
+                
+                <a href="{{ route('admin.user.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.user.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="users" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.user.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola User
+                </a>
 
-            <!-- Main content -->
-            <div class="flex flex-col flex-1 overflow-hidden">
-                <!-- Top header -->
-                <header class="flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 lg:px-8">
-                    <button @click="sidebarOpen = true" class="p-2 text-gray-500 rounded-md lg:hidden hover:bg-gray-100 hover:text-gray-700">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
+                <a href="{{ route('admin.organizer.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.organizer.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="shield-check" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.organizer.*') ? 'text-[#E7C77E]' : '' }}"></i> Verifikasi Organizer
+                </a>
+                
+                <a href="{{ route('admin.kajian.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.kajian.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="calendar-check" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.kajian.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Kajian
+                </a>
+
+                <a href="{{ route('admin.mosque.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.mosque.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="map-pin" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.mosque.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Masjid
+                </a>
+
+                <a href="{{ route('admin.speaker.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.speaker.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="mic" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.speaker.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Pemateri
+                </a>
+
+                <a href="{{ route('admin.category.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.category.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.category.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Kategori
+                </a>
+            </nav>
+
+            <!-- Settings / Logout Area -->
+            <div class="p-4 border-t border-white/10">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl">
+                        <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> Keluar
                     </button>
-                    
-                    <div class="flex items-center ml-auto space-x-4">
-                        <span class="text-sm font-medium">{{ Auth::user()->name }} (Admin)</span>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="text-sm text-brand-ink-soft hover:text-brand-danger">Logout</button>
-                        </form>
-                    </div>
-                </header>
-
-                <!-- Page content -->
-                <main class="flex-1 overflow-y-auto p-4 lg:p-8">
-                    @if(session('success'))
-                        <div class="mb-4 p-4 bg-brand-emerald-100 text-brand-emerald-950 rounded-lg flex items-center">
-                            <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i> {{ session('success') }}
-                        </div>
-                    @endif
-                    
-                    @if(session('error'))
-                        <div class="mb-4 p-4 bg-red-100 text-brand-danger rounded-lg flex items-center">
-                            <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i> {{ session('error') }}
-                        </div>
-                    @endif
-
-                    @isset($header)
-                        <div class="mb-6">
-                            <h1 class="text-2xl font-bold text-brand-ink">{{ $header }}</h1>
-                        </div>
-                    @endisset
-
-                    {{ $slot }}
-                </main>
+                </form>
             </div>
         </div>
+    </aside>
 
-        <script>
-            lucide.createIcons();
-        </script>
-    </body>
+    <!-- Mobile overlay -->
+    <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden" style="display: none;"></div>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        
+        <!-- Topbar -->
+        <header class="h-16 px-6 flex items-center justify-between shrink-0 bg-white border-b border-gray-200">
+            <div class="flex items-center">
+                <button @click="sidebarOpen = true" class="mr-4 p-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <!-- Location / Center Dropdown (Like Masjidhero) -->
+                <div class="hidden md:flex items-center bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-50">
+                    <span>Admin Pusat KajianKu</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-2 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="relative p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border-2 border-white"></span>
+                </button>
+                
+                <!-- Profile -->
+                <div class="flex items-center gap-3">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=f3f4f6&color=111827" class="w-9 h-9 rounded-full border border-gray-200">
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm font-bold text-gray-900 leading-none">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Admin</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#F8F9FA]">
+            <div class="max-w-[1400px] mx-auto">
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-lg flex items-center border border-emerald-100 text-sm font-medium">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 mr-3 text-emerald-500"></i>
+                        {{ session('success') }}
+                    </div>
+                @endif
+                
+                @if(session('error'))
+                    <div class="mb-6 p-4 bg-red-50 text-red-800 rounded-lg flex items-center border border-red-100 text-sm font-medium">
+                        <i data-lucide="alert-circle" class="w-5 h-5 mr-3 text-red-500"></i>
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                @if (isset($header))
+                    <header class="mb-6">
+                        <div class="text-xl font-bold text-gray-900">
+                            {{ $header }}
+                        </div>
+                    </header>
+                @endif
+
+                {{ $slot }}
+            </div>
+        </main>
+    </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
 </html>

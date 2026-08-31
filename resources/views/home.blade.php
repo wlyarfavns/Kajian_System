@@ -182,34 +182,6 @@
   </div>
 </section>
 
-<section id="testimoni">
-  <div class="container">
-    <div class="section-head" style="margin-left:auto;margin-right:auto;text-align:center;max-width:800px; margin-bottom:60px;">
-      <span class="eyebrow" style="justify-content:center; color:var(--gold-deep); letter-spacing:2px; font-weight:800; font-size:15px; text-transform:uppercase; margin-bottom:12px;">TESTIMONI JAMAAH</span>
-      <h3 style="font-family:'Amiri',serif; font-size:clamp(32px, 5vw, 46px); color:var(--jade-950); margin-top:0; line-height:1.1;">Cerita asli dari <em style="color:var(--gold-deep); font-style:italic;">jamaah kami.</em></h3>
-    </div>
-    <div class="testi-grid">
-      <div class="tcard">
-        <span class="mark">”</span>
-        <div class="stars">★★★★★</div>
-        <p>Sangat terbantu dengan aplikasi ini. Saya yang baru hijrah bisa dengan mudah mencari kajian terdekat dari rumah tanpa harus bingung jadwal.</p>
-        <div class="tperson"><div class="tavatar">A</div><div><div class="name">Ahmad Fauzi</div><div class="loc">Jakarta Selatan</div></div></div>
-      </div>
-      <div class="tcard">
-        <span class="mark">”</span>
-        <div class="stars">★★★★★</div>
-        <p>Fitur rute peta sangat akurat. Dulu sering nyasar kalau cari masjid untuk tabligh akbar, sekarang tinggal klik langsung diarahkan.</p>
-        <div class="tperson"><div class="tavatar">B</div><div><div class="name">Budi Santoso</div><div class="loc">Bandung</div></div></div>
-      </div>
-      <div class="tcard">
-        <span class="mark">”</span>
-        <div class="stars">★★★★★</div>
-        <p>Alhamdulillah antarmukanya mudah digunakan, informasinya update. Cocok bagi akhwat yang mencari kajian khusus perempuan.</p>
-        <div class="tperson"><div class="tavatar">S</div><div><div class="name">Siti Rahma</div><div class="loc">Yogyakarta</div></div></div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section style="padding-top:0">
   <div class="container">

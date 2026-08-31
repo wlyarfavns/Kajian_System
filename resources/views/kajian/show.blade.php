@@ -93,20 +93,30 @@
                     <!-- Waktu -->
                     <div style="flex:1; background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05);">
                         <svg style="width:22px; height:22px; color:var(--jade-800); margin-bottom:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        <p style="font-size:15px; font-weight:700; color:var(--ink); margin:0 0 2px;">{{ $kajian->start_at->translatedFormat('d M Y') }}</p>
-                        <p style="font-size:13px; color:var(--ink-soft); margin:0;">{{ $kajian->start_at->format('H:i') }} WIB</p>
+                        
+                        <div style="margin-bottom:10px;">
+                            <span class="eyebrow" style="display:block; font-size:9px; color:var(--ink-soft); margin-bottom:2px;">Tanggal</span>
+                            <p style="font-size:15px; font-weight:700; color:var(--ink); margin:0;">{{ $kajian->start_at->translatedFormat('d M Y') }}</p>
+                        </div>
+                        <div style="display:flex; gap:16px;">
+                            <div>
+                                <span class="eyebrow" style="display:block; font-size:9px; color:var(--ink-soft); margin-bottom:2px;">Jam Mulai</span>
+                                <p style="font-size:14px; font-weight:700; color:var(--ink); margin:0;">{{ $kajian->start_at->format('H:i') }}</p>
+                            </div>
+                            <div>
+                                <span class="eyebrow" style="display:block; font-size:9px; color:var(--ink-soft); margin-bottom:2px;">Jam Selesai</span>
+                                <p style="font-size:14px; font-weight:700; color:var(--ink); margin:0;">{{ $kajian->end_at->format('H:i') }}</p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Peserta -->
                     <div style="flex:1; background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05);">
                         <svg style="width:22px; height:22px; color:var(--jade-800); margin-bottom:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        <p style="font-size:15px; font-weight:700; color:var(--ink); margin:0 0 2px; text-transform:capitalize;">{{ $kajian->audience }}</p>
-                        @if($kajian->is_family_friendly)
-                            <p style="font-size:12px; font-weight:600; color:var(--gold); margin:0;">Ramah Keluarga</p>
-                        @endif
-                        <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); font-size:12px; color:var(--ink-soft); font-weight:600;">
-                            {{ $attendeesCount }} <span style="font-weight:400;">telah mendaftar</span>
-                        </div>
+                        
+                        <span class="eyebrow" style="display:block; font-size:9px; color:var(--ink-soft); margin-bottom:4px;">Jumlah Calon Peserta</span>
+                        <div style="font-size:24px; font-family:'Fraunces',serif; font-weight:700; color:var(--jade-950); margin:0 0 4px;">{{ $attendeesCount }}</div>
+                        <p style="font-size:12px; color:var(--ink-soft); font-weight:500; margin:0;">Orang telah mendaftar</p>
                     </div>
                 </div>
 
@@ -140,6 +150,26 @@
                         <span style="font-size:16px; font-weight:800; color:var(--jade-700);">{{ number_format($distance, 1) }}</span>
                         <span style="font-size:12px; font-weight:600; color:var(--ink-soft); display:block;">KM</span>
                     </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Fasilitas -->
+            @php
+                $facilities = is_string($kajian->facilities) ? json_decode($kajian->facilities, true) : (is_array($kajian->facilities) ? $kajian->facilities : []);
+            @endphp
+            <div style="margin-bottom:40px;">
+                <h3 style="font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--jade-950); margin:0 0 16px;">Fasilitas</h3>
+                <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                    @if(!empty($facilities))
+                        @foreach($facilities as $facility)
+                        <div style="background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:var(--jade-800); display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 10px rgba(10,43,32,0.03);">
+                            <svg style="width:16px; height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            {{ $facility }}
+                        </div>
+                        @endforeach
+                    @else
+                        <p style="font-size:14px; color:var(--ink-soft);">Belum ada informasi fasilitas.</p>
                     @endif
                 </div>
             </div>

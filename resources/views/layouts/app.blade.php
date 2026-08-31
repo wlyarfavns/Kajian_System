@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="view-transition" content="same-origin" />
+        <meta name="layout" content="app" data-turbo-track="reload">
 
         <title>{{ config('app.name', 'Cari Kajian Terdekat') }}</title>
 

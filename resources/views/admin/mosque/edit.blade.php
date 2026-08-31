@@ -1,7 +1,7 @@
-<x-organizer-layout>
+<x-admin-layout>
     <x-slot name="header">
         <div class="flex items-center">
-            <a href="{{ route('organizer.mosque.index') }}" class="mr-4 text-gray-400 hover:text-gray-600">
+            <a href="{{ route('admin.mosque.index') }}" class="mr-4 text-gray-400 hover:text-gray-600">
                 <i data-lucide="arrow-left" class="w-6 h-6"></i>
             </a>
             Edit Lokasi Masjid
@@ -14,10 +14,21 @@
             <p class="text-sm text-brand-ink-soft">Perbarui informasi masjid Anda.</p>
         </div>
 
-        <form action="{{ route('organizer.mosque.update', $mosque->id) }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('admin.mosque.update', $mosque->id) }}" method="POST" class="p-6 space-y-6">
             @csrf
             @method('PUT')
             
+            <div>
+                <label for="organizer_id" class="block text-sm font-medium text-brand-ink">Penyelenggara Pemilik Masjid</label>
+                <select name="organizer_id" id="organizer_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring-brand-emerald-900 sm:text-sm">
+                    <option value="">Pilih Penyelenggara...</option>
+                    @foreach($organizers as $org)
+                        <option value="{{ $org->id }}" {{ old('organizer_id', $mosque->organizer_id) == $org->id ? 'selected' : '' }}>{{ $org->name }}</option>
+                    @endforeach
+                </select>
+                @error('organizer_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+            </div>
+
             <div>
                 <label for="name" class="block text-sm font-medium text-brand-ink">Nama Masjid</label>
                 <input type="text" name="name" id="name" value="{{ old('name', $mosque->name) }}" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring-brand-emerald-900 sm:text-sm">
@@ -50,11 +61,11 @@
             </div>
 
             <div class="pt-5 border-t border-gray-200 flex justify-end">
-                <a href="{{ route('organizer.mosque.index') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3">Batal</a>
+                <a href="{{ route('admin.mosque.index') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3">Batal</a>
                 <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-brand-emerald-900 hover:bg-brand-emerald-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900">
                     Simpan Perubahan
                 </button>
             </div>
         </form>
     </div>
-</x-organizer-layout>
+</x-admin-layout>

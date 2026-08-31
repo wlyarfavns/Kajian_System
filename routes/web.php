@@ -63,6 +63,10 @@ Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(functi
     Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index']);
     
     Route::resource('mosque', OrganizerMosqueController::class)->names('organizer.mosque');
+    
+    Route::get('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'edit'])->name('organizer.profile.edit');
+    Route::put('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'update'])->name('organizer.profile.update');
+    Route::get('/peserta', [\App\Http\Controllers\Organizer\ParticipantController::class, 'globalIndex'])->name('organizer.peserta.global');
 });
 
 /*
