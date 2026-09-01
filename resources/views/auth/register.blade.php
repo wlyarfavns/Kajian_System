@@ -256,7 +256,7 @@
         </form>
 
         <div style="margin-top:20px; text-align:center; font-size:13px; font-weight:500; color:var(--ink-soft);">
-            Sudah punya akun? <a href="{{ route('login') }}" style="font-weight:700; color:var(--jade-900); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--jade-900)'">Masuk di sini</a>
+            Sudah punya akun? <a href="{{ route('login') }}" style="font-weight:700; color:var(--jade-900); text-decoration:none; transition:color 0.2s; position:relative; z-index:50;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--jade-900)'">Masuk di sini</a>
         </div>
     </div>
 

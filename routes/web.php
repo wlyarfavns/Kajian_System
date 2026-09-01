@@ -25,12 +25,18 @@ use App\Http\Controllers\Admin\SpeakerController as AdminSpeakerController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 
+use App\Http\Controllers\Auth\GoogleAuthController;
+
 /*
 |--------------------------------------------------------------------------
 | Public & User Routes
 |--------------------------------------------------------------------------
 */
 Route::get('/', [HomeController::class, 'index']);
+
+// Google OAuth Routes
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 Route::get('/kajian', [KajianController::class, 'index'])->name('kajian.index');
 Route::get('/kajian/{kajian:slug}', [KajianController::class, 'show'])->name('kajian.show');
