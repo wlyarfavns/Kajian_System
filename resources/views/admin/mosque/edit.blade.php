@@ -14,7 +14,7 @@
             <p class="text-sm text-brand-ink-soft">Perbarui informasi masjid Anda.</p>
         </div>
 
-        <form action="{{ route('admin.mosque.update', $mosque->id) }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('admin.mosque.update', $mosque->id) }}" method="POST" data-turbo="false" class="p-6 space-y-6">
             @csrf
             @method('PUT')
             

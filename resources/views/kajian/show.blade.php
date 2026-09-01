@@ -201,20 +201,20 @@
         <div style="max-width:480px; margin:0 auto; padding:16px 20px; pointer-events:auto;">
             <div style="background:rgba(244,238,220,0.95); backdrop-filter:blur(14px); border:1px solid var(--line); border-radius:28px; padding:12px; box-shadow:0 -10px 40px rgba(10,43,32,0.1); display:flex; gap:8px;">
                 
-                <form action="{{ url('/kajian/'.$kajian->id.'/favorite') }}" method="POST" style="flex-shrink:0;">
+                <form action="{{ url('/kajian/'.$kajian->slug.'/favorite') }}" method="POST" data-turbo="false" style="flex-shrink:0;">
                     @csrf
                     <button type="submit" style="width:52px; height:52px; border-radius:18px; background:{{ $isFavorited ? '#FEE2E2' : 'var(--paper)' }}; border:1px solid {{ $isFavorited ? 'var(--terracotta)' : 'var(--line)' }}; display:flex; align-items:center; justify-content:center; color:{{ $isFavorited ? 'var(--terracotta)' : 'var(--ink)' }}; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='var(--terracotta)'; this.style.borderColor='var(--terracotta)'; this.style.background='#FEE2E2';" onmouseout="this.style.color='{{ $isFavorited ? 'var(--terracotta)' : 'var(--ink)' }}'; this.style.borderColor='{{ $isFavorited ? 'var(--terracotta)' : 'var(--line)' }}'; this.style.background='{{ $isFavorited ? '#FEE2E2' : 'var(--paper)' }}';">
                         <svg style="width:22px; height:22px;" fill="{{ $isFavorited ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </button>
                 </form>
                 
-                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $kajian->latitude }},{{ $kajian->longitude }}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--paper); border:1px solid var(--line); color:var(--jade-900); font-size:14px; font-weight:700; text-decoration:none; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--parchment-deep)';" onmouseout="this.style.background='var(--paper)';">
+                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $kajian->latitude }},{{ $kajian->longitude }}" target="_blank" data-turbo="false" style="flex:1; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--paper); border:1px solid var(--line); color:var(--jade-900); font-size:14px; font-weight:700; text-decoration:none; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--parchment-deep)';" onmouseout="this.style.background='var(--paper)';">
                     <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                     Arahkan
                 </a>
                 
                 @if($isAttending)
-                    <form action="{{ url('/kajian/'.$kajian->id.'/join') }}" method="POST" style="flex:1.5;">
+                    <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" data-turbo="false" style="flex:1.5;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="width:100%; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--jade-800); color:var(--paper); font-size:14px; font-weight:700; gap:6px; border:none; cursor:pointer;" title="Klik untuk membatalkan">
@@ -223,7 +223,7 @@
                         </button>
                     </form>
                 @else
-                    <form action="{{ url('/kajian/'.$kajian->id.'/join') }}" method="POST" style="flex:1.5;">
+                    <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" data-turbo="false" style="flex:1.5;">
                         @csrf
                         <button type="submit" class="btn btn-solid" style="width:100%; height:52px; border-radius:18px; font-size:14px; justify-content:center; padding:0;">
                             Saya Mau Hadir

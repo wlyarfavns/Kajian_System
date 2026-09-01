@@ -100,13 +100,21 @@
         </div>
 
         <!-- Detail Modal -->
-        <div x-show="modalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div x-show="modalOpen" class="relative z-50" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <!-- Background overlay -->
             <div x-show="modalOpen" x-transition.opacity class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
 
-            <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
-                <!-- Modal panel -->
-                <div x-show="modalOpen" x-transition.scale.origin.center class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 w-full max-w-3xl border border-gray-100">
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <!-- Modal panel -->
+                    <div x-show="modalOpen" 
+                         x-transition:enter="ease-out duration-300" 
+                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
+                         x-transition:leave="ease-in duration-200" 
+                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
+                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
+                         class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 w-full max-w-3xl border border-gray-100">
                     
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
@@ -211,13 +219,13 @@
                                 <input type="text" placeholder="Contoh: Poster kurang jelas..." class="w-full border-gray-300 rounded-lg shadow-sm focus:border-brand-emerald-500 focus:ring-brand-emerald-500 text-sm">
                             </div>
                             <div class="flex gap-3 w-full sm:w-auto">
-                                <form :action="activeKajian.reject_url" method="POST" class="flex-1 sm:flex-none">
+                                <form :action="activeKajian.reject_url" method="POST" data-turbo="false" class="flex-1 sm:flex-none">
                                     @csrf
                                     <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 font-bold rounded-lg hover:bg-red-100 transition text-sm flex items-center justify-center">
                                         <i data-lucide="ban" class="w-4 h-4 mr-2"></i> Tolak
                                     </button>
                                 </form>
-                                <form :action="activeKajian.verify_url" method="POST" class="flex-1 sm:flex-none">
+                                <form :action="activeKajian.verify_url" method="POST" data-turbo="false" class="flex-1 sm:flex-none">
                                     @csrf
                                     <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-brand-emerald-900 text-white font-bold rounded-lg hover:bg-brand-emerald-950 shadow-sm transition text-sm flex items-center justify-center">
                                         <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Verifikasi
@@ -226,6 +234,7 @@
                             </div>
                         </div>
                     </template>
+                    </div>
                 </div>
             </div>
         </div>

@@ -22,10 +22,34 @@
         
         <div style="display:flex; align-items:center; background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:6px 6px 6px 20px; max-width:600px; margin:0 auto; box-shadow:0 10px 25px rgba(10,43,32,0.05);">
             <svg style="width:20px; height:20px; color:var(--ink-soft);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input type="search" name="q" value="{{ request('q') }}" style="flex:1; background:transparent; border:none; outline:none; padding:10px 14px; font-size:15px; color:var(--ink);" placeholder="Cari ustadz, masjid, atau tema...">
+            <input type="search" name="q" id="searchInput" value="{{ request('q') }}" style="flex:1; background:transparent; border:none; outline:none; padding:10px 14px; font-size:15px; color:var(--ink);" placeholder="Cari ustadz, masjid, atau tema...">
+            
+            @if(request('q'))
+            <!-- Custom clear button in case native is not supported or not clicked -->
+            <a href="{{ request()->fullUrlWithQuery(['q' => null]) }}" style="color:var(--ink-soft); margin-right: 12px; padding: 4px; display:flex; align-items:center; justify-content:center; border-radius: 50%; hover:background:var(--parchment-deep);" title="Hapus pencarian">
+                <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </a>
+            <style>
+                /* Hide native webkit search cancel button since we have a custom one */
+                #searchInput::-webkit-search-cancel-button {
+                    -webkit-appearance: none;
+                    appearance: none;
+                }
+            </style>
+            @endif
+
             <button type="submit" class="btn btn-solid" style="padding:10px 24px;">Cari</button>
         </div>
     </form>
+    
+    <script>
+        // Fallback for search input clear
+        document.getElementById('searchInput').addEventListener('search', function(e) {
+            if(this.value === '') {
+                this.form.submit();
+            }
+        });
+    </script>
 
     <style>
         .filter-container {

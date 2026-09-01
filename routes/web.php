@@ -60,13 +60,15 @@ Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(functi
     Route::get('/', [OrganizerDashboardController::class, 'index']);
     
     Route::resource('kajian', OrganizerKajianController::class)->names('organizer.kajian');
-    Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index']);
+    Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index'])->name('organizer.kajian.peserta');
+    Route::get('/kajian/{kajian}/peserta/export', [OrganizerParticipantController::class, 'exportKajian'])->name('organizer.kajian.peserta.export');
     
     Route::resource('mosque', OrganizerMosqueController::class)->names('organizer.mosque');
     
     Route::get('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'edit'])->name('organizer.profile.edit');
     Route::put('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'update'])->name('organizer.profile.update');
     Route::get('/peserta', [\App\Http\Controllers\Organizer\ParticipantController::class, 'globalIndex'])->name('organizer.peserta.global');
+    Route::get('/peserta/export', [\App\Http\Controllers\Organizer\ParticipantController::class, 'export'])->name('organizer.peserta.export');
 });
 
 /*

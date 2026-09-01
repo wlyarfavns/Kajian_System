@@ -9,7 +9,7 @@
             <p class="text-sm text-brand-ink-soft">Masukkan profil pemateri / ustadz baru ke dalam sistem.</p>
         </div>
 
-        <form action="{{ route('admin.speaker.store') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8" x-data="photoPreview()">
+        <form action="{{ route('admin.speaker.store') }}" method="POST" enctype="multipart/form-data" data-turbo="false" class="p-6 sm:p-8" x-data="photoPreview()">
             @csrf
 
             <div class="space-y-6">

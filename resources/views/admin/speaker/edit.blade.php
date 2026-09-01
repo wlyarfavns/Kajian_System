@@ -9,7 +9,7 @@
             <p class="text-sm text-brand-ink-soft">Perbarui profil pemateri / ustadz.</p>
         </div>
 
-        <form action="{{ route('admin.speaker.update', $speaker->id) }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8" x-data="photoPreview('{{ $speaker->photo ? Storage::url($speaker->photo) : '' }}')">
+        <form action="{{ route('admin.speaker.update', $speaker->id) }}" method="POST" enctype="multipart/form-data" data-turbo="false" class="p-6 sm:p-8" x-data="photoPreview('{{ $speaker->photo ? Storage::url($speaker->photo) : '' }}')">
             @csrf
             @method('PUT')
 

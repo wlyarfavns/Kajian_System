@@ -13,7 +13,7 @@
 
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
             <div class="p-6 sm:p-8">
-                <form action="{{ route('admin.user.update', $user->id) }}" method="POST">
+                <form action="{{ route('admin.user.update', $user->id) }}" method="POST" data-turbo="false">
                     @csrf
                     @method('PUT')
                     

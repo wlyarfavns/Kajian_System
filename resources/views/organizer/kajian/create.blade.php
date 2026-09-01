@@ -9,7 +9,7 @@
     </x-slot>
 
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
-        <form action="{{ route('organizer.kajian.store') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8">
+        <form action="{{ route('organizer.kajian.store') }}" method="POST" enctype="multipart/form-data" data-turbo="false" class="p-6 sm:p-8">
             @csrf
 
             <!-- Section 1: Informasi Dasar -->

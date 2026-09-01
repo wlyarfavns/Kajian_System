@@ -11,7 +11,6 @@ class DashboardController extends Controller
     {
         $organizerId = auth()->user()->organizer->id ?? null;
         
-        // Placeholder or simple queries for now
         $kajianAktif = \App\Models\Kajian::where('organizer_id', $organizerId)->where('status', 'published')->count();
         $kajianBulanIni = \App\Models\Kajian::where('organizer_id', $organizerId)->whereMonth('start_at', now()->month)->count();
         
@@ -23,6 +22,14 @@ class DashboardController extends Controller
             $query->where('organizer_id', $organizerId);
         })->where('status', 'attended')->count();
 
-        return view('organizer.dashboard', compact('kajianAktif', 'kajianBulanIni', 'calonPeserta', 'pesertaHadir'));
+        // Get recent Kajians for the Event List table
+        $recentKajians = \App\Models\Kajian::with('category')
+            ->withCount('attendees')
+            ->where('organizer_id', $organizerId)
+            ->latest('start_at')
+            ->take(5)
+            ->get();
+
+        return view('organizer.dashboard', compact('kajianAktif', 'kajianBulanIni', 'calonPeserta', 'pesertaHadir', 'recentKajians'));
     }
 }

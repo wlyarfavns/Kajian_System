@@ -53,10 +53,13 @@ class KajianController extends Controller
 
         $organizerId = auth()->user()->organizer->id;
 
+        $isFree = $request->boolean('is_free');
+        
         $data = array_merge($validated, [
             'organizer_id' => $organizerId,
             'is_family_friendly' => $request->has('is_family_friendly'),
-            'is_free' => $request->has('is_free'),
+            'is_free' => $isFree,
+            'price' => $isFree ? 0 : ($request->price ?? 0),
             'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
             'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
@@ -116,9 +119,12 @@ class KajianController extends Controller
             'facilities.*' => 'string'
         ]);
 
+        $isFree = $request->boolean('is_free');
+
         $data = array_merge($validated, [
             'is_family_friendly' => $request->has('is_family_friendly'),
-            'is_free' => $request->has('is_free'),
+            'is_free' => $isFree,
+            'price' => $isFree ? 0 : ($request->price ?? 0),
             'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
             'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
@@ -143,6 +149,6 @@ class KajianController extends Controller
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) abort(403);
         $kajian->delete();
-        return redirect()->route('kajian.index')->with('success', 'Kajian deleted successfully.');
+        return redirect()->route('organizer.kajian.index')->with('success', 'Kajian deleted successfully.');
     }
 }

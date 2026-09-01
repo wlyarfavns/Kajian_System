@@ -14,7 +14,7 @@
             <p class="text-sm text-brand-ink-soft">Tambahkan masjid baru untuk tempat kajian Anda.</p>
         </div>
 
-        <form action="{{ route('organizer.mosque.store') }}" method="POST" class="p-6 space-y-6">
+        <form action="{{ route('organizer.mosque.store') }}" method="POST" data-turbo="false" class="p-6 space-y-6">
             @csrf
             
             <div>

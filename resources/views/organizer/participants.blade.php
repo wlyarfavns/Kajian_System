@@ -15,9 +15,9 @@
                 <p class="text-sm text-brand-ink-soft">Melihat daftar jamaah yang mendaftar dan hadir pada kajian ini.</p>
             </div>
             <div class="mt-4 sm:mt-0 flex space-x-2">
-                <button type="button" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition">
+                <a href="{{ route('organizer.kajian.peserta.export', $kajian->id) }}" data-turbo="false" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition">
                     <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Data
-                </button>
+                </a>
             </div>
         </div>
 

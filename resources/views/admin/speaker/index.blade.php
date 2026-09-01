@@ -11,7 +11,7 @@
                     <h2 class="text-lg font-bold text-brand-ink">Daftar Pemateri / Ustadz</h2>
                     <p class="text-sm text-brand-ink-soft">Kelola database profil asatidzah.</p>
                 </div>
-                <a href="{{ route('admin.speaker.create') }}" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900">
+                <a href="{{ route('admin.speaker.create') }}" data-turbo="false" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900">
                     <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Tambah Pemateri
                 </a>
             </div>
@@ -69,7 +69,7 @@
                      x-transition:leave="ease-in duration-200" 
                      x-transition:leave-start="opacity-100" 
                      x-transition:leave-end="opacity-0" 
-                     class="fixed inset-0 transition-opacity bg-gray-500/75" aria-hidden="true" @click="deleteModalOpen = false"></div>
+                     class="fixed inset-0 transition-opacity bg-transparent" aria-hidden="true" @click="deleteModalOpen = false"></div>
                 
                 <div x-show="deleteModalOpen" 
                      x-transition:enter="ease-out duration-300" 
@@ -96,7 +96,7 @@
                         </div>
                     </div>
                     <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                        <form :action="deleteFormAction" method="POST" class="inline-block w-full sm:w-auto">
+                        <form :action="deleteFormAction" method="POST" data-turbo="false" class="inline-block w-full sm:w-auto">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-brand-danger border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-danger sm:ml-3 sm:w-auto sm:text-sm">
@@ -122,7 +122,7 @@
                      x-transition:leave="ease-in duration-200" 
                      x-transition:leave-start="opacity-100" 
                      x-transition:leave-end="opacity-0" 
-                     class="fixed inset-0 transition-opacity bg-gray-500/75" aria-hidden="true" @click="detailModalOpen = false"></div>
+                     class="fixed inset-0 transition-opacity bg-transparent" aria-hidden="true" @click="detailModalOpen = false"></div>
                 
                 <!-- Modal panel -->
                 <div x-show="detailModalOpen" 
@@ -187,7 +187,7 @@
                                 </div>
                                 
                                 <div class="w-full sm:w-auto flex justify-end">
-                                    <a :href="selectedSpeaker?.edit_url" class="inline-flex justify-center items-center px-4 py-2 border border-brand-emerald-900 text-sm font-medium rounded-lg text-brand-emerald-900 bg-white hover:bg-brand-emerald-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 transition shadow-sm w-full sm:w-auto">
+                                    <a :href="selectedSpeaker?.edit_url" data-turbo="false" class="inline-flex justify-center items-center px-4 py-2 border border-brand-emerald-900 text-sm font-medium rounded-lg text-brand-emerald-900 bg-white hover:bg-brand-emerald-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 transition shadow-sm w-full sm:w-auto">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         Edit Profil
                                     </a>
