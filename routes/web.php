@@ -42,9 +42,9 @@ Route::get('/kajian', [KajianController::class, 'index'])->name('kajian.index');
 Route::get('/kajian/{kajian:slug}', [KajianController::class, 'show'])->name('kajian.show');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/kajian/{kajian}/join', [AttendanceController::class, 'store']);
-    Route::delete('/kajian/{kajian}/join', [AttendanceController::class, 'destroy']);
-    Route::post('/kajian/{kajian}/favorite', [FavoriteController::class, 'toggle']);
+    Route::post('/kajian/{kajian:slug}/join', [AttendanceController::class, 'store']);
+    Route::delete('/kajian/{kajian:slug}/join', [AttendanceController::class, 'destroy']);
+    Route::post('/kajian/{kajian:slug}/favorite', [FavoriteController::class, 'toggle']);
     
     Route::get('/kajian-saya', [AttendanceController::class, 'index']);
     Route::get('/tersimpan', [FavoriteController::class, 'index']);
@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(function () {
     Route::get('/', [OrganizerDashboardController::class, 'index']);
     
+    Route::get('/kajian/{kajian}/qrcode', [OrganizerKajianController::class, 'qrcode'])->name('organizer.kajian.qrcode');
     Route::resource('kajian', OrganizerKajianController::class)->names('organizer.kajian');
     Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index'])->name('organizer.kajian.peserta');
     Route::get('/kajian/{kajian}/peserta/export', [OrganizerParticipantController::class, 'exportKajian'])->name('organizer.kajian.peserta.export');

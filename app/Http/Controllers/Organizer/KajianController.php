@@ -73,7 +73,11 @@ class KajianController extends Controller
             $data['poster'] = null;
         }
 
-        Kajian::create($data);
+        $kajian = Kajian::create($data);
+
+        if ($kajian->status === 'published') {
+            return redirect()->route('organizer.kajian.qrcode', $kajian->slug)->with('success', 'Kajian published successfully.');
+        }
 
         return redirect()->route('organizer.kajian.index')->with('success', 'Kajian created successfully.');
     }
@@ -142,7 +146,17 @@ class KajianController extends Controller
 
         $kajian->update($data);
 
+        if ($kajian->status === 'published') {
+            return redirect()->route('organizer.kajian.qrcode', $kajian->slug)->with('success', 'Kajian updated and published successfully.');
+        }
+
         return redirect()->route('organizer.kajian.index')->with('success', 'Kajian updated successfully.');
+    }
+
+    public function qrcode(Kajian $kajian)
+    {
+        if ($kajian->organizer_id !== auth()->user()->organizer->id) abort(403);
+        return view('organizer.kajian.qrcode', compact('kajian'));
     }
 
     public function destroy(Kajian $kajian)

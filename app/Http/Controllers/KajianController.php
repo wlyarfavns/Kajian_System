@@ -40,6 +40,10 @@ class KajianController extends Controller
                 $query->whereBetween('start_at', [now()->startOfDay()->addHours(18), now()->endOfDay()]);
             }
         }
+        // Filter: Month
+        if ($request->filled('month')) {
+            $query->whereMonth('start_at', $request->month);
+        }
 
         // Filter: Audience
         if ($request->filled('audience')) {

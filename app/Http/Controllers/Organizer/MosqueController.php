@@ -9,7 +9,7 @@ class MosqueController extends Controller
 {
     public function index()
     {
-        $mosques = \App\Models\Mosque::where('organizer_id', auth()->user()->organizer->id)->get();
+        $mosques = \App\Models\Mosque::where('organizer_id', auth()->user()->organizer->id)->simplePaginate(10);
         return view('organizer.mosque.index', compact('mosques'));
     }
 

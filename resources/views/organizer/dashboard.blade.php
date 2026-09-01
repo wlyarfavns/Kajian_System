@@ -1,5 +1,5 @@
 <x-organizer-layout>
-    <div x-data="{ deleteModalOpen: false, deleteFormAction: '' }" class="space-y-6 relative">
+    <div class="space-y-6 relative">
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <a href="{{ route('organizer.peserta.global') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
@@ -48,12 +48,19 @@
                 </p>
             </a>
 
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 flex flex-col justify-center text-center">
-                <p class="text-xs text-gray-500 font-bold tracking-wider mb-2 uppercase">Waktu Sistem</p>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1" x-data="{ time: new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}) }" x-init="setInterval(() => time = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'}), 60000)" x-text="time">
-                    12:30
-                </h3>
-                <p class="text-sm font-medium text-gray-900">{{ now()->translatedFormat('d F Y') }}</p>
+            <div class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 hover:border-emerald-200 group">
+                <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Total Organizer</p>
+                <div class="flex items-end justify-between mt-4">
+                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $totalOrganizer ?? 0 }}</h3>
+                    <div class="w-16 h-8">
+                        <svg viewBox="0 0 50 20" class="w-full h-full stroke-emerald-500 fill-none" stroke-width="2">
+                            <path d="M0,15 L10,10 L20,12 L30,5 L40,8 L50,2" />
+                        </svg>
+                    </div>
+                </div>
+                <p class="text-xs text-emerald-500 font-medium flex items-center mt-2">
+                    <i data-lucide="arrow-up" class="w-3 h-3 mr-1"></i> Baru <span class="text-gray-400 font-normal ml-1">Terdaftar</span>
+                </p>
             </div>
         </div>
 
@@ -176,7 +183,6 @@
                             <th class="pb-3 font-medium">Status</th>
                             <th class="pb-3 font-medium">Kategori</th>
                             <th class="pb-3 font-medium text-right">Peserta</th>
-                            <th class="pb-3 font-medium text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50 text-sm">
@@ -205,8 +211,8 @@
                                         $colorClass = 'text-red-600 bg-red-50';
                                         $dotClass = 'bg-red-500';
                                     } elseif ($label === 'Akan Datang') {
-                                        $colorClass = 'text-blue-600 bg-blue-50';
-                                        $dotClass = 'bg-blue-500';
+                                        $colorClass = 'text-yellow-600 bg-yellow-50';
+                                        $dotClass = 'bg-yellow-500';
                                     } elseif ($label === 'Draft') {
                                         $colorClass = 'text-gray-600 bg-gray-50';
                                         $dotClass = 'bg-gray-500';
@@ -218,15 +224,10 @@
                             </td>
                             <td class="py-4 text-gray-600 font-medium">{{ $k->category->name ?? '-' }}</td>
                             <td class="py-4 text-gray-900 font-bold text-right">{{ $k->attendees_count }}</td>
-                            <td class="py-4 text-right">
-                                <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('organizer.kajian.destroy', $k->slug) }}'" class="text-red-500 hover:text-red-700 transition-colors p-1" title="Hapus Kajian">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="py-6 text-center text-gray-500 font-medium">Belum ada kajian yang dibuat.</td>
+                            <td colspan="6" class="py-6 text-center text-gray-500 font-medium">Belum ada kajian yang dibuat.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -290,45 +291,7 @@
             </div>
         </div>
 
-        <div x-show="deleteModalOpen" style="display: none;" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div x-show="deleteModalOpen" class="fixed inset-0 bg-transparent" @click="deleteModalOpen = false"></div>
 
-            <div class="fixed inset-0 z-10 w-screen overflow-y-auto pointer-events-none">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <div x-show="deleteModalOpen" 
-                         x-transition:enter="ease-out duration-300" 
-                         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
-                         x-transition:leave="ease-in duration-200" 
-                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-                         class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg pointer-events-auto border border-gray-200">
-                        
-                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                                    <i data-lucide="alert-triangle" class="h-6 w-6 text-red-600"></i>
-                                </div>
-                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                    <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Hapus Kajian</h3>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus kajian ini? Data yang sudah dihapus tidak dapat dikembalikan.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100">
-                            <form method="POST" :action="deleteFormAction" data-turbo="false" class="w-full sm:w-auto">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 sm:ml-3 sm:w-auto">Hapus Permanen</button>
-                            </form>
-                            <button type="button" @click="deleteModalOpen = false" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Batal</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js" data-turbo-eval="false"></script>

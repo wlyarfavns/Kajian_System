@@ -21,6 +21,7 @@
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Judul Kajian</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Waktu</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-center">Barcode</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -48,6 +49,16 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-brand-danger">Dibatalkan</span>
                                 @endif
                             </td>
+                            <td class="px-6 py-4 text-center">
+                                @if($kajian->status === 'published' || $kajian->status === 'ongoing' || $kajian->status === 'finished')
+                                    <a href="{{ route('organizer.kajian.qrcode', $kajian->slug) }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-brand-emerald-200 text-sm font-medium rounded-md text-brand-emerald-900 bg-brand-emerald-50 hover:bg-brand-emerald-100 transition" title="Lihat Barcode">
+                                        <i data-lucide="qr-code" class="w-4 h-4 sm:mr-1.5"></i>
+                                        <span class="hidden sm:inline">Barcode</span>
+                                    </a>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">-</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-right space-x-2">
                                 <a href="{{ url('/organizer/kajian/'.$kajian->slug.'/peserta') }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Lihat Peserta">
                                     <i data-lucide="users" class="w-4 h-4 sm:mr-1.5"></i>
@@ -65,7 +76,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-8 text-center text-brand-ink-soft">
+                            <td colspan="5" class="px-6 py-8 text-center text-brand-ink-soft">
                                 <div class="flex flex-col items-center justify-center">
                                     <i data-lucide="book-x" class="w-12 h-12 mb-3 text-gray-300"></i>
                                     <p>Belum ada kajian yang ditambahkan.</p>

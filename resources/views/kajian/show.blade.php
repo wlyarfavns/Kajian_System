@@ -213,22 +213,28 @@
                     Arahkan
                 </a>
                 
-                @if($isAttending)
-                    <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" data-turbo="false" style="flex:1.5;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="width:100%; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--jade-800); color:var(--paper); font-size:14px; font-weight:700; gap:6px; border:none; cursor:pointer;" title="Klik untuk membatalkan">
-                            <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            Akan Hadir
-                        </button>
-                    </form>
+                @if(now()->isBefore($kajian->end_at))
+                    @if($isAttending)
+                        <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" data-turbo="false" style="flex:1.5;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="width:100%; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--jade-800); color:var(--paper); font-size:14px; font-weight:700; gap:6px; border:none; cursor:pointer;" title="Klik untuk membatalkan">
+                                <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Akan Hadir
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" data-turbo="false" style="flex:1.5;">
+                            @csrf
+                            <button type="submit" class="btn btn-solid" style="width:100%; height:52px; border-radius:18px; font-size:14px; justify-content:center; padding:0;">
+                                Saya Mau Hadir
+                            </button>
+                        </form>
+                    @endif
                 @else
-                    <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" data-turbo="false" style="flex:1.5;">
-                        @csrf
-                        <button type="submit" class="btn btn-solid" style="width:100%; height:52px; border-radius:18px; font-size:14px; justify-content:center; padding:0;">
-                            Saya Mau Hadir
-                        </button>
-                    </form>
+                    <div style="flex:1.5; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--line); color:var(--ink-soft); font-size:14px; font-weight:700;">
+                        Kajian Selesai
+                    </div>
                 @endif
 
             </div>

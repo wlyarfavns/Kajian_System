@@ -54,6 +54,12 @@
                 </tbody>
             </table>
         </div>
+        
+        @if($mosques->hasPages())
+        <div class="p-4 border-t border-gray-200">
+            {{ $mosques->links() }}
+        </div>
+        @endif
 
         <!-- Delete Modal -->
         <div x-show="deleteModalOpen" style="display: none;" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">

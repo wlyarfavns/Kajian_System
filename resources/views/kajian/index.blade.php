@@ -15,6 +15,7 @@
         <!-- Preserve hidden filters -->
         @if(request('category')) <input type="hidden" name="category" value="{{ request('category') }}"> @endif
         @if(request('date')) <input type="hidden" name="date" value="{{ request('date') }}"> @endif
+        @if(request('month')) <input type="hidden" name="month" value="{{ request('month') }}"> @endif
         @if(request('audience')) <input type="hidden" name="audience" value="{{ request('audience') }}"> @endif
         @if(request('lat')) <input type="hidden" name="lat" value="{{ request('lat') }}"> @endif
         @if(request('lng')) <input type="hidden" name="lng" value="{{ request('lng') }}"> @endif
@@ -29,14 +30,20 @@
             <a href="{{ request()->fullUrlWithQuery(['q' => null]) }}" style="color:var(--ink-soft); margin-right: 12px; padding: 4px; display:flex; align-items:center; justify-content:center; border-radius: 50%; hover:background:var(--parchment-deep);" title="Hapus pencarian">
                 <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </a>
+            @endif
             <style>
                 /* Hide native webkit search cancel button since we have a custom one */
                 #searchInput::-webkit-search-cancel-button {
                     -webkit-appearance: none;
                     appearance: none;
                 }
+                /* Remove focus ring */
+                #searchInput:focus {
+                    outline: none !important;
+                    box-shadow: none !important;
+                    border-color: transparent !important;
+                }
             </style>
-            @endif
 
             <button type="submit" class="btn btn-solid" style="padding:10px 24px;">Cari</button>
         </div>
@@ -82,7 +89,7 @@
     </div>
 
     <!-- Additional Filters: Date & Audience & Nearby -->
-    <div class="filter-container" style="margin-bottom:40px; border-top:1px solid var(--line); padding-top:20px; padding-bottom:8px;">
+    <div class="filter-container" style="margin-bottom:15px; border-top:1px solid var(--line); padding-top:20px; padding-bottom:8px;">
         <!-- Nearby -->
         @if(request('lat') && request('lng'))
             <a href="{{ request('nearby') == 1 ? request()->fullUrlWithQuery(['nearby' => null]) : request()->fullUrlWithQuery(['nearby' => 1]) }}" class="btn filter-btn {{ request('nearby') == 1 ? 'btn-solid' : 'btn-outline' }}">
@@ -111,6 +118,19 @@
                 {{ $label }}
             </a>
         @endforeach
+
+    </div>
+
+    <!-- Filter Month (Di Bawah, Kanan) -->
+    <div style="display:flex; justify-content:flex-end; margin-bottom:40px; padding-right: 4px;">
+        <select onchange="window.location.href=this.value" class="btn filter-btn btn-outline" style="appearance:auto; background-color:var(--paper); cursor:pointer; padding:8px 30px 8px 18px; font-weight:600; font-family:inherit; border-radius:99px;">
+            <option value="{{ request()->fullUrlWithQuery(['month' => null]) }}">Pilih Bulan</option>
+            @for($i = 1; $i <= 12; $i++)
+                <option value="{{ request()->fullUrlWithQuery(['month' => $i]) }}" {{ request('month') == $i ? 'selected' : '' }}>
+                    {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                </option>
+            @endfor
+        </select>
     </div>
 
     <script>

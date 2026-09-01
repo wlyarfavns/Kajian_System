@@ -38,6 +38,7 @@ class Kajian extends Model
         'quota',
         'status',
         'is_verified',
+        'facilities',
     ];
 
     /**

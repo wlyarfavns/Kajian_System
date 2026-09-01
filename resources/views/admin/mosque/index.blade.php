@@ -21,6 +21,7 @@
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Masjid</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Penyelenggara</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Alamat</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Link Maps</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -29,14 +30,18 @@
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 font-medium text-brand-ink">
                                 {{ $mosque->name }}
-                                @if($mosque->google_maps_url)
-                                    <a href="{{ $mosque->google_maps_url }}" target="_blank" class="text-xs text-blue-500 ml-2 hover:underline">
-                                        <i data-lucide="external-link" class="w-3 h-3 inline"></i> Maps
-                                    </a>
-                                @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ $mosque->organizer->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($mosque->address, 50) }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                @if($mosque->google_maps_url)
+                                    <a href="{{ $mosque->google_maps_url }}" target="_blank" class="inline-flex items-center text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors">
+                                        <i data-lucide="map-pin" class="w-3 h-3 mr-1.5"></i> Buka Maps
+                                    </a>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">-</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-right space-x-2">
                                 <a href="{{ route('admin.mosque.edit', $mosque->id) }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit">
                                     <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>

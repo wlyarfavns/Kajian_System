@@ -82,6 +82,8 @@ class DashboardController extends Controller
             })->whereMonth('created_at', $month->month)->whereYear('created_at', $month->year)->count();
         }
 
+        $totalOrganizer = \App\Models\Organizer::count();
+
         return view('organizer.dashboard', compact(
             'kajianAktif', 
             'kajianBulanIni', 
@@ -97,7 +99,8 @@ class DashboardController extends Controller
             'chartWeeklyLabels',
             'chartWeeklyData',
             'chartMonthlyLabels',
-            'chartMonthlyData'
+            'chartMonthlyData',
+            'totalOrganizer'
         ));
     }
 }

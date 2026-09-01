@@ -215,8 +215,8 @@
                                         $colorClass = 'text-red-600 bg-red-50';
                                         $dotClass = 'bg-red-500';
                                     } elseif ($label === 'Akan Datang') {
-                                        $colorClass = 'text-blue-600 bg-blue-50';
-                                        $dotClass = 'bg-blue-500';
+                                        $colorClass = 'text-yellow-600 bg-yellow-50';
+                                        $dotClass = 'bg-yellow-500';
                                     }
                                 @endphp
                                 <span class="text-xs font-bold {{ $colorClass }} px-2 py-1 rounded-md flex items-center w-max">
@@ -295,12 +295,7 @@
                 </table>
             </div>
             
-            <div class="mt-4 flex justify-end">
-                <!-- Float right action button similar to purple dot in Masjidhero -->
-                <button class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-indigo-700 transition-colors">
-                    <i data-lucide="plus" class="w-5 h-5"></i>
-                </button>
-            </div>
+
         </div>
 
     </div>
