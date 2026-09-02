@@ -133,10 +133,13 @@
 
             <!-- Settings / Logout Area -->
             <div class="p-4 border-t border-white/10">
-                <button @click="logoutModalOpen = true" class="w-full flex items-center py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
-                    <i data-lucide="log-out" class="w-5 h-5 shrink-0" :class="(expanded && !isMobile) ? 'mr-3' : 'mr-0'"></i> 
-                    <span x-show="expanded && !isMobile" class="whitespace-nowrap">Keluar</span>
-                </button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                        <i data-lucide="log-out" class="w-5 h-5 shrink-0" :class="(expanded && !isMobile) ? 'mr-3' : 'mr-0'"></i> 
+                        <span x-show="expanded && !isMobile" class="whitespace-nowrap">Keluar</span>
+                    </button>
+                </form>
             </div>
         </div>
     </aside>
@@ -259,50 +262,6 @@
         </main>
     </div>
 
-    <!-- Logout Modal -->
-    <div x-show="logoutModalOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center">
-        <!-- Backdrop -->
-        <div x-show="logoutModalOpen" 
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click="logoutModalOpen = false" 
-             class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
-
-        <!-- Modal Panel -->
-        <div x-show="logoutModalOpen" 
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full mx-4 overflow-hidden z-10">
-            
-            <div class="p-6">
-                <div class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center mb-4 mx-auto">
-                    <i data-lucide="log-out" class="w-6 h-6"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 text-center mb-2">Konfirmasi Keluar</h3>
-                <p class="text-sm text-gray-500 text-center">Apakah Anda yakin ingin keluar dari akun Penyelenggara Anda? Sesi Anda akan diakhiri.</p>
-            </div>
-            
-            <div class="bg-gray-50 px-6 py-4 flex items-center justify-center sm:justify-end gap-3 border-t border-gray-100">
-                <button @click="logoutModalOpen = false" class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 bg-gray-100 rounded-lg transition-colors w-full sm:w-auto">
-                    Batal
-                </button>
-                <form method="POST" action="{{ route('logout') }}" class="m-0 w-full sm:w-auto">
-                    @csrf
-                    <button type="submit" class="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm">
-                        Ya, Keluar
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
     </div>
 
     <script>
