@@ -92,11 +92,13 @@
                 @method('put')
 
                 <!-- Current Password -->
+                @if(auth()->user()->password)
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <label for="update_password_current_password" style="font-size: 13px; font-weight: 700; color: var(--jade-950);">Kata Sandi Saat Ini</label>
                     <input id="update_password_current_password" name="current_password" type="password" autocomplete="current-password" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-family: inherit; font-size: 14px; outline: none;">
                     <x-input-error :messages="$errors->updatePassword->get('current_password')" style="color:#dc2626; font-size:12px; margin-top: 4px;" />
                 </div>
+                @endif
 
                 <!-- New Password -->
                 <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -147,11 +149,15 @@
                 @csrf
                 @method('delete')
 
+                @if(auth()->user()->password)
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <label for="password" style="font-size: 13px; font-weight: 700; color: var(--jade-950);">Kata Sandi</label>
                     <input id="password" name="password" type="password" placeholder="Masukkan sandi Anda" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-family: inherit; font-size: 14px; outline: none;">
                     <x-input-error :messages="$errors->userDeletion->get('password')" style="color:#dc2626; font-size:12px; margin-top: 4px;" />
                 </div>
+                @else
+                <p style="color: #991b1b; font-size: 13px; margin: 0;">Karena Anda masuk menggunakan Google, tekan "Ya, Hapus Akun" untuk mengonfirmasi langsung penghapusan akun tanpa kata sandi.</p>
+                @endif
 
                 <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px;">
                     <button type="button" onclick="document.getElementById('delete-account-modal').style.display = 'none'" class="btn btn-outline" style="padding: 10px 20px;">
