@@ -223,7 +223,7 @@
                     <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
                         <label for="password" style="font-size:13px; font-weight:700; color:var(--jade-950);">Kata Sandi</label>
                         @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" style="font-size:12px; font-weight:600; color:var(--gold); text-decoration:none; position:relative; z-index:50;">Lupa sandi?</a>
+                            <a href="{{ route('password.request') }}" data-turbo="false" style="font-size:12px; font-weight:600; color:var(--gold); text-decoration:none; position:relative; z-index:50;">Lupa sandi?</a>
                         @endif
                     </div>
                     <div style="position:relative;">
@@ -282,7 +282,7 @@
             </form>
 
             <div style="margin-top:24px; text-align:center; font-size:13px; font-weight:500; color:var(--ink-soft);">
-                Belum punya akun? <a href="{{ route('register') }}" style="font-weight:700; color:var(--jade-900); text-decoration:none; position:relative; z-index:50;">Daftar sekarang</a>
+                Belum punya akun? <a href="{{ route('register') }}" data-turbo="false" style="font-weight:700; color:var(--jade-900); text-decoration:none; position:relative; z-index:50;">Daftar sekarang</a>
             </div>
         </div>
     </div>
