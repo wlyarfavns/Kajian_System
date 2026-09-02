@@ -20,7 +20,7 @@
         <div style="padding: 0 20px;">
             <div style="position:relative; width:100%; aspect-ratio: 4/5; max-height: 480px; border-radius:32px; overflow:hidden; box-shadow:0 20px 50px rgba(10,43,32,0.2); margin-bottom:32px;">
                 @php
-                  $bgImage = $kajian->poster ? Storage::url($kajian->poster) : asset('images/about_mosque.jpg');
+                  $bgImage = $kajian->poster ? asset('storage/' . $kajian->poster) : asset('images/about_mosque.jpg');
                 @endphp
                 <div style="position:absolute; inset:0; background: linear-gradient(to top, rgba(10,43,32,0.95) 0%, rgba(10,43,32,0.3) 50%, rgba(10,43,32,0.1) 100%), url('{{ $bgImage }}') center/cover;"></div>
                 
