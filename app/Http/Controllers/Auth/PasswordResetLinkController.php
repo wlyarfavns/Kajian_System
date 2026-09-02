@@ -30,16 +30,31 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withInput($request->only('email'))
+                         ->withErrors(['email' => __('passwords.user')]);
+        }
+
+        // Generate 6-digit OTP
+        $otp = sprintf("%06d", mt_rand(100000, 999999));
+
+        // Save to DB
+        \Illuminate\Support\Facades\DB::table('password_reset_otps')->updateOrInsert(
+            ['email' => $request->email],
+            [
+                'otp' => $otp,
+                'created_at' => now()
+            ]
         );
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        // Send Email
+        \Illuminate\Support\Facades\Mail::to($request->email)->send(new \App\Mail\SendOtpMail($otp));
+
+        // Redirect to verification page
+        $request->session()->put('reset_email', $request->email);
+        
+        return redirect()->route('password.verify-otp')->with('status', 'Kode OTP telah dikirim ke email Anda.');
     }
 }

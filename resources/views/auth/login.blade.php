@@ -8,10 +8,17 @@
 
     <title>Masuk - KajianKu</title>
 
+    <meta name="view-transition" content="same-origin" />
+    <meta name="layout" content="landing" data-turbo-track="reload">
+
+    <!-- Scripts & Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+</head>
+<body class="auth-body">
     <style>
         :root {
             --parchment: #F4EEDC;
@@ -28,14 +35,12 @@
             --line: rgba(21,42,32,0.14);
         }
         * { box-sizing: border-box; }
-        html, body {
+        body.auth-body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-        }
-        body {
             font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
             color: var(--ink);
             background: var(--jade-950);
@@ -52,7 +57,7 @@
             padding: 0 28px;
         }
         
-        .hero {
+        .auth-hero {
             position: relative;
             height: 100vh;
             display: flex;
@@ -60,7 +65,7 @@
             justify-content: center;
             padding: 20px 0;
         }
-        .hero-lattice {
+        .auth-hero-lattice {
             position: absolute;
             inset: 0;
             opacity: 0.16;
@@ -128,7 +133,7 @@
             pointer-events: none;
         }
 
-        .btn-solid {
+        .auth-btn-solid {
             background: var(--jade-900);
             color: var(--parchment);
             border: none;
@@ -144,9 +149,9 @@
             justify-content: center;
             box-shadow: 0 14px 30px rgba(10,43,32,0.28);
         }
-        .btn-solid:hover { background: var(--jade-800); transform: translateY(-2px); }
+        .auth-btn-solid:hover { background: var(--jade-800); transform: translateY(-2px); }
 
-        .btn-outline {
+        .auth-btn-outline {
             background: transparent;
             color: var(--ink);
             border: 1px solid var(--gold);
@@ -161,13 +166,11 @@
             justify-content: center;
             transition: all 0.2s;
         }
-        .btn-outline:hover { background: var(--gold-pale); transform: translateY(-2px); }
+        .auth-btn-outline:hover { background: var(--gold-pale); transform: translateY(-2px); }
     </style>
-</head>
-<body>
 
-<header class="hero" style="position: relative; height: 100vh; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 0; background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%); width: 100%;">
-  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; opacity: 0.16; pointer-events: none; width: 100%; height: 100%;">
+<header class="auth-hero" style="position: relative; height: 100vh; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 0; background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%); width: 100%;">
+  <svg class="auth-hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; opacity: 0.16; pointer-events: none; width: 100%; height: 100%;">
     <defs>
       <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
         <g stroke="#E7C77E" stroke-width="1" fill="none">
@@ -262,7 +265,7 @@
                     <label for="remember_me" style="margin-left:8px; font-size:13px; font-weight:500; color:var(--ink); cursor:pointer;">Ingat saya</label>
                 </div>
 
-                <button type="submit" class="btn-solid" style="margin-top: 8px; background: var(--jade-900); color: var(--parchment); border: none; border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">Masuk Sekarang</button>
+                <button type="submit" class="auth-btn-solid" style="margin-top: 8px; background: var(--jade-900); color: var(--parchment); border: none; border-radius: 14px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">Masuk Sekarang</button>
                 
                 <div style="display:flex; align-items:center; margin: 4px 0;">
                     <div style="flex-grow:1; border-top:1px solid var(--line);"></div>
@@ -270,7 +273,7 @@
                     <div style="flex-grow:1; border-top:1px solid var(--line);"></div>
                 </div>
 
-                <button type="button" class="btn-outline" style="background: transparent; color: var(--ink); border: 1px solid var(--gold); border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <a href="{{ route('auth.google') }}" class="auth-btn-outline" style="background: transparent; color: var(--ink); border: 1px solid var(--gold); border-radius: 14px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-decoration: none;">
                     <svg style="width:18px; height:18px; margin-right:10px;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -278,7 +281,7 @@
                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                     </svg>
                     Lanjutkan dengan Google
-                </button>
+                </a>
             </form>
 
             <div style="margin-top:24px; text-align:center; font-size:13px; font-weight:500; color:var(--ink-soft);">

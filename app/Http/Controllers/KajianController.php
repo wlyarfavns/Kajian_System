@@ -11,7 +11,7 @@ class KajianController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Kajian::query()->where('status', 'published')->with(['organizer', 'mosque', 'speaker', 'category']);
+        $query = Kajian::query()->where('status', 'published')->where('is_verified', true)->with(['organizer', 'mosque', 'speaker', 'category']);
 
         // Pastikan hanya yang masih aktif/upcoming
         $query->where(function($q) {
@@ -51,7 +51,13 @@ class KajianController extends Controller
             $q = $request->q;
             $query->where(function ($subQ) use ($q) {
                 $subQ->where('title', 'like', "%{$q}%")
-                     ->orWhere('description', 'like', "%{$q}%");
+                     ->orWhere('description', 'like', "%{$q}%")
+                     ->orWhereHas('speaker', function ($spQ) use ($q) {
+                         $spQ->where('name', 'like', "%{$q}%");
+                     })
+                     ->orWhereHas('mosque', function ($mqQ) use ($q) {
+                         $mqQ->where('name', 'like', "%{$q}%");
+                     });
             });
         }
 
@@ -80,12 +86,20 @@ class KajianController extends Controller
         
         $isAttending = false;
         $isFavorited = false;
+        $isCancelled = false;
 
         if (auth()->check()) {
-            $isAttending = \App\Models\KajianAttendee::where('user_id', auth()->id())
+            $attendee = \App\Models\KajianAttendee::where('user_id', auth()->id())
                 ->where('kajian_id', $kajian->id)
-                ->where('status', '!=', 'cancelled')
-                ->exists();
+                ->first();
+                
+            if ($attendee) {
+                if ($attendee->status === 'cancelled') {
+                    $isCancelled = true;
+                } else {
+                    $isAttending = true;
+                }
+            }
                 
             $isFavorited = \App\Models\Favorite::where('user_id', auth()->id())
                 ->where('kajian_id', $kajian->id)
@@ -111,6 +125,6 @@ class KajianController extends Controller
             $distance = $earthRadius * $c;
         }
 
-        return view('kajian.show', compact('kajian', 'isAttending', 'isFavorited', 'attendeesCount', 'distance'));
+        return view('kajian.show', compact('kajian', 'isAttending', 'isFavorited', 'attendeesCount', 'distance', 'isCancelled'));
     }
 }

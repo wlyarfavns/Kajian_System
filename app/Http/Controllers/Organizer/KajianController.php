@@ -12,10 +12,20 @@ use Illuminate\Support\Str;
 
 class KajianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $organizerId = auth()->user()->organizer->id;
-        $kajians = Kajian::where('organizer_id', $organizerId)->latest()->get();
+        $query = Kajian::where('organizer_id', $organizerId);
+
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function ($subQ) use ($q) {
+                $subQ->where('title', 'like', "%{$q}%")
+                     ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        $kajians = $query->latest()->paginate(15)->appends($request->query());
         return view('organizer.kajian.index', compact('kajians'));
     }
 
@@ -41,6 +51,7 @@ class KajianController extends Controller
             'address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'google_maps_url' => 'nullable|url',
             'audience' => 'required|in:umum,ikhwan,akhwat',
             'description' => 'nullable|string',
             'quota' => 'nullable|integer|min:1',
@@ -60,6 +71,7 @@ class KajianController extends Controller
             'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
             'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
+            'price' => $request->has('is_free') ? 0 : ($validated['price'] ?? 0),
         ]);
         
         unset($data['tanggal'], $data['start_time'], $data['end_time']);
@@ -70,7 +82,14 @@ class KajianController extends Controller
             $data['poster'] = null;
         }
 
-        Kajian::create($data);
+        $kajian = Kajian::create($data);
+
+        // Notify all admins
+        $admins = \App\Models\User::where('role', 'admin')->get();
+        if ($admins->count() > 0) {
+            $organizer = auth()->user()->organizer;
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewKajianSubmitted($kajian, $organizer));
+        }
 
         return redirect()->route('organizer.kajian.index')->with('success', 'Kajian created successfully.');
     }
@@ -106,6 +125,7 @@ class KajianController extends Controller
             'address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'google_maps_url' => 'nullable|url',
             'audience' => 'required|in:umum,ikhwan,akhwat',
             'description' => 'nullable|string',
             'quota' => 'nullable|integer|min:1',
@@ -122,6 +142,7 @@ class KajianController extends Controller
             'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
             'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
+            'price' => $request->has('is_free') ? 0 : ($validated['price'] ?? 0),
         ]);
         
         unset($data['tanggal'], $data['start_time'], $data['end_time']);
@@ -143,6 +164,6 @@ class KajianController extends Controller
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) abort(403);
         $kajian->delete();
-        return redirect()->route('kajian.index')->with('success', 'Kajian deleted successfully.');
+        return redirect()->route('organizer.kajian.index')->with('success', 'Kajian deleted successfully.');
     }
 }

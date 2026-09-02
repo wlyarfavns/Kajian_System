@@ -9,17 +9,32 @@
                 <h2 class="text-lg font-bold text-brand-ink">Daftar Semua Peserta</h2>
                 <p class="text-sm text-brand-ink-soft">Melihat seluruh jamaah yang mendaftar pada kajian Anda.</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex space-x-2">
-                <button type="button" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition">
-                    <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Data
-                </button>
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
+                <form action="{{ route('organizer.peserta.global') }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-auto">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+                        </div>
+                        <input type="search" id="searchInput" name="q" value="{{ request('q') }}" {{ request('q') ? 'autofocus' : '' }} onfocus="var temp_value=this.value; this.value=''; this.value=temp_value;" oninput="clearTimeout(this.delay); this.delay = setTimeout(() => this.form.requestSubmit(), 500);" placeholder="Cari nama jamaah atau email..." class="pl-10 border-gray-300 rounded-lg text-sm text-brand-ink focus:ring-brand-emerald-800 focus:border-brand-emerald-800 w-full">
+                    </div>
+                    <!-- Kajian Dropdown -->
+                    <select id="kajianSelect" name="kajian_id" onchange="this.form.requestSubmit()" class="w-full sm:w-auto" style="min-width: 250px;">
+                        <option value="">-- Semua Kajian --</option>
+                        @foreach($kajians as $k)
+                            <option value="{{ $k->id }}" {{ request('kajian_id') == $k->id ? 'selected' : '' }}>
+                                {{ $k->title }} ({{ \Carbon\Carbon::parse($k->start_at)->format('d M Y') }})
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-gray-50 border-b border-gray-200">
+                    <tr class="bg-gray-50 border-b border-gray-200 whitespace-nowrap">
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Peserta</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Kajian</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Waktu Daftar</th>
@@ -29,7 +44,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($participants as $attendee)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr class="hover:bg-gray-50 transition whitespace-nowrap">
                             <td class="px-6 py-4">
                                 <div class="font-medium text-brand-ink">{{ $attendee->user->name }}</div>
                                 <div class="text-sm text-brand-ink-soft mt-1">{{ $attendee->user->email }}</div>
@@ -82,4 +97,26 @@
             </div>
         @endif
     </div>
+
+    <script>
+        (function() {
+            const initTomSelect = function() {
+                const el = document.getElementById('kajianSelect');
+                if (el && !el.tomselect) {
+                    new TomSelect('#kajianSelect', {
+                        create: false,
+                        allowEmptyOption: true,
+                        maxOptions: null,
+                        plugins: ['dropdown_input']
+                    });
+                }
+            };
+            
+            // Run immediately in case of direct load or inline execution
+            initTomSelect();
+            
+            // Also run on Turbo load just to be safe
+            document.addEventListener('turbo:load', initTomSelect);
+        })();
+    </script>
 </x-organizer-layout>

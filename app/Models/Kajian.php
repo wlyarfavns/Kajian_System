@@ -31,6 +31,7 @@ class Kajian extends Model
         'address',
         'latitude',
         'longitude',
+        'google_maps_url',
         'audience',
         'is_family_friendly',
         'is_free',
@@ -143,6 +144,7 @@ class Kajian extends Model
     public function scopeNearby($query, $lat, $lng, $radius = 5)
     {
         $query->where('status', 'published')
+              ->where('is_verified', true)
               ->where(function($q) {
                   $q->where('start_at', '>=', now())
                     ->orWhere(function($subQ) {
@@ -171,6 +173,10 @@ class Kajian extends Model
     {
         if ($this->status === 'cancelled') {
             return 'Dibatalkan';
+        }
+
+        if ($this->status === 'published' && !$this->is_verified) {
+            return 'Menunggu Verifikasi';
         }
 
         $now = now();

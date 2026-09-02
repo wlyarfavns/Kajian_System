@@ -10,8 +10,17 @@
         <p style="color:var(--ink-soft); font-size:15px; margin:0;">Daftar kajian yang telah Anda simpan untuk dilihat nanti.</p>
     </div>
 
+    <!-- Search Form -->
+    <form action="{{ url('/tersimpan') }}" method="GET" style="margin-bottom:40px;">
+        <div style="display:flex; align-items:center; background:var(--paper); border:1px solid var(--line); border-radius:99px; padding:6px 6px 6px 20px; max-width:600px; margin:0 auto; box-shadow:0 10px 25px rgba(10,43,32,0.05);">
+            <svg style="width:20px; height:20px; color:var(--ink-soft);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="search" id="searchInput" name="q" value="{{ request('q') }}" oninput="clearTimeout(this.delay); this.delay = setTimeout(() => this.form.requestSubmit(), 500);" style="flex:1; background:transparent; border:none; outline:none; padding:10px 14px; font-size:15px; color:var(--ink);" placeholder="Cari judul kajian di favorit...">
+            <button type="submit" class="btn btn-solid" style="padding:10px 24px;">Cari</button>
+        </div>
+    </form>
+
     <!-- Results List -->
-    <div class="kajian-grid">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         @forelse($favorites as $favorite)
             <x-kajian-card :kajian="$favorite->kajian" />
         @empty

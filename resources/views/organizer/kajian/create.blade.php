@@ -24,9 +24,20 @@
                         @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div class="md:col-span-2" x-data="{ posterPreview: null }">
                         <label for="poster" class="block text-sm font-medium text-brand-ink mb-1">Poster Kajian</label>
-                        <input type="file" name="poster" id="poster" accept="image/*" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50">
+                        
+                        <!-- Preview Area -->
+                        <template x-if="posterPreview">
+                            <div class="mb-3 relative w-32 h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-sm inline-block">
+                                <img :src="posterPreview" class="object-cover w-full h-full" alt="Preview Poster">
+                                <button type="button" @click="posterPreview = null; $refs.posterInput.value = ''" class="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-50 text-red-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+
+                        <input type="file" name="poster" id="poster" x-ref="posterInput" accept="image/*" @change="if($event.target.files.length > 0) { posterPreview = URL.createObjectURL($event.target.files[0]) } else { posterPreview = null }" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50">
                         <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, WEBP. Maks 5MB.</p>
                         @error('poster') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -85,12 +96,21 @@
                         </div>
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div class="md:col-span-2" x-data="{
+                        updateCoordinates(event) {
+                            const selectedOption = event.target.options[event.target.selectedIndex];
+                            if(selectedOption && selectedOption.value) {
+                                document.getElementById('latitude').value = selectedOption.getAttribute('data-lat') || '';
+                                document.getElementById('longitude').value = selectedOption.getAttribute('data-lng') || '';
+                                document.getElementById('google_maps_url').value = selectedOption.getAttribute('data-map') || '';
+                            }
+                        }
+                    }">
                         <label for="mosque_id" class="block text-sm font-medium text-brand-ink mb-1">Masjid <span class="text-brand-danger">*</span></label>
-                        <select name="mosque_id" id="mosque_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required>
+                        <select name="mosque_id" id="mosque_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required @change="updateCoordinates">
                             <option value="">-- Pilih Masjid --</option>
                             @foreach($mosques as $mosque)
-                                <option value="{{ $mosque->id }}" {{ old('mosque_id') == $mosque->id ? 'selected' : '' }}>{{ $mosque->name }}</option>
+                                <option value="{{ $mosque->id }}" data-lat="{{ $mosque->latitude }}" data-lng="{{ $mosque->longitude }}" data-map="{{ $mosque->google_maps_url }}" {{ old('mosque_id') == $mosque->id ? 'selected' : '' }}>{{ $mosque->name }}</option>
                             @endforeach
                         </select>
                         @error('mosque_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -113,11 +133,17 @@
                         <input type="text" name="longitude" id="longitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('longitude', '106.816666') }}" required>
                         @error('longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
+                    
+                    <div class="md:col-span-2">
+                        <label for="google_maps_url" class="block text-sm font-medium text-brand-ink mb-1">Link Google Maps (Opsional)</label>
+                        <input type="url" name="google_maps_url" id="google_maps_url" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" placeholder="https://maps.app.goo.gl/..." value="{{ old('google_maps_url') }}">
+                        @error('google_maps_url') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
 
             <!-- Section 3: Detail Audien & Lainnya -->
-            <div class="mb-8">
+            <div class="mb-8" x-data="{ isFree: '{{ old('is_free', '1') }}' }">
                 <h3 class="text-lg font-semibold text-brand-ink mb-4 flex items-center">
                     <i data-lucide="users" class="w-5 h-5 mr-2 text-brand-emerald-900"></i> Audien & Tiket
                 </h3>
@@ -147,13 +173,13 @@
 
                     <div>
                         <label for="is_free" class="block text-sm font-medium text-brand-ink mb-1">Biaya <span class="text-brand-danger">*</span></label>
-                        <select name="is_free" id="is_free" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required>
-                            <option value="1" {{ old('is_free', true) == true ? 'selected' : '' }}>Gratis</option>
-                            <option value="0" {{ old('is_free', true) == false ? 'selected' : '' }}>Berbayar</option>
+                        <select name="is_free" id="is_free" x-model="isFree" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required>
+                            <option value="1">Gratis</option>
+                            <option value="0">Berbayar</option>
                         </select>
                     </div>
 
-                    <div id="price_container" style="display: none;">
+                    <div id="price_container" x-show="isFree === '0'" x-cloak>
                         <label for="price" class="block text-sm font-medium text-brand-ink mb-1">Harga</label>
                         <div class="relative rounded-md shadow-sm">
                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -200,21 +226,6 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const isFreeSelect = document.getElementById('is_free');
-            const priceContainer = document.getElementById('price_container');
-
-            function togglePrice() {
-                if (isFreeSelect.value === '1') {
-                    priceContainer.style.display = 'none';
-                } else {
-                    priceContainer.style.display = 'block';
-                }
-            }
-
-            isFreeSelect.addEventListener('change', togglePrice);
-            // Run once on load
-            togglePrice();
-        });
+        lucide.createIcons();
     </script>
 </x-organizer-layout>

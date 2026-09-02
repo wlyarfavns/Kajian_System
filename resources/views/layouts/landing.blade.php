@@ -712,6 +712,37 @@
 
     window.addEventListener('hashchange', updateActiveState);
     document.addEventListener('turbo:render', updateActiveState);
+
+    // Preserve focus and cursor position during Turbo renders
+    let focusedElementId = null;
+    let cursorPosition = null;
+
+    document.addEventListener('turbo:before-render', () => {
+        if (document.activeElement && document.activeElement.id) {
+            focusedElementId = document.activeElement.id;
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                cursorPosition = document.activeElement.selectionStart;
+            }
+        } else {
+            focusedElementId = null;
+            cursorPosition = null;
+        }
+    });
+
+    document.addEventListener('turbo:render', () => {
+        if (focusedElementId) {
+            const el = document.getElementById(focusedElementId);
+            if (el) {
+                el.focus();
+                if (cursorPosition !== null && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
+                    // Slight delay to ensure DOM is fully ready for selection
+                    setTimeout(() => {
+                        el.setSelectionRange(cursorPosition, cursorPosition);
+                    }, 0);
+                }
+            }
+        }
+    });
 })();
 </script>
 </body>

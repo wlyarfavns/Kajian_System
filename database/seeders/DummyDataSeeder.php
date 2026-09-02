@@ -32,7 +32,7 @@ class DummyDataSeeder extends Seeder
 
         // 3. Create Organizer User
         $orgUser = User::firstOrCreate(
-            ['email' => 'organizer@kajianku.test'],
+            ['email' => 'organizer@kajiansystem.test'],
             ['name' => 'Takmir Masjid', 'password' => Hash::make('password'), 'role' => 'organizer']
         );
         $organizer = Organizer::firstOrCreate(

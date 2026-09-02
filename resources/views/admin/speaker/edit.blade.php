@@ -9,7 +9,24 @@
             <p class="text-sm text-brand-ink-soft">Perbarui profil pemateri / ustadz.</p>
         </div>
 
-        <form action="{{ route('admin.speaker.update', $speaker->id) }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8" x-data="photoPreview('{{ $speaker->photo ? Storage::url($speaker->photo) : '' }}')">
+        <form action="{{ route('admin.speaker.update', $speaker->id) }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8" x-data="{
+            imageUrl: '{{ $speaker->photo ? Storage::url($speaker->photo) : '' }}',
+            errorMsg: '',
+            fileChosen(event) {
+                if (! event.target.files.length) return;
+                let file = event.target.files[0];
+                if (file.size > 2 * 1024 * 1024) {
+                    this.errorMsg = 'Ukuran foto maksimal adalah 2MB.';
+                    this.imageUrl = '{{ $speaker->photo ? Storage::url($speaker->photo) : '' }}';
+                    event.target.value = '';
+                    return;
+                }
+                this.errorMsg = '';
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = e => this.imageUrl = e.target.result;
+            }
+        }">
             @csrf
             @method('PUT')
 
@@ -19,12 +36,8 @@
                     <label class="block text-sm font-medium text-brand-ink mb-2">Foto Profil</label>
                     <div class="flex items-center space-x-6">
                         <div class="flex-shrink-0 w-24 h-24 rounded-full bg-brand-cream border border-brand-border-light flex items-center justify-center overflow-hidden">
-                            <template x-if="imageUrl">
-                                <img :src="imageUrl" class="w-full h-full object-cover" alt="Preview" />
-                            </template>
-                            <template x-if="!imageUrl">
-                                <i data-lucide="user" class="w-8 h-8 text-brand-nav-inactive"></i>
-                            </template>
+                            <img x-show="imageUrl" :src="imageUrl" class="w-full h-full object-cover" alt="Preview" style="display: none;" />
+                            <i x-show="!imageUrl" data-lucide="user" class="w-8 h-8 text-brand-nav-inactive"></i>
                         </div>
                         <div>
                             <input type="file" name="photo" id="photo" accept="image/*" class="sr-only" @change="fileChosen">
@@ -32,8 +45,11 @@
                                 <i data-lucide="upload" class="w-4 h-4 mr-2"></i> Ubah Foto
                             </label>
                             <p class="mt-2 text-xs text-brand-ink-soft">JPG, PNG atau GIF (Maks. 2MB). Kosongkan jika tidak ingin mengubah.</p>
+                            <template x-if="errorMsg">
+                                <p class="mt-1 text-sm text-brand-danger" x-text="errorMsg"></p>
+                            </template>
                             @error('photo')
-                                <p class="mt-1 text-sm text-brand-danger">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-brand-danger" x-show="!errorMsg">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
@@ -69,22 +85,5 @@
         </form>
     </div>
 
-    <!-- Alpine Component for Image Preview -->
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('photoPreview', (initialUrl) => ({
-                imageUrl: initialUrl,
-                fileChosen(event) {
-                    this.fileToDataUrl(event, src => this.imageUrl = src)
-                },
-                fileToDataUrl(event, callback) {
-                    if (! event.target.files.length) return
-                    let file = event.target.files[0],
-                        reader = new FileReader()
-                    reader.readAsDataURL(file)
-                    reader.onload = e => callback(e.target.result)
-                },
-            }))
-        })
-    </script>
+
 </x-admin-layout>

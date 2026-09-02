@@ -36,6 +36,9 @@ class ProfileController extends Controller
         }
 
         $organizer->update($validated);
+        
+        // Update user name as well to reflect in navbar
+        Auth::user()->update(['name' => $validated['name']]);
 
         return redirect()->route('organizer.profile.edit')->with('success', 'Profil penyelenggara berhasil diperbarui.');
     }

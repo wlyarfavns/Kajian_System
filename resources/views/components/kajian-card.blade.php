@@ -21,7 +21,7 @@
                 $isFavorited = \App\Models\Favorite::where('user_id', auth()->id())->where('kajian_id', $kajian->id)->exists();
             }
         @endphp
-        <form action="{{ url('/kajian/'.$kajian->id.'/favorite') }}" method="POST" style="position:absolute; top:16px; right:16px; z-index:10;">
+        <form action="{{ url('/kajian/'.$kajian->slug.'/favorite') }}" method="POST" style="position:absolute; top:16px; right:16px; z-index:10;">
             @csrf
             <button type="submit" class="kcard-save" style="width:32px; height:32px; background:{{ $isFavorited ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.2)' }}; backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:{{ $isFavorited ? 'var(--terracotta)' : '#fff' }}; border:none; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.9)'; this.style.color='var(--terracotta)';" onmouseout="this.style.background='{{ $isFavorited ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.2)' }}'; this.style.color='{{ $isFavorited ? 'var(--terracotta)' : '#fff' }}';">♥</button>
         </form>
@@ -58,11 +58,18 @@
         @if(isset($kajian->distance))
         <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 2px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            <span style="line-height: 1.4; color:var(--jade-950);">Jarak: {{ number_format($kajian->distance, 1) }} KM</span>
+            <span style="line-height: 1.4; color:var(--jade-950);">
+                Jarak: 
+                @if($kajian->distance < 1)
+                    {{ number_format($kajian->distance * 1000, 0) }} M
+                @else
+                    {{ number_format($kajian->distance, 1) }} KM
+                @endif
+            </span>
         </div>
         @endif
     </div>
     
-    <a href="{{ route('kajian.show', $kajian->slug) }}" style="display: block; text-align: center; background: var(--gold-pale); color: var(--gold-deep); padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 15px; transition: background 0.2s;" onmouseover="this.style.background='var(--gold)'; this.style.color='white';" onmouseout="this.style.background='var(--gold-pale)'; this.style.color='var(--gold-deep)';">Lihat Detail</a>
+    <a href="{{ route('kajian.show', ['kajian' => $kajian->slug, 'lat' => request('lat'), 'lng' => request('lng')]) }}" style="display: block; text-align: center; background: var(--gold-pale); color: var(--gold-deep); padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 15px; transition: background 0.2s;" onmouseover="this.style.background='var(--gold)'; this.style.color='white';" onmouseout="this.style.background='var(--gold-pale)'; this.style.color='var(--gold-deep)';">Lihat Detail</a>
   </div>
 </div>

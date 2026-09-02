@@ -41,25 +41,7 @@
             </button>
         </div>
 
-        @if(session('success'))
-            <div class="bg-green-50 text-green-800 p-4 border-b border-green-200 text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-50 text-red-800 p-4 border-b border-red-200 text-sm">
-                {{ session('error') }}
-            </div>
-        @endif
-        @if($errors->any())
-            <div class="bg-red-50 text-red-800 p-4 border-b border-red-200 text-sm">
-                <ul class="list-disc list-inside">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+
 
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -78,12 +60,12 @@
                             <td class="px-6 py-4 text-right space-x-2">
                                 <button type="button" @click="openEditModal({{ json_encode([
                                     'name' => $category->name,
-                                    'update_url' => route('admin.category.update', $category->slug)
+                                    'update_url' => route('admin.category.update', $category->id)
                                 ]) }})" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit">
                                     <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i>
                                     <span class="hidden sm:inline">Edit</span>
                                 </button>
-                                <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('admin.category.destroy', $category->slug) }}'" class="inline-flex items-center px-3 py-1.5 border border-red-200 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 transition" title="Hapus">
+                                <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('admin.category.destroy', $category->id) }}'" class="inline-flex items-center px-3 py-1.5 border border-red-200 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 transition" title="Hapus">
                                     <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i>
                                     <span class="hidden sm:inline">Hapus</span>
                                 </button>
@@ -99,6 +81,12 @@
                 </tbody>
             </table>
         </div>
+
+        @if ($categories->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200">
+                {{ $categories->links() }}
+            </div>
+        @endif
 
         <!-- Create/Edit Modal -->
         <div x-show="editModalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">

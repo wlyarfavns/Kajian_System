@@ -11,7 +11,16 @@
             </div>
         </div>
 
-        <form action="{{ route('organizer.profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8" x-data="photoPreview('{{ $organizer->logo ? \Illuminate\Support\Facades\Storage::url($organizer->logo) : '' }}')">
+        <form action="{{ route('organizer.profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8" x-data="{
+            imageUrl: '{{ $organizer->logo ? \Illuminate\Support\Facades\Storage::url($organizer->logo) : '' }}',
+            fileChosen(event) {
+                if (!event.target.files.length) return;
+                let file = event.target.files[0];
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = e => this.imageUrl = e.target.result;
+            }
+        }">
             @csrf
             @method('PUT')
 
@@ -87,23 +96,4 @@
             </div>
         </form>
     </div>
-
-    <!-- Alpine Component for Image Preview -->
-    <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('photoPreview', (initialUrl) => ({
-                imageUrl: initialUrl,
-                fileChosen(event) {
-                    this.fileToDataUrl(event, src => this.imageUrl = src)
-                },
-                fileToDataUrl(event, callback) {
-                    if (! event.target.files.length) return
-                    let file = event.target.files[0],
-                        reader = new FileReader()
-                    reader.readAsDataURL(file)
-                    reader.onload = e => callback(e.target.result)
-                },
-            }))
-        })
-    </script>
 </x-organizer-layout>

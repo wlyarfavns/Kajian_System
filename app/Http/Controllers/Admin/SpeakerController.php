@@ -11,7 +11,7 @@ class SpeakerController extends Controller
 {
     public function index()
     {
-        $speakers = Speaker::all();
+        $speakers = Speaker::paginate(10);
         return view('admin.speaker.index', compact('speakers'));
     }
 
@@ -26,6 +26,10 @@ class SpeakerController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Format foto harus berupa jpeg, png, jpg, atau gif.',
+            'photo.max' => 'Ukuran foto maksimal adalah 2MB.',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -54,6 +58,10 @@ class SpeakerController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Format foto harus berupa jpeg, png, jpg, atau gif.',
+            'photo.max' => 'Ukuran foto maksimal adalah 2MB.',
         ]);
 
         if ($request->hasFile('photo')) {

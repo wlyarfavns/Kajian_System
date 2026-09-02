@@ -97,6 +97,12 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($kajians->hasPages())
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $kajians->links() }}
+                </div>
+            @endif
         </div>
 
         <!-- Detail Modal -->
@@ -211,13 +217,13 @@
                                 <input type="text" placeholder="Contoh: Poster kurang jelas..." class="w-full border-gray-300 rounded-lg shadow-sm focus:border-brand-emerald-500 focus:ring-brand-emerald-500 text-sm">
                             </div>
                             <div class="flex gap-3 w-full sm:w-auto">
-                                <form :action="activeKajian.reject_url" method="POST" class="flex-1 sm:flex-none">
+                                <form :action="activeKajian.reject_url" method="POST" class="flex-1 sm:flex-none" data-turbo="false">
                                     @csrf
                                     <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 font-bold rounded-lg hover:bg-red-100 transition text-sm flex items-center justify-center">
                                         <i data-lucide="ban" class="w-4 h-4 mr-2"></i> Tolak
                                     </button>
                                 </form>
-                                <form :action="activeKajian.verify_url" method="POST" class="flex-1 sm:flex-none">
+                                <form :action="activeKajian.verify_url" method="POST" class="flex-1 sm:flex-none" data-turbo="false">
                                     @csrf
                                     <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-brand-emerald-900 text-white font-bold rounded-lg hover:bg-brand-emerald-950 shadow-sm transition text-sm flex items-center justify-center">
                                         <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i> Verifikasi

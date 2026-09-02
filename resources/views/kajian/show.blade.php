@@ -4,12 +4,12 @@
 <style>
     footer { display: none !important; }
 </style>
-<div style="background:var(--parchment); min-height:100vh; padding-bottom:120px;">
+<div style="background:var(--parchment); min-height:100vh; padding-bottom:120px;" class="md:pb-12">
     
-    <!-- Mobile Container Wrapper -->
-    <div style="max-width: 480px; margin: 0 auto; position: relative;">
+    <!-- Container Wrapper -->
+    <div class="max-w-md md:max-w-6xl mx-auto relative md:px-8 md:pt-8 pt-0">
         
-        <div style="padding: 24px 20px;">
+        <div style="padding: 24px 20px;" class="md:px-0 md:pt-0 md:pb-6">
             <a href="{{ url()->previous() !== url()->current() ? url()->previous() : url('/kajian') }}" class="btn btn-outline" style="border-color:var(--line); padding:8px 16px; font-size:13px; background:var(--paper); border-radius: 99px;">
                 <svg style="width:18px; height:18px; margin-right:6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 Kembali
@@ -17,8 +17,8 @@
         </div>
 
         <!-- Poster Section -->
-        <div style="padding: 0 20px;">
-            <div style="position:relative; width:100%; aspect-ratio: 4/5; max-height: 480px; border-radius:32px; overflow:hidden; box-shadow:0 20px 50px rgba(10,43,32,0.2); margin-bottom:32px;">
+        <div style="padding: 0 20px;" class="md:px-0">
+            <div class="relative w-full aspect-[4/5] md:aspect-[21/9] max-h-[480px] md:max-h-[400px] rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(10,43,32,0.2)] mb-8 md:mb-12">
                 @php
                   $bgImage = $kajian->poster ? Storage::url($kajian->poster) : asset('images/about_mosque.jpg');
                 @endphp
@@ -33,13 +33,18 @@
                             {{ $kajian->status_label }}
                         </span>
                     </div>
-                    <h1 style="font-family:'Fraunces',serif; font-size:28px; font-weight:700; color:#fff; line-height:1.25; margin:0;">{{ $kajian->title }}</h1>
+                    <h1 class="text-[28px] md:text-[40px]" style="font-family:'Fraunces',serif; font-weight:700; color:#fff; line-height:1.25; margin:0;">{{ $kajian->title }}</h1>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div style="padding: 0 20px;">
+        <!-- Grid Layout for Desktop -->
+        <div class="hidden md:grid md:grid-cols-12 md:gap-8 lg:gap-12 md:items-start"></div> <!-- Dummy just to force tailwind classes if needed -->
+        <div class="md:grid md:grid-cols-12 md:gap-8 lg:gap-12 md:items-start">
+            
+            <!-- Left Column: Main Content -->
+            <div class="md:col-span-7 lg:col-span-8">
+                <div style="padding: 0 20px;" class="md:px-0">
             
             <!-- Status Alerts (For Admin) -->
             @if(Auth::check() && Auth::user()->role === 'admin')
@@ -89,7 +94,7 @@
             <!-- Detail Grid -->
             <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:32px;">
                 
-                <div style="display:flex; gap:16px;">
+                <div class="flex flex-col md:flex-row gap-4">
                     <!-- Waktu -->
                     <div style="flex:1; background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05);">
                         <svg style="width:22px; height:22px; color:var(--jade-800); margin-bottom:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -120,8 +125,8 @@
                     </div>
                 </div>
 
-                <!-- Biaya -->
-                <div style="background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05); display:flex; align-items:center; justify-content:space-between;">
+                <!-- Biaya (Mobile Only, moved to Sidebar on Desktop) -->
+                <div class="md:hidden" style="background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(10,43,32,0.05); display:flex; align-items:center; justify-content:space-between; margin-bottom:32px;">
                     <div>
                         <span class="eyebrow" style="margin-bottom:4px; font-size:10px;">Biaya Pendaftaran</span>
                         @if($kajian->is_free)
@@ -147,8 +152,13 @@
                     </div>
                     @if(isset($distance))
                     <div style="flex-shrink:0; text-align:right;">
-                        <span style="font-size:16px; font-weight:800; color:var(--jade-700);">{{ number_format($distance, 1) }}</span>
-                        <span style="font-size:12px; font-weight:600; color:var(--ink-soft); display:block;">KM</span>
+                        @if($distance < 1)
+                            <span style="font-size:16px; font-weight:800; color:var(--jade-700);">{{ number_format($distance * 1000, 0) }}</span>
+                            <span style="font-size:12px; font-weight:600; color:var(--ink-soft); display:block;">M</span>
+                        @else
+                            <span style="font-size:16px; font-weight:800; color:var(--jade-700);">{{ number_format($distance, 1) }}</span>
+                            <span style="font-size:12px; font-weight:600; color:var(--ink-soft); display:block;">KM</span>
+                        @endif
                     </div>
                     @endif
                 </div>
@@ -192,45 +202,112 @@
                     <p style="font-size:16px; font-weight:700; color:var(--ink); margin:0;">{{ $kajian->organizer->name }}</p>
                 </div>
             </div>
+        </div> <!-- End md:px-0 -->
+        </div> <!-- End md:col-span-7 -->
+        
+        <!-- Right Column: Sticky Action Card (Desktop Only) -->
+        <div class="hidden md:block md:col-span-5 lg:col-span-4 md:sticky md:top-8">
+            <div style="background:var(--paper); border:1px solid var(--line); border-radius:24px; padding:28px; box-shadow:0 20px 50px rgba(10,43,32,0.05);">
+                <!-- Price Desktop -->
+                <div style="margin-bottom:24px;">
+                    <span style="font-size:13px; font-weight:600; color:var(--ink-soft); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:8px;">Biaya Pendaftaran</span>
+                    @if($kajian->is_free)
+                        <div style="font-size:32px; font-weight:800; color:var(--jade-700); line-height:1;">Gratis <span style="font-size:20px; font-weight:600; color:var(--jade-600);">(Free)</span></div>
+                    @else
+                        <div style="font-size:32px; font-weight:800; color:var(--ink); line-height:1;">Rp {{ number_format($kajian->price, 0, ',', '.') }}</div>
+                    @endif
+                </div>
 
+                <!-- Desktop Actions -->
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <!-- Arahkan & Favorite -->
+                    <div style="display:flex; gap:12px;">
+                        <a href="{{ $kajian->google_maps_url ?: 'https://www.google.com/maps/dir/?api=1&destination=' . $kajian->latitude . ',' . $kajian->longitude }}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--parchment); border:1px solid var(--line); color:var(--jade-900); font-size:14px; font-weight:700; text-decoration:none; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--parchment-deep)';" onmouseout="this.style.background='var(--parchment)';">
+                            <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            Arahkan
+                        </a>
+                        <form action="{{ url('/kajian/'.$kajian->slug.'/favorite') }}" method="POST" style="flex-shrink:0;">
+                            @csrf
+                            <button type="submit" style="width:52px; height:52px; border-radius:18px; background:{{ $isFavorited ? '#FEE2E2' : 'var(--parchment)' }}; border:1px solid {{ $isFavorited ? 'var(--terracotta)' : 'var(--line)' }}; display:flex; align-items:center; justify-content:center; color:{{ $isFavorited ? 'var(--terracotta)' : 'var(--ink)' }}; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='var(--terracotta)'; this.style.borderColor='var(--terracotta)'; this.style.background='#FEE2E2';" onmouseout="this.style.color='{{ $isFavorited ? 'var(--terracotta)' : 'var(--ink)' }}'; this.style.borderColor='{{ $isFavorited ? 'var(--terracotta)' : 'var(--line)' }}'; this.style.background='{{ $isFavorited ? '#FEE2E2' : 'var(--parchment)' }}';">
+                                <svg style="width:22px; height:22px;" fill="{{ $isFavorited ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Hadir -->
+                    @if($isAttending)
+                        <div style="display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--jade-800); color:var(--paper); font-size:14px; font-weight:700; gap:6px;">
+                            <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Anda Telah Terdaftar
+                        </div>
+                        <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="width:100%; display:flex; align-items:center; justify-content:center; height:44px; border-radius:14px; background:transparent; color:var(--terracotta); font-size:13px; font-weight:700; border:1px solid var(--terracotta); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='#FEE2E2';" onmouseout="this.style.background='transparent';">
+                                Batal Hadir
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-solid" style="width:100%; height:52px; border-radius:18px; font-size:14px; justify-content:center; padding:0;">
+                                {{ isset($isCancelled) && $isCancelled ? 'Daftar Kembali' : 'Saya Mau Hadir' }}
+                            </button>
+                        </form>
+                    @endif
+                </div>
+                
+                <!-- Share (Optional) -->
+                <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--line); text-align:center;">
+                     <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link kajian disalin ke clipboard!');" style="background:transparent; border:none; font-size:13px; font-weight:600; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px; cursor:pointer; hover:color:var(--jade-800);">
+                         <svg style="width:16px; height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                         Bagikan Kajian
+                     </button>
+                </div>
+            </div>
         </div>
+
     </div>
 
-    <!-- Floating Action Bar -->
-    <div style="position:fixed; bottom:0; left:0; width:100%; z-index:50; pointer-events:none;">
+    <!-- Floating Action Bar (Mobile Only) -->
+    <div class="md:hidden" style="position:fixed; bottom:0; left:0; width:100%; z-index:50; pointer-events:none;">
         <div style="max-width:480px; margin:0 auto; padding:16px 20px; pointer-events:auto;">
             <div style="background:rgba(244,238,220,0.95); backdrop-filter:blur(14px); border:1px solid var(--line); border-radius:28px; padding:12px; box-shadow:0 -10px 40px rgba(10,43,32,0.1); display:flex; gap:8px;">
                 
-                <form action="{{ url('/kajian/'.$kajian->id.'/favorite') }}" method="POST" style="flex-shrink:0;">
+                <form action="{{ url('/kajian/'.$kajian->slug.'/favorite') }}" method="POST" style="flex-shrink:0;">
                     @csrf
                     <button type="submit" style="width:52px; height:52px; border-radius:18px; background:{{ $isFavorited ? '#FEE2E2' : 'var(--paper)' }}; border:1px solid {{ $isFavorited ? 'var(--terracotta)' : 'var(--line)' }}; display:flex; align-items:center; justify-content:center; color:{{ $isFavorited ? 'var(--terracotta)' : 'var(--ink)' }}; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='var(--terracotta)'; this.style.borderColor='var(--terracotta)'; this.style.background='#FEE2E2';" onmouseout="this.style.color='{{ $isFavorited ? 'var(--terracotta)' : 'var(--ink)' }}'; this.style.borderColor='{{ $isFavorited ? 'var(--terracotta)' : 'var(--line)' }}'; this.style.background='{{ $isFavorited ? '#FEE2E2' : 'var(--paper)' }}';">
                         <svg style="width:22px; height:22px;" fill="{{ $isFavorited ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </button>
                 </form>
                 
-                <a href="https://www.google.com/maps/dir/?api=1&destination={{ $kajian->latitude }},{{ $kajian->longitude }}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--paper); border:1px solid var(--line); color:var(--jade-900); font-size:14px; font-weight:700; text-decoration:none; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--parchment-deep)';" onmouseout="this.style.background='var(--paper)';">
+                <a href="{{ $kajian->google_maps_url ?: 'https://www.google.com/maps/dir/?api=1&destination=' . $kajian->latitude . ',' . $kajian->longitude }}" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--paper); border:1px solid var(--line); color:var(--jade-900); font-size:14px; font-weight:700; text-decoration:none; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--parchment-deep)';" onmouseout="this.style.background='var(--paper)';">
                     <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                     Arahkan
                 </a>
                 
                 @if($isAttending)
-                    <form action="{{ url('/kajian/'.$kajian->id.'/join') }}" method="POST" style="flex:1.5;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="width:100%; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--jade-800); color:var(--paper); font-size:14px; font-weight:700; gap:6px; border:none; cursor:pointer;" title="Klik untuk membatalkan">
-                            <svg style="width:18px; height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            Akan Hadir
-                        </button>
-                    </form>
+                    <div style="flex:1.5; display:flex; gap:6px;">
+                        <div style="flex:1.2; display:flex; align-items:center; justify-content:center; height:52px; border-radius:18px; background:var(--jade-800); color:var(--paper); font-size:13px; font-weight:700; gap:4px;">
+                            <svg style="width:16px; height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Terdaftar
+                        </div>
+                        <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" style="flex:1;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="width:100%; height:52px; display:flex; align-items:center; justify-content:center; border-radius:18px; background:#FEE2E2; color:var(--terracotta); border:1px solid var(--terracotta); font-size:13px; font-weight:700; cursor:pointer;">
+                                Batal
+                            </button>
+                        </form>
+                    </div>
                 @else
-                    <form action="{{ url('/kajian/'.$kajian->id.'/join') }}" method="POST" style="flex:1.5;">
+                    <form action="{{ url('/kajian/'.$kajian->slug.'/join') }}" method="POST" style="flex:1.5;">
                         @csrf
                         <button type="submit" class="btn btn-solid" style="width:100%; height:52px; border-radius:18px; font-size:14px; justify-content:center; padding:0;">
-                            Saya Mau Hadir
+                            {{ isset($isCancelled) && $isCancelled ? 'Daftar Kembali' : 'Saya Mau Hadir' }}
                         </button>
                     </form>
                 @endif
-
             </div>
         </div>
     </div>

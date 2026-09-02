@@ -16,7 +16,8 @@ class DashboardController extends Controller
         $totalMosque = \App\Models\Mosque::count();
         
         $recentKajians = \App\Models\Kajian::with(['mosque', 'category'])->withCount('attendees')->latest()->take(5)->get();
+        $pendingOrganizers = \App\Models\Organizer::where('is_verified', false)->latest()->take(4)->get();
 
-        return view('admin.dashboard', compact('totalKajian', 'kajianHariIni', 'totalUser', 'totalOrganizer', 'totalMosque', 'recentKajians'));
+        return view('admin.dashboard', compact('totalKajian', 'kajianHariIni', 'totalUser', 'totalOrganizer', 'totalMosque', 'recentKajians', 'pendingOrganizers'));
     }
 }

@@ -57,16 +57,31 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(function () {
-    Route::get('/', [OrganizerDashboardController::class, 'index']);
-    
-    Route::resource('kajian', OrganizerKajianController::class)->names('organizer.kajian');
-    Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index']);
-    
-    Route::resource('mosque', OrganizerMosqueController::class)->names('organizer.mosque');
-    
-    Route::get('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'edit'])->name('organizer.profile.edit');
-    Route::put('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'update'])->name('organizer.profile.update');
-    Route::get('/peserta', [\App\Http\Controllers\Organizer\ParticipantController::class, 'globalIndex'])->name('organizer.peserta.global');
+    // Unverified Page
+    Route::get('/pending', function () {
+        if (auth()->user()->organizer?->is_verified) {
+            return redirect('/organizer');
+        }
+        return view('organizer.unverified');
+    })->name('organizer.pending');
+
+    // Verified Organizer Routes
+    Route::middleware([\App\Http\Middleware\EnsureOrganizerIsVerified::class])->group(function () {
+        Route::get('/', [OrganizerDashboardController::class, 'index']);
+        
+        Route::resource('kajian', OrganizerKajianController::class)->names('organizer.kajian');
+        Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index']);
+        
+        Route::resource('mosque', OrganizerMosqueController::class)->only(['index'])->names('organizer.mosque');
+        
+        // Notifications
+        Route::post('/notifications/{id}/read', [\App\Http\Controllers\Organizer\NotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notifications/read-all', [\App\Http\Controllers\Organizer\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+
+        Route::get('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'edit'])->name('organizer.profile.edit');
+        Route::put('/profile', [App\Http\Controllers\Organizer\ProfileController::class, 'update'])->name('organizer.profile.update');
+        Route::get('/peserta', [\App\Http\Controllers\Organizer\ParticipantController::class, 'globalIndex'])->name('organizer.peserta.global');
+    });
 });
 
 /*
@@ -89,5 +104,13 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     
     Route::resource('user', AdminUserController::class)->names('admin.user');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Socialite / Google Auth
+|--------------------------------------------------------------------------
+*/
+Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback']);
 
 require __DIR__.'/auth.php';

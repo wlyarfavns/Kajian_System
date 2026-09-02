@@ -34,13 +34,37 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:user,organizer'],
+            // Organizer specific fields
+            'phone' => ['nullable', 'required_if:role,organizer', 'string', 'max:20'],
+            'address' => ['nullable', 'required_if:role,organizer', 'string'],
+            'description' => ['nullable', 'string'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
         ]);
+
+        if ($request->role === 'organizer') {
+            $logoPath = null;
+            if ($request->hasFile('logo')) {
+                $logoPath = $request->file('logo')->store('organizers', 'public');
+            }
+
+            \App\Models\Organizer::create([
+                'user_id' => $user->id,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'description' => $request->description,
+                'logo' => $logoPath,
+                'is_verified' => false,
+            ]);
+        }
 
         event(new Registered($user));
 

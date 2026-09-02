@@ -8,10 +8,17 @@
 
     <title>Lupa Sandi - KajianKu</title>
 
+    <meta name="view-transition" content="same-origin" />
+    <meta name="layout" content="landing" data-turbo-track="reload">
+
+    <!-- Scripts & Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+</head>
+<body class="auth-body">
     <style>
         :root {
             --parchment: #F4EEDC;
@@ -28,14 +35,12 @@
             --line: rgba(21,42,32,0.14);
         }
         * { box-sizing: border-box; }
-        html, body {
+        body.auth-body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-        }
-        body {
             font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
             color: var(--ink);
             background: var(--jade-950);
@@ -47,7 +52,7 @@
             text-decoration: none;
         }
         
-        .hero {
+        .auth-hero {
             position: relative;
             height: 100vh;
             display: flex;
@@ -56,7 +61,7 @@
             padding: 20px 0;
             background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%);
         }
-        .hero-lattice {
+        .auth-hero-lattice {
             position: absolute;
             inset: 0;
             opacity: 0.16;
@@ -121,7 +126,7 @@
             pointer-events: none;
         }
 
-        .btn-solid {
+        .auth-btn-solid {
             background: var(--jade-900);
             color: var(--parchment);
             border: none;
@@ -137,14 +142,14 @@
             justify-content: center;
             box-shadow: 0 14px 30px rgba(10,43,32,0.28);
         }
-        .btn-solid:hover { background: var(--jade-800); transform: translateY(-2px); }
+        .auth-btn-solid:hover { background: var(--jade-800); transform: translateY(-2px); }
 
     </style>
 </head>
-<body>
+<body class="auth-body">
 
-<header class="hero">
-  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice">
+<header class="auth-hero">
+  <svg class="auth-hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice">
     <defs>
       <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
         <g stroke="#E7C77E" stroke-width="1" fill="none">
@@ -194,7 +199,7 @@
                     <x-input-error :messages="$errors->get('email')" style="margin-top:6px; color:#dc2626; font-size:12px;" />
                 </div>
 
-                <button type="submit" class="btn-solid" style="margin-top: 8px;">Kirim Tautan Reset</button>
+                <button type="submit" class="auth-btn-solid" style="margin-top: 8px;">Kirim Tautan Reset</button>
                 
             </form>
 

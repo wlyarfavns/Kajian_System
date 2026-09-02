@@ -8,11 +8,18 @@
 
     <title>Daftar - KajianKu</title>
 
+    <meta name="view-transition" content="same-origin" />
+    <meta name="layout" content="landing" data-turbo-track="reload">
+
+    <!-- Scripts & Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+</head>
+<body class="auth-body">
     <style>
         :root {
             --parchment: #F4EEDC;
@@ -31,14 +38,11 @@
         * {
             box-sizing: border-box;
         }
-        html, body {
+        body.auth-body {
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        body {
+            min-height: 100vh;
             font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
             color: var(--ink);
             background: var(--jade-950);
@@ -70,33 +74,33 @@
         .btn:hover {
             transform: translateY(-2px);
         }
-        .btn-solid {
+        .auth-btn-solid {
             background: var(--jade-900);
             color: var(--parchment);
             box-shadow: 0 14px 30px rgba(10,43,32,0.28);
         }
-        .btn-solid:hover {
+        .auth-btn-solid:hover {
             background: var(--jade-800);
         }
-        .btn-outline {
+        .auth-btn-outline {
             border-color: var(--gold);
             color: var(--ink);
             background: transparent;
         }
-        .btn-outline:hover {
+        .auth-btn-outline:hover {
             background: var(--gold-pale);
         }
 
-        .hero {
+        .auth-hero {
             position: relative;
             background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, var(--jade-950) 0%, var(--jade-900) 55%, var(--jade-800) 100%);
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px 0;
         }
-        .hero-lattice {
+        .auth-hero-lattice {
             position: absolute;
             inset: 0;
             opacity: 0.16;
@@ -127,9 +131,8 @@
             position: relative;
             z-index: 10;
             border: 1px solid rgba(231,199,126,0.3);
-            max-height: 90vh;
-            overflow-y: auto;
             width: 100%;
+            margin: 40px 0;
         }
         
         @media (max-width: 576px) {
@@ -142,11 +145,9 @@
             }
         }
     </style>
-</head>
-<body>
 
-<header class="hero" style="position: relative; height: 100vh; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 0; background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%); width: 100%;">
-  <svg class="hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; opacity: 0.16; pointer-events: none; width: 100%; height: 100%;">
+<header class="auth-hero" style="position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px 0; background: radial-gradient(900px 500px at 82% -10%, rgba(184,134,59,0.20), transparent 60%), linear-gradient(180deg, #0A2B20 0%, #0C3B2A 55%, #0F5137 100%); width: 100%;">
+  <svg class="auth-hero-lattice" viewBox="0 0 1180 700" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; opacity: 0.16; pointer-events: none; width: 100%; height: 100%;">
     <defs>
       <pattern id="star8" width="86" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
         <g stroke="#E7C77E" stroke-width="1" fill="none">
@@ -160,7 +161,7 @@
   <div class="auth-wrapper" style="width: 100%; max-width: 520px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10;">
     
     <!-- Bagian Form Register -->
-    <div class="auth-card" style="background: #F4EEDC !important; border-radius: 32px; padding: 36px 48px; box-shadow: 0 40px 80px rgba(6,26,19,0.4); position: relative; z-index: 10; border: 1px solid rgba(231,199,126,0.3); max-height: 90vh; overflow-y: auto; width: 100%;">
+    <div class="auth-card" style="background: #F4EEDC !important; border-radius: 32px; padding: 36px 48px; box-shadow: 0 40px 80px rgba(6,26,19,0.4); position: relative; z-index: 10; border: 1px solid rgba(231,199,126,0.3); width: 100%; margin: 40px 0;">
         
         <div style="text-align: left; margin-bottom: 12px;">
             <a href="{{ url('/') }}" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:var(--jade-900); text-transform:uppercase; letter-spacing:1px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateX(-5px)'" onmouseout="this.style.transform='translateX(0)'">
@@ -181,18 +182,40 @@
             <p style="color:var(--ink-soft); font-size:14px; margin:0;">Mari bergabung dan temukan majelis ilmu di sekitarmu</p>
         </div>
 
-        <form method="POST" action="{{ route('register') }}" style="display:flex; flex-direction:column; gap:16px;">
+        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:16px;" x-data="{ role: '{{ old('role', 'user') }}', hoverUser: false, hoverOrg: false, step: 1 }">
             @csrf
 
-            <!-- Name -->
+            <!-- STEP 1 -->
+            <div x-show="step === 1" style="display:flex; flex-direction:column; gap:16px;">
+                
+                <!-- Role Selection -->
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom: 4px;">
+                    <label style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Mendaftar Sebagai</label>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <label style="cursor:pointer; position:relative; display:block;" @mouseenter="hoverUser = true" @mouseleave="hoverUser = false">
+                            <input type="radio" name="role" value="user" x-model="role" required style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">
+                            <div :style="(role === 'user' || hoverUser) ? 'display:flex; align-items:center; justify-content:center; width:100%; border-radius:999px; padding:14px 12px; text-align:center; transition:all 0.2s; border: 1px solid var(--jade-900); background-color: rgba(12, 59, 42, 0.05); box-shadow: 0 0 0 1px var(--jade-900); height:100%;' : 'display:flex; align-items:center; justify-content:center; width:100%; border-radius:999px; padding:14px 12px; text-align:center; transition:all 0.2s; border: 1px solid var(--line); background-color: var(--paper); height:100%;'">
+                                <span style="font-size:14px; font-weight:700; color:var(--jade-950);">Jamaah / User</span>
+                            </div>
+                        </label>
+                        <label style="cursor:pointer; position:relative; display:block;" @mouseenter="hoverOrg = true" @mouseleave="hoverOrg = false">
+                            <input type="radio" name="role" value="organizer" x-model="role" style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">
+                            <div :style="(role === 'organizer' || hoverOrg) ? 'display:flex; align-items:center; justify-content:center; width:100%; border-radius:999px; padding:14px 12px; text-align:center; transition:all 0.2s; border: 1px solid var(--jade-900); background-color: rgba(12, 59, 42, 0.05); box-shadow: 0 0 0 1px var(--jade-900); height:100%;' : 'display:flex; align-items:center; justify-content:center; width:100%; border-radius:999px; padding:14px 12px; text-align:center; transition:all 0.2s; border: 1px solid var(--line); background-color: var(--paper); height:100%;'">
+                                <span style="font-size:14px; font-weight:700; color:var(--jade-950);">Penyelenggara</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Name -->
             <div style="display:flex; flex-direction:column; gap:6px;">
-                <label for="name" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Nama Lengkap</label>
+                <label for="name" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;" x-text="role === 'organizer' ? 'Nama Lembaga/Organisasi' : 'Nama Lengkap'"></label>
                 <div style="position:relative;">
                     <svg style="position:absolute; top:50%; left:16px; transform:translateY(-50%); width:18px; height:18px; color:var(--ink-soft); pointer-events:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="Fulan bin Fulan" class="login-input" style="width:100%; padding:12px 18px 12px 42px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="Lembaga Fulan" class="login-input" style="width:100%; padding:12px 18px 12px 42px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
                     <x-input-error :messages="$errors->get('name')" style="margin-top:4px; color:#dc2626; font-size:12px;" />
                 </div>
             </div>
@@ -249,10 +272,89 @@
             </div>
 
             <div style="margin-top:8px;">
-                <button type="submit" class="btn btn-solid" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:14px; background: var(--jade-900); color: var(--parchment); border: none; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">
-                    Daftar Sekarang
-                </button>
+                <template x-if="role === 'user'">
+                    <button type="submit" class="btn auth-btn-solid" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:14px; background: var(--jade-900); color: var(--parchment); border: none; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">
+                        Daftar Sekarang
+                    </button>
+                </template>
+                <template x-if="role === 'organizer'">
+                    <button type="button" 
+                            @click="if(document.getElementById('name').reportValidity() && document.getElementById('email').reportValidity() && document.getElementById('password').reportValidity() && document.getElementById('password_confirmation').reportValidity()) { step = 2; }" 
+                            class="btn auth-btn-solid" style="width:100%; justify-content:center; padding:14px; font-size:15px; border-radius:14px; background: var(--jade-900); color: var(--parchment); border: none; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">
+                        Lanjutkan <svg style="width:16px; height:16px; margin-left:6px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </template>
             </div>
+            
+            </div> <!-- End of Step 1 -->
+
+            <!-- STEP 2 (Organizer Specific Fields) -->
+            <template x-if="role === 'organizer'">
+                <div x-show="step === 2" style="display:none;" :style="step === 2 ? 'display:flex; flex-direction:column; gap:16px;' : 'display:none;'">
+                    
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:-4px;">
+                        <div>
+                            <h2 style="font-size:18px; font-weight:800; color:var(--jade-950); margin:0;">Profil Lembaga</h2>
+                            <p style="font-size:13px; color:var(--ink-soft); margin:0;">Lengkapi data agar mudah ditemukan</p>
+                        </div>
+                        <div style="background:var(--jade-50); border:1px solid rgba(12,59,42,0.1); padding:4px 12px; border-radius:99px;">
+                            <span style="font-size:11px; font-weight:700; color:var(--jade-900); letter-spacing:0.5px;">LANGKAH 2/2</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:16px; padding:20px; background:rgba(184,134,59,0.04); border-radius:20px; border:1px dashed rgba(184,134,59,0.25);">
+                    
+                    <!-- Phone -->
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label for="phone" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Nomor Telepon (WhatsApp) <span style="color:#dc2626;">*</span></label>
+                        <div style="position:relative;">
+                            <svg style="position:absolute; top:50%; left:16px; transform:translateY(-50%); width:18px; height:18px; color:var(--ink-soft); pointer-events:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <input id="phone" type="text" name="phone" value="{{ old('phone') }}" :required="role === 'organizer'" placeholder="0812xxxx" class="login-input" style="width:100%; padding:12px 18px 12px 42px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
+                        </div>
+                        <x-input-error :messages="$errors->get('phone')" style="margin-top:4px; color:#dc2626; font-size:12px;" />
+                    </div>
+
+                    <!-- Address -->
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label for="address" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Alamat Lengkap <span style="color:#dc2626;">*</span></label>
+                        <div style="position:relative;">
+                            <textarea id="address" name="address" :required="role === 'organizer'" rows="2" placeholder="Alamat sekretariat atau masjid" class="login-input" style="width:100%; padding:12px 18px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">{{ old('address') }}</textarea>
+                        </div>
+                        <x-input-error :messages="$errors->get('address')" style="margin-top:4px; color:#dc2626; font-size:12px;" />
+                    </div>
+
+                    <!-- Description -->
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label for="description" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Deskripsi Lembaga (Opsional)</label>
+                        <div style="position:relative;">
+                            <textarea id="description" name="description" rows="2" placeholder="Ceritakan singkat tentang yayasan atau DKM Anda" class="login-input" style="width:100%; padding:12px 18px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">{{ old('description') }}</textarea>
+                        </div>
+                        <x-input-error :messages="$errors->get('description')" style="margin-top:4px; color:#dc2626; font-size:12px;" />
+                    </div>
+
+                    <!-- Logo -->
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <label for="logo" style="font-size:13px; font-weight:700; color:var(--jade-950); text-align:left;">Logo Yayasan / Masjid (Opsional)</label>
+                        <div style="position:relative;">
+                            <input id="logo" type="file" name="logo" accept="image/*" class="login-input" style="width:100%; padding:10px 14px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
+                        </div>
+                        <p style="font-size:11px; color:var(--ink-soft); margin:2px 0 0 0;">Format JPEG, PNG, JPG, maksimal 2MB.</p>
+                        <x-input-error :messages="$errors->get('logo')" style="margin-top:4px; color:#dc2626; font-size:12px;" />
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:12px;">
+                    <button type="button" @click="step = 1" style="flex:1; justify-content:center; padding:14px; font-size:15px; border-radius:14px; border: 2px solid rgba(12,59,42,0.1); background: transparent; color: var(--jade-900); font-weight: 700; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='rgba(12,59,42,0.05)'; this.style.borderColor='var(--jade-900)'" onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='rgba(12,59,42,0.1)'">
+                        Kembali
+                    </button>
+                    <button type="submit" class="btn auth-btn-solid" style="flex:2; justify-content:center; padding:14px; font-size:15px; border-radius:14px; background: var(--jade-900); color: var(--parchment); border: none; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; box-shadow: 0 14px 30px rgba(10,43,32,0.28);">
+                        Selesaikan Pendaftaran
+                    </button>
+                </div>
+                </div>
+            </template>
         </form>
 
         <div style="margin-top:20px; text-align:center; font-size:13px; font-weight:500; color:var(--ink-soft);">

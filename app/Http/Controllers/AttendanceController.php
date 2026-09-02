@@ -12,12 +12,26 @@ class AttendanceController extends Controller
     /**
      * Tampilkan daftar kajian yang akan/sudah dihadiri user.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = KajianAttendee::with(['kajian.organizer', 'kajian.mosque', 'kajian.category', 'kajian.speaker'])
-            ->where('user_id', Auth::id())
-            ->latest()
-            ->paginate(10);
+        $query = KajianAttendee::with(['kajian.organizer', 'kajian.mosque', 'kajian.category', 'kajian.speaker'])
+            ->where('user_id', Auth::id());
+
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->whereHas('kajian', function ($subQ) use ($q) {
+                $subQ->where('title', 'like', "%{$q}%")
+                     ->orWhere('description', 'like', "%{$q}%")
+                     ->orWhereHas('speaker', function ($spQ) use ($q) {
+                         $spQ->where('name', 'like', "%{$q}%");
+                     })
+                     ->orWhereHas('mosque', function ($mqQ) use ($q) {
+                         $mqQ->where('name', 'like', "%{$q}%");
+                     });
+            });
+        }
+
+        $attendances = $query->latest()->paginate(10)->appends($request->query());
 
         return view('user.my-kajian', compact('attendances'));
     }
@@ -27,12 +41,12 @@ class AttendanceController extends Controller
      */
     public function store(Kajian $kajian)
     {
-        // Cek jika sudah terdaftar
-        $exists = KajianAttendee::where('user_id', Auth::id())
+        $attendee = KajianAttendee::where('user_id', Auth::id())
             ->where('kajian_id', $kajian->id)
-            ->exists();
+            ->first();
 
-        if ($exists) {
+        // Cek jika sudah terdaftar dan belum dibatalkan
+        if ($attendee && $attendee->status !== 'cancelled') {
             return back()->with('status', 'Anda sudah terdaftar di kajian ini.');
         }
 
@@ -47,11 +61,20 @@ class AttendanceController extends Controller
             }
         }
 
-        KajianAttendee::create([
-            'user_id' => Auth::id(),
-            'kajian_id' => $kajian->id,
-            'status' => 'registered', // registered | attended | cancelled
-        ]);
+        if ($attendee && $attendee->status === 'cancelled') {
+            $attendee->update(['status' => 'registered']);
+        } else {
+            $attendee = KajianAttendee::create([
+                'user_id' => Auth::id(),
+                'kajian_id' => $kajian->id,
+                'status' => 'registered', // registered | attended | cancelled
+            ]);
+        }
+
+        // Notify organizer
+        if ($kajian->organizer && $kajian->organizer->user) {
+            $kajian->organizer->user->notify(new \App\Notifications\UserRegisteredToKajian($kajian, Auth::user()));
+        }
 
         return back()->with('status', 'Berhasil mendaftar! Anda akan menghadiri kajian ini.');
     }
