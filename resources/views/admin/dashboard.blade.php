@@ -73,7 +73,7 @@
             <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 relative" x-data="chartData()" x-init="initChart()">
                 <div class="flex items-center justify-between mb-8">
                     <h3 class="text-lg font-bold text-gray-900">Pertumbuhan Pendaftar Kajian</h3>
-                    <select x-model="chartType" @change="updateChart()" class="px-3 py-1.5 pr-8 border border-gray-200 rounded-lg text-sm text-gray-600 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-white">
+                    <select x-model="chartType" @change="updateChart()" class="px-3 py-1.5 pr-10 w-32 border border-gray-200 rounded-lg text-sm text-gray-600 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-white">
                         <option value="harian">Harian</option>
                         <option value="mingguan">Mingguan</option>
                         <option value="bulanan">Bulanan</option>
