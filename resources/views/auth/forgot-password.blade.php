@@ -160,6 +160,13 @@
             
             <x-auth-session-status style="margin-bottom: 16px; color: var(--jade-800); font-weight: 600; font-size: 14px; text-align: center;" :status="session('status')" />
 
+            @if (session('reset_link'))
+                <div style="background: #eef2ff; border: 1px solid #c7d2fe; color: #4338ca; padding: 12px; border-radius: 12px; margin-bottom: 16px; text-align: left; font-size: 13px;">
+                    <strong>[Mode Development]</strong> Link reset sandi Anda telah dibuat (karena SMTP menggunakan log):<br>
+                    <a href="{{ session('reset_link') }}" style="color: #4f46e5; text-decoration: underline; font-weight: bold; word-break: break-all; display: inline-block; margin-top: 4px;">{{ session('reset_link') }}</a>
+                </div>
+            @endif
+
             <div style="text-align: left; margin-bottom: 16px;">
                 <a href="{{ route('login') }}" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:var(--jade-900); text-transform:uppercase; letter-spacing:1px; text-decoration:none;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
