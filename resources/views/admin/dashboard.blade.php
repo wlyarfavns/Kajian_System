@@ -312,6 +312,10 @@
                                     <a href="{{ $mosque->google_maps_url }}" target="_blank" class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">
                                         <i data-lucide="map" class="w-4 h-4 mr-1.5"></i> Buka Maps
                                     </a>
+                                @elseif($mosque->latitude && $mosque->longitude)
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $mosque->latitude }},{{ $mosque->longitude }}" target="_blank" class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">
+                                        <i data-lucide="map" class="w-4 h-4 mr-1.5"></i> Buka Maps
+                                    </a>
                                 @else
                                     <span class="text-gray-400 text-xs">-</span>
                                 @endif
