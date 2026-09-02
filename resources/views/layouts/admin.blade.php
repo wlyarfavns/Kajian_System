@@ -141,7 +141,6 @@
                 <!-- Location / Center Dropdown (Like Masjidhero) -->
                 <div class="hidden md:flex items-center bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-50">
                     <span>Admin Pusat KajianKu</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 ml-2 text-gray-400"></i>
                 </div>
             </div>
             
