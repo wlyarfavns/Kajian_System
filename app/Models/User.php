@@ -39,6 +39,21 @@ class User extends Authenticatable
     {
         return $this->hasMany(KajianAttendee::class);
     }
+    public function kajian()
+    {
+        return $this->hasMany(Kajian::class, 'organizer_id');
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPassword($token));
+    }
     public function favorites(): HasMany
     {
         return $this->hasMany(Favorite::class);

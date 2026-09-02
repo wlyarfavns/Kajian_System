@@ -160,7 +160,7 @@
             
             <x-auth-session-status style="margin-bottom: 16px; color: var(--jade-800); font-weight: 600; font-size: 14px; text-align: center;" :status="session('status')" />
 
-            @if (session('reset_link'))
+            @if (session('reset_link') && env('MAIL_MAILER') === 'log')
                 <div style="background: #eef2ff; border: 1px solid #c7d2fe; color: #4338ca; padding: 12px; border-radius: 12px; margin-bottom: 16px; text-align: left; font-size: 13px;">
                     <strong>[Mode Development]</strong> Link reset sandi Anda telah dibuat (karena SMTP menggunakan log):<br>
                     <a href="{{ session('reset_link') }}" style="color: #4f46e5; text-decoration: underline; font-weight: bold; word-break: break-all; display: inline-block; margin-top: 4px;">{{ session('reset_link') }}</a>
