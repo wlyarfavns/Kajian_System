@@ -9,7 +9,7 @@ class OrganizerController extends Controller
 {
     public function index()
     {
-        $organizers = \App\Models\Organizer::with('user')->get();
+        $organizers = \App\Models\Organizer::with('user')->latest()->paginate(10);
         return view('admin.organizer.index', compact('organizers'));
     }
 

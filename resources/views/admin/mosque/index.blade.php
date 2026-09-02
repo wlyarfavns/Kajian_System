@@ -34,7 +34,11 @@
                             <td class="px-6 py-4 text-sm text-gray-500">{{ $mosque->organizer->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($mosque->address, 50) }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                @if($mosque->google_maps_url)
+                                @if($mosque->latitude && $mosque->longitude)
+                                    <a href="https://www.google.com/maps?q={{ $mosque->latitude }},{{ $mosque->longitude }}" target="_blank" class="inline-flex items-center text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors">
+                                        <i data-lucide="map-pin" class="w-3 h-3 mr-1.5"></i> Buka Maps
+                                    </a>
+                                @elseif($mosque->google_maps_url)
                                     <a href="{{ $mosque->google_maps_url }}" target="_blank" class="inline-flex items-center text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100 transition-colors">
                                         <i data-lucide="map-pin" class="w-3 h-3 mr-1.5"></i> Buka Maps
                                     </a>
@@ -61,6 +65,12 @@
                 </tbody>
             </table>
         </div>
+
+        @if($mosques->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $mosques->links() }}
+            </div>
+        @endif
 
         <!-- Delete Modal -->
         <div x-show="deleteModalOpen" class="relative z-50" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">

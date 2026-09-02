@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Organizer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Mosque;
+use Illuminate\Support\Facades\Auth;
 
 class MosqueController extends Controller
 {
     public function index()
     {
-        $mosques = \App\Models\Mosque::where('organizer_id', auth()->user()->organizer->id)->simplePaginate(10);
+        $mosques = Mosque::where('organizer_id', Auth::user()->organizer->id)->latest()->paginate(3);
         return view('organizer.mosque.index', compact('mosques'));
     }
 

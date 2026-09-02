@@ -51,4 +51,20 @@ class Mosque extends Model
     {
         return $this->hasMany(Kajian::class);
     }
+
+    /**
+     * Mengambil daftar fasilitas gabungan dari semua kajian yang ada di masjid ini.
+     */
+    public function getFacilitiesAttribute()
+    {
+        if ($this->relationLoaded('kajians')) {
+            $allFacilities = $this->kajians->pluck('facilities')->filter()->map(function($f) {
+                $decoded = is_string($f) ? json_decode($f, true) : $f;
+                return is_array($decoded) ? $decoded : [];
+            })->flatten()->unique()->filter()->values()->toArray();
+            
+            return count($allFacilities) > 0 ? implode(', ', $allFacilities) : null;
+        }
+        return null;
+    }
 }

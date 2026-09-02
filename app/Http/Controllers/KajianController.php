@@ -13,14 +13,16 @@ class KajianController extends Controller
     {
         $query = Kajian::query()->where('status', 'published')->with(['organizer', 'mosque', 'speaker', 'category']);
 
-        // Pastikan hanya yang masih aktif/upcoming
-        $query->where(function($q) {
-            $q->where('start_at', '>=', now())
-              ->orWhere(function($subQ) {
-                  $subQ->where('start_at', '<=', now())
-                       ->where('end_at', '>=', now());
-              });
-        });
+        // Jika tidak ada filter tanggal spesifik, pastikan hanya yang masih aktif/upcoming
+        if (!$request->filled('date') && !$request->filled('month')) {
+            $query->where(function($q) {
+                $q->where('start_at', '>=', now())
+                  ->orWhere(function($subQ) {
+                      $subQ->where('start_at', '<=', now())
+                           ->where('end_at', '>=', now());
+                  });
+            });
+        }
 
         // Filter: Category
         if ($request->filled('category')) {
@@ -47,7 +49,12 @@ class KajianController extends Controller
 
         // Filter: Audience
         if ($request->filled('audience')) {
-            $query->where('audience', $request->audience);
+            if (in_array($request->audience, ['ikhwan', 'akhwat'])) {
+                // Jika filter ikhwan/akhwat, tampilkan juga yang umum (karena umum berlaku untuk keduanya)
+                $query->whereIn('audience', [$request->audience, 'umum']);
+            } else {
+                $query->where('audience', $request->audience);
+            }
         }
 
         // Filter: Keyword (q)

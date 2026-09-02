@@ -9,13 +9,14 @@ use App\Models\Mosque;
 use App\Models\Speaker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class KajianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $organizerId = auth()->user()->organizer->id;
-        $kajians = Kajian::where('organizer_id', $organizerId)->latest()->get();
+        $kajians = Kajian::where('organizer_id', $organizerId)->latest()->paginate(3);
         return view('organizer.kajian.index', compact('kajians'));
     }
 
@@ -23,7 +24,7 @@ class KajianController extends Controller
     {
         $organizerId = auth()->user()->organizer->id;
         $categories = Category::all();
-        $mosques = Mosque::where('organizer_id', $organizerId)->get();
+        $mosques = Mosque::all();
         $speakers = Speaker::all();
         return view('organizer.kajian.create', compact('categories', 'mosques', 'speakers'));
     }
@@ -32,7 +33,7 @@ class KajianController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'mosque_id' => 'required|exists:mosques,id',
+            'mosque_name' => 'required|string',
             'speaker_id' => 'required|exists:speakers,id',
             'category_id' => 'required|exists:categories,id',
             'tanggal' => 'required|date',
@@ -41,6 +42,7 @@ class KajianController extends Controller
             'address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'google_maps_url' => 'nullable|url|max:500',
             'audience' => 'required|in:umum,ikhwan,akhwat',
             'description' => 'nullable|string',
             'quota' => 'nullable|integer|min:1',
@@ -53,19 +55,31 @@ class KajianController extends Controller
 
         $organizerId = auth()->user()->organizer->id;
 
+        $mosque = Mosque::firstOrCreate(
+            ['name' => $request->mosque_name],
+            [
+                'address' => $request->address,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'organizer_id' => $organizerId
+            ]
+        );
+
         $isFree = $request->boolean('is_free');
         
         $data = array_merge($validated, [
             'organizer_id' => $organizerId,
+            'mosque_id' => $mosque->id,
             'is_family_friendly' => $request->has('is_family_friendly'),
             'is_free' => $isFree,
             'price' => $isFree ? 0 : ($request->price ?? 0),
             'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
             'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
+            'google_maps_url' => $request->google_maps_url,
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
         ]);
         
-        unset($data['tanggal'], $data['start_time'], $data['end_time']);
+        unset($data['tanggal'], $data['start_time'], $data['end_time'], $data['mosque_name']);
 
         if ($request->hasFile('poster')) {
             $data['poster'] = $request->file('poster')->store('posters', 'public');
@@ -93,7 +107,7 @@ class KajianController extends Controller
         if ($kajian->organizer_id !== $organizerId) abort(403);
 
         $categories = Category::all();
-        $mosques = Mosque::where('organizer_id', $organizerId)->get();
+        $mosques = Mosque::all();
         $speakers = Speaker::all();
         return view('organizer.kajian.edit', compact('kajian', 'categories', 'mosques', 'speakers'));
     }
@@ -104,7 +118,7 @@ class KajianController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'mosque_id' => 'required|exists:mosques,id',
+            'mosque_name' => 'required|string',
             'speaker_id' => 'required|exists:speakers,id',
             'category_id' => 'required|exists:categories,id',
             'tanggal' => 'required|date',
@@ -113,6 +127,7 @@ class KajianController extends Controller
             'address' => 'required|string',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'google_maps_url' => 'nullable|url|max:500',
             'audience' => 'required|in:umum,ikhwan,akhwat',
             'description' => 'nullable|string',
             'quota' => 'nullable|integer|min:1',
@@ -123,18 +138,33 @@ class KajianController extends Controller
             'facilities.*' => 'string'
         ]);
 
+        $organizerId = auth()->user()->organizer->id;
+
+        $mosque = Mosque::firstOrCreate(
+            ['name' => $request->mosque_name],
+            [
+                'address' => $request->address,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'google_maps_url' => $request->google_maps_url,
+                'organizer_id' => $organizerId
+            ]
+        );
+
         $isFree = $request->boolean('is_free');
 
         $data = array_merge($validated, [
+            'mosque_id' => $mosque->id,
             'is_family_friendly' => $request->has('is_family_friendly'),
             'is_free' => $isFree,
             'price' => $isFree ? 0 : ($request->price ?? 0),
             'start_at' => $request->tanggal . ' ' . $request->start_time . ':00',
             'end_at' => $request->tanggal . ' ' . $request->end_time . ':00',
+            'google_maps_url' => $request->google_maps_url,
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
         ]);
         
-        unset($data['tanggal'], $data['start_time'], $data['end_time']);
+        unset($data['tanggal'], $data['start_time'], $data['end_time'], $data['mosque_name']);
 
         if ($request->hasFile('poster')) {
             // Delete old poster if exists

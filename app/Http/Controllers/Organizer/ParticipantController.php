@@ -18,7 +18,7 @@ class ParticipantController extends Controller
         $participants = \App\Models\KajianAttendee::with('user')
             ->where('kajian_id', $kajian->id)
             ->latest()
-            ->simplePaginate(15);
+            ->paginate(3);
 
         return view('organizer.participants', compact('kajian', 'participants'));
     }
@@ -33,7 +33,7 @@ class ParticipantController extends Controller
                 $query->where('organizer_id', $organizerId);
             })
             ->latest()
-            ->simplePaginate(15);
+            ->paginate(3);
 
         return view('organizer.participants_global', compact('participants'));
     }

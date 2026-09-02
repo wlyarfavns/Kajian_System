@@ -11,7 +11,7 @@ class SpeakerController extends Controller
 {
     public function index()
     {
-        $speakers = Speaker::all();
+        $speakers = Speaker::latest()->paginate(10);
         return view('admin.speaker.index', compact('speakers'));
     }
 

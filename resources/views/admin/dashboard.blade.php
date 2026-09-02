@@ -275,6 +275,7 @@
                             <th class="pb-3 font-medium">Nama Masjid</th>
                             <th class="pb-3 font-medium">Fasilitas</th>
                             <th class="pb-3 font-medium">Alamat</th>
+                            <th class="pb-3 font-medium text-center">Link Maps</th>
                             <th class="pb-3 font-medium text-right">Total Kajian</th>
                         </tr>
                     </thead>
@@ -282,13 +283,44 @@
                         @forelse($recentMosques as $mosque)
                         <tr>
                             <td class="py-4 text-gray-900 font-bold">{{ $mosque->name }}</td>
-                            <td class="py-4 text-gray-600 font-medium">{{ $mosque->facilities ?? '-' }}</td>
+                            <td class="py-4">
+                                @if($mosque->facilities)
+                                    <div class="flex flex-wrap gap-1 max-w-[250px]">
+                                        @php
+                                            $facilities = explode(', ', $mosque->facilities);
+                                            $display = array_slice($facilities, 0, 2);
+                                            $remaining = count($facilities) - 2;
+                                        @endphp
+                                        @foreach($display as $facility)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800 border border-gray-200 whitespace-nowrap">
+                                                {{ $facility }}
+                                            </span>
+                                        @endforeach
+                                        @if($remaining > 0)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap" title="{{ implode(', ', array_slice($facilities, 2)) }}">
+                                                +{{ $remaining }} lainnya
+                                            </span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-gray-400 font-medium">-</span>
+                                @endif
+                            </td>
                             <td class="py-4 text-gray-600 font-medium truncate max-w-[200px]">{{ $mosque->address ?? '-' }}</td>
+                            <td class="py-4 text-center">
+                                @if($mosque->google_maps_url)
+                                    <a href="{{ $mosque->google_maps_url }}" target="_blank" class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">
+                                        <i data-lucide="map" class="w-4 h-4 mr-1.5"></i> Buka Maps
+                                    </a>
+                                @else
+                                    <span class="text-gray-400 text-xs">-</span>
+                                @endif
+                            </td>
                             <td class="py-4 text-gray-900 font-bold text-right">{{ $mosque->kajians_count }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="py-4 text-center text-gray-500 font-medium">Belum ada masjid</td>
+                            <td colspan="5" class="py-4 text-center text-gray-500 font-medium">Belum ada masjid</td>
                         </tr>
                         @endforelse
                     </tbody>

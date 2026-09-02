@@ -9,8 +9,7 @@ class MosqueController extends Controller
 {
     public function index()
     {
-        // Admin sees all mosques
-        $mosques = \App\Models\Mosque::with('organizer')->get();
+        $mosques = \App\Models\Mosque::with('organizer')->latest()->paginate(10);
         return view('admin.mosque.index', compact('mosques'));
     }
 

@@ -86,14 +86,15 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="mosque_id" class="block text-sm font-medium text-brand-ink mb-1">Masjid <span class="text-brand-danger">*</span></label>
-                        <select name="mosque_id" id="mosque_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" required>
-                            <option value="">-- Pilih Masjid --</option>
+                        <label for="mosque_name" class="block text-sm font-medium text-brand-ink mb-1">Masjid <span class="text-brand-danger">*</span></label>
+                        <select name="mosque_name" id="mosque_name" class="w-full" required placeholder="Ketik nama masjid baru atau pilih dari daftar...">
+                            <option value="">Ketik nama masjid baru atau pilih dari daftar...</option>
                             @foreach($mosques as $mosque)
-                                <option value="{{ $mosque->id }}" {{ old('mosque_id') == $mosque->id ? 'selected' : '' }}>{{ $mosque->name }}</option>
+                                <option value="{{ $mosque->name }}" {{ old('mosque_name') == $mosque->name ? 'selected' : '' }}>{{ $mosque->name }} ({{ Str::limit($mosque->address, 50) }})</option>
                             @endforeach
                         </select>
-                        @error('mosque_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <p class="text-xs text-gray-500 mt-1">Anda dapat memilih dari opsi yang ada, atau mengetikkan nama masjid baru jika belum terdaftar.</p>
+                        @error('mosque_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="md:col-span-2">
@@ -102,16 +103,26 @@
                         @error('address') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <!-- Latitude & Longitude -->
-                    <div>
-                        <label for="latitude" class="block text-sm font-medium text-brand-ink mb-1">Latitude</label>
-                        <input type="text" name="latitude" id="latitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('latitude', '-6.200000') }}" required>
-                        @error('latitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <!-- Coordinates -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:col-span-2">
+                        <div>
+                            <label for="latitude" class="block text-sm font-medium text-brand-ink mb-1">Latitude</label>
+                            <input type="text" name="latitude" id="latitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('latitude', '-6.200000') }}">
+                            @error('latitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="longitude" class="block text-sm font-medium text-brand-ink mb-1">Longitude</label>
+                            <input type="text" name="longitude" id="longitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('longitude', '106.816666') }}">
+                            @error('longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
-                    <div>
-                        <label for="longitude" class="block text-sm font-medium text-brand-ink mb-1">Longitude</label>
-                        <input type="text" name="longitude" id="longitude" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" value="{{ old('longitude', '106.816666') }}" required>
-                        @error('longitude') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+
+                    <!-- Google Maps URL -->
+                    <div class="md:col-span-2">
+                        <label for="google_maps_url" class="block text-sm font-medium text-brand-ink mb-1">Link Google Maps (Opsional)</label>
+                        <input type="url" name="google_maps_url" id="google_maps_url" class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring focus:ring-brand-emerald-900 focus:ring-opacity-50" placeholder="https://maps.app.goo.gl/..." value="{{ old('google_maps_url') }}">
+                        <p class="text-xs text-gray-500 mt-1">Masukkan URL dari Google Maps agar peserta dapat membuka navigasi dengan mudah.</p>
+                        @error('google_maps_url') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -196,11 +207,38 @@
                     Publikasikan
                 </button>
             </div>
+            </div>
         </form>
     </div>
 
+    @push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <style>
+        .ts-control { border-radius: 0.375rem; border-color: #d1d5db; padding: 0.5rem 0.75rem; min-height: 42px; }
+        .ts-control.focus { border-color: #064E3B; box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.5); }
+    </style>
+    @endpush
+
+    @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            new TomSelect("#mosque_name", {
+                create: true,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                render: {
+                    option_create: function(data, escape) {
+                        return '<div class="create">Tambahkan masjid baru: <strong>' + escape(data.input) + '</strong>&hellip;</div>';
+                    },
+                    no_results: function(data, escape) {
+                        return '<div class="no-results">Tidak ditemukan masjid "'+escape(data.input)+'". Tekan Enter untuk menambahkan sebagai masjid baru.</div>';
+                    }
+                }
+            });
+
             const isFreeSelect = document.getElementById('is_free');
             const priceContainer = document.getElementById('price_container');
 
@@ -217,4 +255,5 @@
             togglePrice();
         });
     </script>
+    @endpush
 </x-organizer-layout>

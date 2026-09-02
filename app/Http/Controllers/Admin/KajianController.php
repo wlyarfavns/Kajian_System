@@ -11,8 +11,7 @@ class KajianController extends Controller
 {
     public function index()
     {
-        // Get kajians that are not drafts, ordered by creation date (newest first)
-        $kajians = Kajian::with('organizer')->where('status', '!=', 'draft')->latest()->get();
+        $kajians = Kajian::with('organizer')->where('status', '!=', 'draft')->latest()->paginate(5);
         return view('admin.kajian.index', compact('kajians'));
     }
 

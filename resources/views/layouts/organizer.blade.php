@@ -16,6 +16,7 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/lucide@latest"></script>
+    @stack('styles')
 
     <style>
         body {
@@ -187,5 +188,6 @@
     <script>
         lucide.createIcons();
     </script>
+    @stack('scripts')
 </body>
 </html>

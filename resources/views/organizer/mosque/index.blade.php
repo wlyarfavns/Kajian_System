@@ -28,7 +28,11 @@
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 font-medium text-brand-ink">
                                 {{ $mosque->name }}
-                                @if($mosque->google_maps_url)
+                                @if($mosque->latitude && $mosque->longitude)
+                                    <a href="https://www.google.com/maps?q={{ $mosque->latitude }},{{ $mosque->longitude }}" target="_blank" class="text-xs text-blue-500 ml-2 hover:underline">
+                                        <i data-lucide="external-link" class="w-3 h-3 inline"></i> Maps
+                                    </a>
+                                @elseif($mosque->google_maps_url)
                                     <a href="{{ $mosque->google_maps_url }}" target="_blank" class="text-xs text-blue-500 ml-2 hover:underline">
                                         <i data-lucide="external-link" class="w-3 h-3 inline"></i> Maps
                                     </a>
@@ -56,7 +60,7 @@
         </div>
         
         @if($mosques->hasPages())
-        <div class="p-4 border-t border-gray-200">
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
             {{ $mosques->links() }}
         </div>
         @endif

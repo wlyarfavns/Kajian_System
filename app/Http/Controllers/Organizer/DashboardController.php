@@ -82,7 +82,12 @@ class DashboardController extends Controller
             })->whereMonth('created_at', $month->month)->whereYear('created_at', $month->year)->count();
         }
 
-        $totalOrganizer = \App\Models\Organizer::count();
+        $kajianSelesai = \App\Models\Kajian::where('organizer_id', $organizerId)
+            ->where('status', 'published')
+            ->where('end_at', '<', now())
+            ->count();
+
+        $totalMasjid = \App\Models\Mosque::where('organizer_id', $organizerId)->count();
 
         return view('organizer.dashboard', compact(
             'kajianAktif', 
@@ -100,7 +105,8 @@ class DashboardController extends Controller
             'chartWeeklyData',
             'chartMonthlyLabels',
             'chartMonthlyData',
-            'totalOrganizer'
+            'kajianSelesai',
+            'totalMasjid'
         ));
     }
 }

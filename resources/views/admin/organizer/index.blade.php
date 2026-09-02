@@ -55,5 +55,11 @@
                 </tbody>
             </table>
         </div>
+
+        @if($organizers->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $organizers->links() }}
+            </div>
+        @endif
     </div>
 </x-admin-layout>

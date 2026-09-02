@@ -2,10 +2,10 @@
     <div class="space-y-6 relative">
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <a href="{{ route('organizer.peserta.global') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
-                <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Total Pendaftar</p>
+            <a href="{{ route('organizer.mosque.index') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
+                <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Total Lokasi Masjid</p>
                 <div class="flex items-end justify-between mt-4">
-                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $calonPeserta ?? 450 }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $totalMasjid ?? 0 }}</h3>
                     <div class="w-16 h-8">
                         <svg viewBox="0 0 50 20" class="w-full h-full stroke-emerald-500 fill-none" stroke-width="2">
                             <path d="M0,15 L10,10 L20,12 L30,5 L40,8 L50,2" />
@@ -13,22 +13,22 @@
                     </div>
                 </div>
                 <p class="text-xs text-emerald-500 font-medium flex items-center mt-2">
-                    <i data-lucide="arrow-up" class="w-3 h-3 mr-1"></i> 12.5% <span class="text-gray-400 font-normal ml-1">Bulan Ini</span>
+                    Masjid terdaftar
                 </p>
             </a>
 
             <a href="{{ route('organizer.kajian.index') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
                 <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Kajian Aktif</p>
                 <div class="flex items-end justify-between mt-4">
-                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $kajianAktif ?? 12 }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $kajianAktif ?? 0 }}</h3>
                 </div>
-                <p class="text-xs text-gray-400 font-medium mt-2">Tafsir, Fiqih, Sejarah</p>
+                <p class="text-xs text-gray-400 font-medium mt-2">Sedang berlangsung / Publish</p>
             </a>
 
             <a href="{{ route('organizer.peserta.global') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
                 <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Total Hadir</p>
                 <div class="flex items-end justify-between mt-4">
-                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $pesertaHadir ?? '2,100' }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $pesertaHadir ?? 0 }}</h3>
                 </div>
                 <p class="text-xs text-gray-400 font-medium mt-2">All-time record</p>
             </a>
@@ -36,7 +36,7 @@
             <a href="{{ route('organizer.kajian.index') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
                 <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Kajian Selesai</p>
                 <div class="flex items-end justify-between mt-4">
-                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">45</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $kajianSelesai ?? 0 }}</h3>
                     <div class="w-16 h-8">
                         <svg viewBox="0 0 50 20" class="w-full h-full stroke-emerald-500 fill-none" stroke-width="2">
                             <path d="M0,18 L10,12 L20,15 L30,8 L40,10 L50,4" />
@@ -44,14 +44,14 @@
                     </div>
                 </div>
                 <p class="text-xs text-emerald-500 font-medium flex items-center mt-2">
-                    <i data-lucide="arrow-up" class="w-3 h-3 mr-1"></i> 5 <span class="text-gray-400 font-normal ml-1">Bulan Ini</span>
+                    Telah berlalu
                 </p>
             </a>
 
-            <div class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 hover:border-emerald-200 group">
-                <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Total Organizer</p>
+            <a href="{{ route('organizer.peserta.global') }}" class="block bg-white p-5 rounded-2xl border border-gray-100 shadow-sm col-span-1 hover:shadow-md transition-all duration-200 cursor-pointer hover:border-emerald-200 group">
+                <p class="text-sm text-gray-500 font-medium mb-1 group-hover:text-emerald-600 transition-colors">Calon Peserta</p>
                 <div class="flex items-end justify-between mt-4">
-                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $totalOrganizer ?? 0 }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">{{ $calonPeserta ?? 0 }}</h3>
                     <div class="w-16 h-8">
                         <svg viewBox="0 0 50 20" class="w-full h-full stroke-emerald-500 fill-none" stroke-width="2">
                             <path d="M0,15 L10,10 L20,12 L30,5 L40,8 L50,2" />
@@ -59,16 +59,16 @@
                     </div>
                 </div>
                 <p class="text-xs text-emerald-500 font-medium flex items-center mt-2">
-                    <i data-lucide="arrow-up" class="w-3 h-3 mr-1"></i> Baru <span class="text-gray-400 font-normal ml-1">Terdaftar</span>
+                    <i data-lucide="users" class="w-3 h-3 mr-1"></i> Total Pendaftar
                 </p>
-            </div>
+            </a>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6 relative" x-data="chartData()" x-init="initChart()">
                 <div class="flex items-center justify-between mb-8">
                     <h3 class="text-lg font-bold text-gray-900">Statistik Pendaftar</h3>
-                    <select x-model="chartType" @change="updateChart()" class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer bg-white">
+                    <select x-model="chartType" @change="updateChart()" class="w-32 pl-3 pr-10 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer bg-white appearance-none" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23111827%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 0.7rem top 50%; background-size: 0.65rem auto;">
                         <option value="harian">Harian</option>
                         <option value="mingguan">Mingguan</option>
                         <option value="bulanan">Bulanan</option>

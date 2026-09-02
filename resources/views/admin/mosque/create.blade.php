@@ -54,6 +54,12 @@
             </div>
 
             <div>
+                <label class="block text-sm font-medium text-brand-ink mb-2">Pilih Titik Lokasi di Peta</label>
+                <div id="map" class="w-full h-[300px] rounded-lg border border-gray-300 z-10 relative"></div>
+                <p class="text-xs text-gray-500 mt-1">Anda bisa menggeser pin atau klik pada peta untuk menentukan koordinat.</p>
+            </div>
+
+            <div>
                 <label for="google_maps_url" class="block text-sm font-medium text-brand-ink">Link Google Maps (Opsional)</label>
                 <input type="url" name="google_maps_url" id="google_maps_url" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-emerald-900 focus:ring-brand-emerald-900 sm:text-sm" placeholder="https://maps.google.com/...">
                 @error('google_maps_url') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
@@ -67,4 +73,65 @@
             </div>
         </form>
     </div>
+
+    @push('styles')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    @endpush
+
+    @push('scripts')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var initialLat = -6.2088;
+            var initialLng = 106.8456;
+            
+            var latInput = document.getElementById('latitude');
+            var lngInput = document.getElementById('longitude');
+
+            if (latInput.value && lngInput.value) {
+                initialLat = parseFloat(latInput.value);
+                initialLng = parseFloat(lngInput.value);
+            } else {
+                latInput.value = initialLat;
+                lngInput.value = initialLng;
+            }
+
+            var map = L.map('map').setView([initialLat, initialLng], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            var marker = L.marker([initialLat, initialLng], {draggable: true}).addTo(map);
+
+            marker.on('dragend', function (e) {
+                var position = marker.getLatLng();
+                latInput.value = position.lat;
+                lngInput.value = position.lng;
+            });
+
+            map.on('click', function(e) {
+                var position = e.latlng;
+                marker.setLatLng(position);
+                latInput.value = position.lat;
+                lngInput.value = position.lng;
+            });
+
+            latInput.addEventListener('change', updateMarker);
+            lngInput.addEventListener('change', updateMarker);
+
+            function updateMarker() {
+                var newLat = parseFloat(latInput.value);
+                var newLng = parseFloat(lngInput.value);
+                if(!isNaN(newLat) && !isNaN(newLng)) {
+                    var newPos = new L.LatLng(newLat, newLng);
+                    marker.setLatLng(newPos);
+                    map.panTo(newPos);
+                }
+            }
+            
+            setTimeout(function() { map.invalidateSize(); }, 500);
+        });
+    </script>
+    @endpush
 </x-admin-layout>

@@ -31,6 +31,7 @@ class Kajian extends Model
         'address',
         'latitude',
         'longitude',
+        'google_maps_url',
         'audience',
         'is_family_friendly',
         'is_free',
@@ -143,14 +144,7 @@ class Kajian extends Model
      */
     public function scopeNearby($query, $lat, $lng, $radius = 5)
     {
-        $query->where('status', 'published')
-              ->where(function($q) {
-                  $q->where('start_at', '>=', now())
-                    ->orWhere(function($subQ) {
-                        $subQ->where('start_at', '<=', now())
-                             ->where('end_at', '>=', now());
-                    });
-              });
+        $query->where('status', 'published');
 
         if ($lat !== null && $lng !== null) {
             $haversine = "(6371 * acos(cos(radians($lat)) * cos(radians(latitude)) * cos(radians(longitude) - radians($lng)) + sin(radians($lat)) * sin(radians(latitude))))";

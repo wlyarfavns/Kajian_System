@@ -71,6 +71,12 @@
             </table>
         </div>
 
+        @if($categories->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $categories->links() }}
+            </div>
+        @endif
+
         <!-- Create/Edit Modal -->
         <div id="createEditModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <!-- Background overlay -->

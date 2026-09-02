@@ -37,7 +37,7 @@ class DashboardController extends Controller
         
         $recentKajians = \App\Models\Kajian::with(['mosque', 'category'])->withCount('attendees')->latest()->take(5)->get();
         $recentOrganizers = \App\Models\Organizer::with('user')->withCount('kajians')->latest()->take(5)->get();
-        $recentMosques = \App\Models\Mosque::withCount('kajians')->latest()->take(5)->get();
+        $recentMosques = \App\Models\Mosque::with('kajians')->withCount('kajians')->latest()->take(5)->get();
 
         // Tasks & Alerts Data
         $unverifiedKajianCount = \App\Models\Kajian::where('is_verified', false)->count();
