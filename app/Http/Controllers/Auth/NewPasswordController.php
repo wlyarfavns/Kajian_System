@@ -25,6 +25,8 @@ class NewPasswordController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
         
+        \Illuminate\Support\Facades\Log::info('RESET ATTEMPT:', $request->only('email', 'token'));
+        
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function (User $user) use ($request) {

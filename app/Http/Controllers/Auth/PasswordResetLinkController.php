@@ -22,17 +22,6 @@ class PasswordResetLinkController extends Controller
             $request->only('email')
         );
 
-        if (app()->environment('local') && $status == Password::RESET_LINK_SENT) {
-            $user = \App\Models\User::where('email', $request->email)->first();
-            if ($user) {
-                $token = app('auth.password.broker')->createToken($user);
-                $resetLink = url(route('password.reset', [
-                    'token' => $token,
-                    'email' => $request->email,
-                ], false));
-                session()->flash('reset_link', $resetLink);
-            }
-        }
 
         return $status == Password::RESET_LINK_SENT
                     ? back()->with('status', __($status))
