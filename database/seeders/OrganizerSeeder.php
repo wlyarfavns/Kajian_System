@@ -1,17 +1,11 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\User;
 use App\Models\Organizer;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-
 class OrganizerSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $user = User::firstOrCreate([
@@ -21,7 +15,6 @@ class OrganizerSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'organizer',
         ]);
-
         Organizer::firstOrCreate([
             'user_id' => $user->id
         ], [

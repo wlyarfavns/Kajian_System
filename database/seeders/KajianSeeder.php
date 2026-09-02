@@ -1,27 +1,18 @@
 <?php
-
 namespace Database\Seeders;
-
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
 class KajianSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Pastikan tabel referensi tidak kosong
         $organizer = \App\Models\Organizer::first();
         $mosque = \App\Models\Mosque::first();
         $speaker = \App\Models\Speaker::first();
         $category = \App\Models\Category::first();
-
         if (!$organizer || !$mosque || !$speaker || !$category) {
             return;
         }
-
         $kajians = [
             [
                 'title' => 'Kajian Rutin Fiqih Muamalah',
@@ -56,7 +47,6 @@ class KajianSeeder extends Seeder
                 'is_verified' => false,
             ]
         ];
-
         foreach ($kajians as $kajian) {
             \App\Models\Kajian::create($kajian);
         }

@@ -1,10 +1,7 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 class UserController extends Controller
 {
     public function index()
@@ -12,12 +9,10 @@ class UserController extends Controller
         $users = \App\Models\User::orderBy('created_at', 'desc')->paginate(10);
         return view('admin.user.index', compact('users'));
     }
-
     public function create()
     {
         return view('admin.user.create');
     }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,29 +32,24 @@ class UserController extends Controller
             'role.required' => 'Peran wajib dipilih.',
             'role.in' => 'Peran yang dipilih tidak valid.'
         ]);
-
         $user = \App\Models\User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
             'role' => $validated['role']
         ]);
-
         if ($user->role === 'organizer') {
             $user->organizer()->create([
                 'name' => $user->name,
                 'is_verified' => true
             ]);
         }
-
         return redirect()->route('admin.user.index')->with('success', 'Akun pengguna berhasil dibuat.');
     }
-
     public function edit(\App\Models\User $user)
     {
         return view('admin.user.edit', compact('user'));
     }
-
     public function update(Request $request, \App\Models\User $user)
     {
         $validated = $request->validate([
@@ -78,37 +68,29 @@ class UserController extends Controller
             'role.required' => 'Peran wajib dipilih.',
             'role.in' => 'Peran yang dipilih tidak valid.'
         ]);
-        
         $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $validated['role']
         ];
-
         if (!empty($validated['password'])) {
             $data['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
         }
-
         $user->update($data);
-        
         if ($validated['role'] === 'organizer' && !$user->organizer) {
             $user->organizer()->create([
                 'name' => $user->name,
                 'is_verified' => true
             ]);
         }
-
         return redirect()->route('admin.user.index')->with('success', 'Akun pengguna berhasil diperbarui.');
     }
-
     public function destroy(\App\Models\User $user)
     {
         if (auth()->id() === $user->id) {
             return redirect()->route('admin.user.index')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
-
         $user->delete();
-        
         return redirect()->route('admin.user.index')->with('success', 'Akun pengguna berhasil dihapus.');
     }
 }

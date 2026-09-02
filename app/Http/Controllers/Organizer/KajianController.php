@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\Organizer;
-
 use App\Http\Controllers\Controller;
 use App\Models\Kajian;
 use App\Models\Category;
@@ -10,7 +8,6 @@ use App\Models\Speaker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-
 class KajianController extends Controller
 {
     public function index(Request $request)
@@ -19,7 +16,6 @@ class KajianController extends Controller
         $kajians = Kajian::where('organizer_id', $organizerId)->latest()->paginate(3);
         return view('organizer.kajian.index', compact('kajians'));
     }
-
     public function create()
     {
         $organizerId = auth()->user()->organizer->id;
@@ -28,7 +24,6 @@ class KajianController extends Controller
         $speakers = Speaker::all();
         return view('organizer.kajian.create', compact('categories', 'mosques', 'speakers'));
     }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -52,9 +47,7 @@ class KajianController extends Controller
             'facilities' => 'nullable|array',
             'facilities.*' => 'string'
         ]);
-
         $organizerId = auth()->user()->organizer->id;
-
         $mosque = Mosque::firstOrCreate(
             ['name' => $request->mosque_name],
             [
@@ -64,9 +57,7 @@ class KajianController extends Controller
                 'organizer_id' => $organizerId
             ]
         );
-
         $isFree = $request->boolean('is_free');
-        
         $data = array_merge($validated, [
             'organizer_id' => $organizerId,
             'mosque_id' => $mosque->id,
@@ -78,44 +69,34 @@ class KajianController extends Controller
             'google_maps_url' => $request->google_maps_url,
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
         ]);
-        
         unset($data['tanggal'], $data['start_time'], $data['end_time'], $data['mosque_name']);
-
         if ($request->hasFile('poster')) {
             $data['poster'] = $request->file('poster')->store('posters', 'public');
         } else {
             $data['poster'] = null;
         }
-
         $kajian = Kajian::create($data);
-
         if ($kajian->status === 'published') {
             return redirect()->route('organizer.kajian.qrcode', $kajian->slug)->with('success', 'Kajian published successfully.');
         }
-
         return redirect()->route('organizer.kajian.index')->with('success', 'Kajian created successfully.');
     }
-
     public function show(Kajian $kajian)
     {
         return view('organizer.kajian.show', compact('kajian'));
     }
-
     public function edit(Kajian $kajian)
     {
         $organizerId = auth()->user()->organizer->id;
         if ($kajian->organizer_id !== $organizerId) abort(403);
-
         $categories = Category::all();
         $mosques = Mosque::all();
         $speakers = Speaker::all();
         return view('organizer.kajian.edit', compact('kajian', 'categories', 'mosques', 'speakers'));
     }
-
     public function update(Request $request, Kajian $kajian)
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) abort(403);
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'mosque_name' => 'required|string',
@@ -137,9 +118,7 @@ class KajianController extends Controller
             'facilities' => 'nullable|array',
             'facilities.*' => 'string'
         ]);
-
         $organizerId = auth()->user()->organizer->id;
-
         $mosque = Mosque::firstOrCreate(
             ['name' => $request->mosque_name],
             [
@@ -150,9 +129,7 @@ class KajianController extends Controller
                 'organizer_id' => $organizerId
             ]
         );
-
         $isFree = $request->boolean('is_free');
-
         $data = array_merge($validated, [
             'mosque_id' => $mosque->id,
             'is_family_friendly' => $request->has('is_family_friendly'),
@@ -163,32 +140,24 @@ class KajianController extends Controller
             'google_maps_url' => $request->google_maps_url,
             'facilities' => $request->has('facilities') ? json_encode($request->facilities) : null,
         ]);
-        
         unset($data['tanggal'], $data['start_time'], $data['end_time'], $data['mosque_name']);
-
         if ($request->hasFile('poster')) {
-            // Delete old poster if exists
             if ($kajian->poster && \Illuminate\Support\Facades\Storage::disk('public')->exists($kajian->poster)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($kajian->poster);
             }
             $data['poster'] = $request->file('poster')->store('posters', 'public');
         }
-
         $kajian->update($data);
-
         if ($kajian->status === 'published') {
             return redirect()->route('organizer.kajian.qrcode', $kajian->slug)->with('success', 'Kajian updated and published successfully.');
         }
-
         return redirect()->route('organizer.kajian.index')->with('success', 'Kajian updated successfully.');
     }
-
     public function qrcode(Kajian $kajian)
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) abort(403);
         return view('organizer.kajian.qrcode', compact('kajian'));
     }
-
     public function destroy(Kajian $kajian)
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) abort(403);

@@ -1,20 +1,13 @@
 <?php
-
 namespace Database\Seeders;
-
 use App\Models\Mosque;
 use App\Models\Organizer;
 use Illuminate\Database\Seeder;
-
 class MosqueSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $organizer = Organizer::where('name', 'Yayasan Al Ikhlas')->first();
-
         if ($organizer) {
             $mosques = [
                 [
@@ -32,7 +25,6 @@ class MosqueSeeder extends Seeder
                     'longitude' => 110.374665,
                 ],
             ];
-
             foreach ($mosques as $mosque) {
                 Mosque::firstOrCreate(['name' => $mosque['name']], $mosque);
             }
