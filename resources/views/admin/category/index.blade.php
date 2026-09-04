@@ -10,15 +10,17 @@
                 <h2 class="text-lg font-bold text-brand-ink">Daftar Kategori</h2>
                 <p class="text-sm text-brand-ink-soft">Kelola referensi kategori untuk kajian.</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
-                <form action="{{ route('admin.category.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama kategori..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
+                <form method="GET" action="{{ route('admin.category.index') }}" class="flex w-full sm:w-auto" data-turbo-frame="data-table" x-data>
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" @input.debounce.500ms="$el.form.requestSubmit()" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-brand-emerald-500 focus:ring-1 focus:ring-brand-emerald-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari nama kategori...">
                     </div>
                 </form>
-                <button type="button" onclick="openCreateModal()" class="inline-flex items-center justify-center px-4 py-2 w-full sm:w-auto bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shadow-sm shrink-0">
-                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Tambah Kategori
+                <button type="button" onclick="openCreateModal()" class="inline-flex items-center justify-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2 shrink-0"></i> Tambah Kategori
                 </button>
             </div>
         </div>
@@ -43,10 +45,12 @@
             </div>
         @endif
 
+        <turbo-frame id="data-table">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Kategori</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Slug</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
@@ -55,23 +59,24 @@
                 <tbody class="divide-y divide-gray-200">
                     @forelse($categories as $category)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                                {{ $categories->firstItem() + $loop->index }}
+                            </td>
                             <td class="px-6 py-4 font-medium text-brand-ink">{{ $category->name }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ $category->slug }}</td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <button type="button" onclick="openEditModal('{{ addslashes($category->name) }}', '{{ route('admin.category.update', $category->id) }}')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit">
-                                    <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i>
-                                    <span class="hidden sm:inline">Edit</span>
+                                <button type="button" onclick="openEditModal('{{ addslashes($category->name) }}', '{{ route('admin.category.update', $category->id) }}')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition shadow-sm" title="Edit">
+                                    <i data-lucide="edit-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
                                 </button>
-                                <button type="button" onclick="openDeleteModal('{{ route('admin.category.destroy', $category->id) }}')" class="inline-flex items-center px-3 py-1.5 border border-red-200 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 transition" title="Hapus">
-                                    <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i>
-                                    <span class="hidden sm:inline">Hapus</span>
+                                <button type="button" onclick="openDeleteModal('{{ route('admin.category.destroy', $category->id) }}')" class="inline-flex items-center px-3 py-1.5 border border-brand-danger text-sm font-medium rounded-md text-white bg-brand-danger hover:bg-red-700 transition shadow-sm" title="Hapus">
+                                    <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Hapus</span>
                                 </button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-8 text-center text-brand-ink-soft">
-                                Belum ada kategori.
+                            <td colspan="4" class="px-6 py-8 text-center text-brand-ink-soft">
+                                Belum ada kategori yang ditambahkan.
                             </td>
                         </tr>
                     @endforelse
@@ -79,9 +84,12 @@
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-            {{ $categories->links('vendor.pagination.custom-dark') }}
-        </div>
+        @if($categories->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $categories->links() }}
+            </div>
+        @endif
+        </turbo-frame>
 
         <!-- Create/Edit Modal -->
         <div id="createEditModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">

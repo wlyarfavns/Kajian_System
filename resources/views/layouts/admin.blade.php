@@ -114,8 +114,19 @@
                 </a>
             </nav>
 
-            <!-- Settings / Logout Area -->
-            <div class="p-4 border-t border-white/10">
+            <!-- Profile & Settings / Logout Area -->
+            <div class="p-4 border-t border-white/10 flex flex-col gap-2">
+                <!-- Profile -->
+                <div class="flex items-center gap-3 py-2 px-2 justify-start">
+                    <div class="w-10 h-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center shrink-0">
+                        <i data-lucide="user" class="w-5 h-5 text-[#E7C77E]"></i>
+                    </div>
+                    <div class="text-left overflow-hidden">
+                        <p class="text-sm font-bold text-white leading-none truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-xs text-[#B7C9BE] mt-1">Administrator</p>
+                    </div>
+                </div>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl">
@@ -138,22 +149,10 @@
                 <button @click="sidebarOpen = true" class="mr-4 p-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
-                <!-- Location / Center Dropdown (Like Masjidhero) -->
-                <div class="hidden md:flex items-center bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-50">
-                    <span>Admin Pusat KajianKu</span>
-                </div>
             </div>
             
             <div class="flex items-center space-x-4">
                 
-                <!-- Profile -->
-                <div class="flex items-center gap-3">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=f3f4f6&color=111827" class="w-9 h-9 rounded-full border border-gray-200">
-                    <div class="hidden md:block text-right">
-                        <p class="text-sm font-bold text-gray-900 leading-none">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Admin</p>
-                    </div>
-                </div>
             </div>
         </header>
 

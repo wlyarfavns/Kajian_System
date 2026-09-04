@@ -9,12 +9,26 @@
                 <h2 class="text-lg font-bold text-brand-ink">Daftar Lokasi Masjid</h2>
                 <p class="text-sm text-brand-ink-soft">Kelola data lokasi masjid tempat Anda menyelenggarakan kajian.</p>
             </div>
-        </div>
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
+                <form method="GET" action="{{ route('organizer.mosque.index') }}" class="flex w-full sm:w-auto" data-turbo-frame="data-table" x-data>
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" @input.debounce.500ms="$el.form.requestSubmit()" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-brand-emerald-500 focus:ring-1 focus:ring-brand-emerald-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari nama masjid atau alamat...">
+                    </div>
+                </form>
+                <a href="{{ route('organizer.mosque.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2 shrink-0"></i> Tambah Masjid
+                </a>
+            </div>
 
+        <turbo-frame id="data-table">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Masjid</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Alamat</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
@@ -23,6 +37,9 @@
                 <tbody class="divide-y divide-gray-200">
                     @forelse($mosques as $mosque)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                                {{ $mosques->firstItem() + $loop->index }}
+                            </td>
                             <td class="px-6 py-4 font-medium text-brand-ink">
                                 {{ $mosque->name }}
                                 @if($mosque->google_maps_url)
@@ -48,11 +65,21 @@
                                 <button type="button" @click="showModal = true; selectedMosque = {{ json_encode($mosqueData) }}" class="inline-flex items-center px-3 py-1.5 border border-brand-emerald-900 text-sm font-medium rounded-md text-brand-emerald-900 bg-white hover:bg-brand-emerald-50 transition" title="Detail">
                                     <i data-lucide="eye" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Detail</span>
                                 </button>
+                                <a href="{{ route('organizer.mosque.edit', $mosque->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit" data-turbo-frame="_top">
+                                    <i data-lucide="edit-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
+                                </a>
+                                <form action="{{ route('organizer.mosque.destroy', $mosque->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus masjid ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-brand-danger text-sm font-medium rounded-md text-white bg-brand-danger hover:bg-red-700 transition shadow-sm" title="Hapus">
+                                        <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Hapus</span>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-8 text-center text-brand-ink-soft">
+                            <td colspan="4" class="px-6 py-8 text-center text-brand-ink-soft">
                                 Belum ada data lokasi masjid.
                             </td>
                         </tr>
@@ -60,6 +87,13 @@
                 </tbody>
             </table>
         </div>
+
+        @if ($mosques->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $mosques->links() }}
+            </div>
+        @endif
+        </turbo-frame>
 
         <!-- Detail Modal -->
         <div x-show="showModal" class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;" x-cloak>

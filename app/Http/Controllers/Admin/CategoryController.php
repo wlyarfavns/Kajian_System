@@ -6,13 +6,17 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $categories = \App\Models\Category::when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%");
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+        $query = \App\Models\Category::latest();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('slug', 'like', "%{$search}%");
+            });
+        }
+        
+        $categories = $query->paginate(10)->withQueryString();
         return view('admin.category.index', compact('categories'));
     }
     public function store(Request $request)

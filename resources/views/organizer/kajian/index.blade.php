@@ -9,15 +9,17 @@
                 <h2 class="text-lg font-bold text-brand-ink">Daftar Kajian</h2>
                 <p class="text-sm text-brand-ink-soft">Kelola semua jadwal kajian yang Anda selenggarakan.</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
-                <form action="{{ route('organizer.kajian.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul kajian..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
+                <form method="GET" action="{{ route('organizer.kajian.index') }}" class="flex w-full sm:w-auto" data-turbo-frame="data-table" x-data>
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" @input.debounce.500ms="$el.form.requestSubmit()" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-brand-emerald-500 focus:ring-1 focus:ring-brand-emerald-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari kajian...">
                     </div>
                 </form>
-                <a href="{{ route('organizer.kajian.create') }}" data-turbo="false" class="inline-flex items-center justify-center px-4 py-2 w-full sm:w-auto bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shrink-0">
-                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Tambah Kajian
+                <a href="{{ route('organizer.kajian.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2 shrink-0"></i> Tambah Kajian
                 </a>
             </div>
         </div>
@@ -26,6 +28,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Judul Kajian</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Waktu</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Status</th>
@@ -36,6 +39,9 @@
                 <tbody class="divide-y divide-gray-200">
                     @forelse($kajians as $kajian)
                         <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                                {{ $kajians->firstItem() + $loop->index }}
+                            </td>
                             <td class="px-6 py-4">
                                 <div class="font-medium text-brand-ink">{{ $kajian->title }}</div>
                                 <div class="text-sm text-brand-ink-soft mt-1">{{ $kajian->category->name ?? '-' }} • {{ $kajian->speaker->name ?? '-' }}</div>
@@ -47,47 +53,56 @@
                             <td class="px-6 py-4">
                                 @if($kajian->status === 'draft')
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Draft</span>
-                                @elseif($kajian->status === 'published')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-emerald-100 text-brand-emerald-950">Dipublikasikan</span>
-                                @elseif($kajian->status === 'ongoing')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-badge-live text-white">Berlangsung</span>
-                                @elseif($kajian->status === 'finished')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-100">Selesai</span>
-                                @elseif($kajian->status === 'cancelled')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-brand-danger">Dibatalkan</span>
+                                @else
+                                    @php $statusLabel = $kajian->status_label; @endphp
+                                    @if($statusLabel === 'Dibatalkan')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-brand-danger">Dibatalkan</span>
+                                    @elseif($statusLabel === 'Selesai')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-100">Selesai</span>
+                                    @elseif($statusLabel === 'Sedang Berlangsung')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-badge-live text-white">Berlangsung</span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-emerald-100 text-brand-emerald-950">{{ $statusLabel }}</span>
+                                    @endif
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($kajian->status === 'published' || $kajian->status === 'ongoing' || $kajian->status === 'finished')
-                                    <a href="{{ route('organizer.kajian.qrcode', $kajian->slug) }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-brand-emerald-200 text-sm font-medium rounded-md text-brand-emerald-900 bg-brand-emerald-50 hover:bg-brand-emerald-100 transition" title="Lihat Barcode">
-                                        <i data-lucide="qr-code" class="w-4 h-4 sm:mr-1.5"></i>
-                                        <span class="hidden sm:inline">Barcode</span>
-                                    </a>
-                                @else
-                                    <span class="text-xs text-gray-400 italic">-</span>
-                                @endif
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                                {{ $kajian->speaker->name ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-brand-ink font-medium">
+                                    {{ \Carbon\Carbon::parse($kajian->start_at)->translatedFormat('d M Y') }}
+                                </div>
+                                <div class="text-xs text-brand-ink-soft mt-1">
+                                    {{ \Carbon\Carbon::parse($kajian->start_at)->format('H:i') }} WIB 
+                                    <span class="mx-1">•</span> 
+                                    {{ $kajian->mosque->name ?? 'Lokasi tidak diketahui' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <a href="{{ url('/organizer/kajian/'.$kajian->slug.'/peserta') }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Lihat Peserta">
-                                    <i data-lucide="users" class="w-4 h-4 sm:mr-1.5"></i>
-                                    <span class="hidden sm:inline">Peserta</span>
-                                </a>
-                                <a href="{{ route('organizer.kajian.edit', $kajian->slug) }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit">
-                                    <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i>
-                                    <span class="hidden sm:inline">Edit</span>
-                                </a>
-                                <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('organizer.kajian.destroy', $kajian->slug) }}'" class="inline-flex items-center px-3 py-1.5 border border-brand-danger text-sm font-medium rounded-md text-white bg-brand-danger hover:bg-red-700 transition" title="Hapus">
-                                    <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i>
-                                    <span class="hidden sm:inline">Hapus</span>
-                                </button>
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('organizer.kajian.peserta', $kajian->slug) }}" class="inline-flex items-center justify-center p-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition shadow-sm" title="Kelola Peserta" data-turbo-frame="_top">
+                                        <i data-lucide="users" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="{{ route('organizer.kajian.edit', $kajian->id) }}" class="inline-flex items-center justify-center p-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition shadow-sm" title="Edit Kajian" data-turbo-frame="_top">
+                                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                                    </a>
+                                    <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('organizer.kajian.destroy', $kajian->id) }}'; kajianTitle = '{{ addslashes($kajian->title) }}'" class="inline-flex items-center justify-center p-2 border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition shadow-sm" title="Hapus Kajian">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-8 text-center text-brand-ink-soft">
                                 <div class="flex flex-col items-center justify-center">
-                                    <i data-lucide="book-x" class="w-12 h-12 mb-3 text-gray-300"></i>
-                                    <p>Belum ada kajian yang ditambahkan.</p>
+                                    <i data-lucide="calendar-x" class="w-12 h-12 text-gray-300 mb-3"></i>
+                                    <p class="font-medium text-gray-500">Belum ada kajian yang ditambahkan.</p>
                                 </div>
                             </td>
                         </tr>
@@ -96,9 +111,12 @@
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-            {{ $kajians->links('vendor.pagination.custom-dark') }}
-        </div>
+        @if ($kajians->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $kajians->links() }}
+            </div>
+        @endif
+        </turbo-frame>
 
         <!-- Delete Modal -->
         <div x-show="deleteModalOpen" style="display: none;" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">

@@ -6,18 +6,20 @@ class MosqueController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $mosques = \App\Models\Mosque::with('organizer')
-            ->when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                             ->orWhere('address', 'like', "%{$search}%")
-                             ->orWhereHas('organizer', function ($oq) use ($search) {
-                                 $oq->where('name', 'like', "%{$search}%");
-                             });
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+        $query = \App\Models\Mosque::with('organizer')->latest();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%")
+                  ->orWhereHas('organizer', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        $mosques = $query->paginate(10)->withQueryString();
         return view('admin.mosque.index', compact('mosques'));
     }
     public function create()

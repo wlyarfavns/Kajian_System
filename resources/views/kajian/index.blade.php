@@ -122,9 +122,10 @@
     </div>
 
     <!-- Filter Month (Di Bawah, Kanan) -->
-    <div style="display:flex; justify-content:flex-end; margin-bottom:40px; padding-right: 4px;">
+    <div style="display:flex; flex-direction:column; align-items:flex-end; margin-bottom:40px; padding-right: 4px;">
+        <label style="font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; margin-right: 4px;">Pilih Bulan</label>
         <select onchange="window.location.href=this.value" class="btn filter-btn btn-outline" style="appearance:auto; background-color:var(--paper); cursor:pointer; padding:8px 30px 8px 18px; font-weight:600; font-family:inherit; border-radius:99px;">
-            <option value="{{ request()->fullUrlWithQuery(['month' => null]) }}">Pilih Bulan</option>
+            <option value="{{ request()->fullUrlWithQuery(['month' => null]) }}">Semua...</option>
             @for($i = 1; $i <= 12; $i++)
                 <option value="{{ request()->fullUrlWithQuery(['month' => $i]) }}" {{ request('month') == $i ? 'selected' : '' }}>
                     {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
@@ -173,7 +174,7 @@
     
     <!-- Pagination -->
     <div style="margin-top:50px;">
-        {{ $kajians->links() }}
+        {{ $kajians->links('vendor.pagination.landing') }}
     </div>
 
 </div>

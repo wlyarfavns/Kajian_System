@@ -478,7 +478,7 @@
                                 borderColor: '#ef4444',
                                 backgroundColor: this.chartStyle === 'line' ? gradient : '#ef4444',
                                 borderWidth: this.chartStyle === 'line' ? 3 : 0,
-                                tension: 0.4,
+                                tension: 0.1, // Set to 0.1 for a more realistic point-to-point line
                                 fill: true,
                                 borderRadius: this.chartStyle === 'bar' ? 4 : 0,
                                 pointBackgroundColor: '#ffffff',

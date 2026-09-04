@@ -6,9 +6,21 @@ use App\Models\Mosque;
 use Illuminate\Support\Facades\Auth;
 class MosqueController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $mosques = Mosque::where('organizer_id', Auth::user()->organizer->id)->latest()->paginate(10);
+        $organizer = Auth::user()->organizer;
+        
+        $query = Mosque::where('organizer_id', $organizer->id)->latest();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
+        }
+        
+        $mosques = $query->paginate(10)->withQueryString();
         return view('organizer.mosque.index', compact('mosques'));
     }
     public function create()

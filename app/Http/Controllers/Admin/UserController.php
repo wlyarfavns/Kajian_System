@@ -6,16 +6,17 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $query = \App\Models\User::orderBy('created_at', 'desc');
 
-        $users = \App\Models\User::when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%")
-                             ->orWhere('email', 'like', "%{$search}%");
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(10)
-            ->appends(['search' => $search]);
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
 
+        $users = $query->paginate(10)->withQueryString();
         return view('admin.user.index', compact('users'));
     }
     public function create()

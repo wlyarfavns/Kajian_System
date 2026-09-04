@@ -12,15 +12,21 @@ class KajianController extends Controller
 {
     public function index(Request $request)
     {
-        $organizerId = auth()->user()->organizer->id;
-        $search = $request->input('search');
-        $kajians = Kajian::where('organizer_id', $organizerId)
-            ->when($search, function ($query, $search) {
-                return $query->where('title', 'like', "%{$search}%");
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+        $organizer = auth()->user()->organizer;
+        
+        if (!$organizer) {
+            return redirect()->route('organizer.profile.edit')->with('error', 'Silakan lengkapi profil penyelenggara terlebih dahulu.');
+        }
+
+        $query = Kajian::where('organizer_id', $organizer->id)->latest();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('title', 'like', "%{$search}%");
+        }
+        
+        $kajians = $query->paginate(10)->withQueryString();
+
         return view('organizer.kajian.index', compact('kajians'));
     }
     public function create()

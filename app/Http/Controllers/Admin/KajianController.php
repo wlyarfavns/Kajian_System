@@ -7,19 +7,19 @@ class KajianController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $kajians = Kajian::with('organizer')->where('status', '!=', 'draft')
-            ->when($search, function ($query, $search) {
-                return $query->where(function($q) use ($search) {
-                    $q->where('title', 'like', "%{$search}%")
-                      ->orWhereHas('organizer', function ($oq) use ($search) {
-                          $oq->where('name', 'like', "%{$search}%");
-                      });
-                });
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+        $query = Kajian::with('organizer')->where('status', '!=', 'draft')->latest();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhereHas('organizer', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        $kajians = $query->paginate(10)->withQueryString();
         return view('admin.kajian.index', compact('kajians'));
     }
     public function verify($id)

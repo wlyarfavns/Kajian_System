@@ -115,6 +115,10 @@
                     <span x-show="expanded && !isMobile" class="whitespace-nowrap">Kelola Kajian</span>
                 </a>
                 
+                <a href="{{ route('organizer.mosque.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('organizer.mosque.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="map-pin" class="w-5 h-5 shrink-0 {{ request()->routeIs('organizer.mosque.*') ? 'text-[#E7C77E]' : '' }}" :class="(expanded && !isMobile) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="expanded && !isMobile" class="whitespace-nowrap">Data Masjid</span>
+                </a>
 
                 <a href="{{ route('organizer.peserta.global') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('organizer.peserta.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
                     <i data-lucide="users" class="w-5 h-5 shrink-0 {{ request()->routeIs('organizer.peserta.*') ? 'text-[#E7C77E]' : '' }}" :class="(expanded && !isMobile) ? 'mr-3' : 'mr-0'"></i> 
@@ -127,8 +131,26 @@
                 </a>
             </nav>
 
-            <!-- Settings / Logout Area -->
-            <div class="p-4 border-t border-white/10">
+            <!-- Profile & Settings / Logout Area -->
+            <div class="p-4 border-t border-white/10 flex flex-col gap-2">
+                <!-- Profile -->
+                <div class="flex items-center gap-3 py-2" :class="(expanded && !isMobile) ? 'px-2 justify-start' : 'px-0 justify-center'">
+                    @php
+                        $organizer = Auth::user()->organizer;
+                    @endphp
+                    @if($organizer && $organizer->logo)
+                        <img src="{{ asset('storage/' . $organizer->logo) }}" class="w-10 h-10 rounded-full border border-white/20 object-cover shrink-0">
+                    @else
+                        <div class="w-10 h-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="user" class="w-5 h-5 text-[#E7C77E]"></i>
+                        </div>
+                    @endif
+                    <div x-show="expanded && !isMobile" class="text-left overflow-hidden">
+                        <p class="text-sm font-bold text-white leading-none truncate">{{ $organizer->name ?? Auth::user()->name }}</p>
+                        <p class="text-xs text-[#B7C9BE] mt-1">Penyelenggara</p>
+                    </div>
+                </div>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="w-full flex items-center py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
@@ -153,22 +175,7 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <!-- Notifications removed -->
                 
-                <!-- Profile -->
-                <div class="flex items-center gap-3">
-                    @php
-                        $organizer = Auth::user()->organizer;
-                        $avatarUrl = ($organizer && $organizer->logo) 
-                            ? asset('storage/' . $organizer->logo) 
-                            : 'https://ui-avatars.com/api/?name=' . urlencode($organizer->name ?? Auth::user()->name) . '&background=f3f4f6&color=111827';
-                    @endphp
-                    <img src="{{ $avatarUrl }}" class="w-9 h-9 rounded-full border border-gray-200 object-cover">
-                    <div class="hidden md:block text-right">
-                        <p class="text-sm font-bold text-gray-900 leading-none">{{ $organizer->name ?? Auth::user()->name }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Penyelenggara</p>
-                    </div>
-                </div>
             </div>
         </header>
 

@@ -10,33 +10,62 @@
                 <p class="text-sm text-brand-ink-soft">Kelola status verifikasi akun organizer agar mereka bisa membuat kajian publik.</p>
             </div>
             <div class="mt-4 sm:mt-0 flex w-full sm:w-auto">
-                <form action="{{ route('admin.organizer.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                <form method="GET" action="{{ route('admin.organizer.index') }}" class="flex w-full" data-turbo-frame="data-table" x-data>
+                    <div class="relative w-full sm:w-64">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" @input.debounce.500ms="$el.form.requestSubmit()" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-brand-emerald-500 focus:ring-1 focus:ring-brand-emerald-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari nama atau email...">
                     </div>
                 </form>
             </div>
         </div>
 
+        <turbo-frame id="data-table">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Organizer</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Logo & Nama</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Email/User</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-center">Status Verifikasi</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($organizers as $organizer)
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 font-medium text-brand-ink">{{ $organizer->name }}</td>
+                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                                {{ $organizers->firstItem() + $loop->index }}
+                            </td>
                             <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    @if($organizer->logo)
+                                        <img src="{{ asset('storage/' . $organizer->logo) }}" class="h-10 w-10 rounded-full object-cover border border-gray-200" alt="{{ $organizer->name }}">
+                                    @else
+                                        <div class="h-10 w-10 rounded-full bg-brand-emerald-100 flex items-center justify-center text-brand-emerald-800 font-bold border border-brand-emerald-200">
+                                            {{ substr($organizer->name, 0, 1) }}
+                                        </div>
+                                    @endif
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-brand-ink">{{ $organizer->name }}</div>
+                                        <div class="text-xs text-gray-500">Bergabung: {{ $organizer->created_at->format('d M Y') }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ $organizer->user->email ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 text-center">
                                 @if($organizer->is_verified)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-emerald-100 text-brand-emerald-950">Terverifikasi</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mr-1"></i> Terverifikasi
+                                    </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Belum Diverifikasi</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                        <i data-lucide="clock" class="w-3.5 h-3.5 mr-1"></i> Menunggu
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
@@ -52,38 +81,37 @@
                                         'created_at' => $organizer->created_at ? $organizer->created_at->format('d M Y') : '-'
                                     ];
                                 @endphp
-                                <button type="button" @click="detailModalOpen = true; selectedOrganizer = {{ json_encode($orgData) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Lihat Detail Profil">
-                                    <i data-lucide="eye" class="w-4 h-4 sm:mr-1.5 text-brand-ink-soft"></i>
-                                    <span class="hidden sm:inline">Detail</span>
+                                <button type="button" @click="selectedOrganizer = {{ json_encode($orgData) }}; detailModalOpen = true" class="inline-flex items-center px-3 py-1.5 border border-brand-emerald-900 text-sm font-medium rounded-md text-brand-emerald-900 bg-white hover:bg-brand-emerald-50 transition shadow-sm" title="Lihat Detail">
+                                    <i data-lucide="eye" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Detail</span>
                                 </button>
                                 
-                                <form action="{{ route('admin.organizer.verify', $organizer->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @if($organizer->is_verified)
-                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-red-200 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 transition" title="Cabut Verifikasi">
-                                            <i data-lucide="shield-x" class="w-4 h-4 sm:mr-1.5 text-red-600"></i>
-                                            <span class="hidden sm:inline">Cabut Verifikasi</span>
+                                @if(!$organizer->is_verified)
+                                    <form action="{{ route('admin.organizer.verify', $organizer->id) }}" method="POST" class="inline-block" data-turbo-frame="_top">
+                                        @csrf
+                                        <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-green-600 text-sm font-medium rounded-md text-green-700 bg-white hover:bg-green-50 transition shadow-sm" title="Verifikasi">
+                                            <i data-lucide="check" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Setujui</span>
                                         </button>
-                                    @else
-                                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-brand-emerald-900 hover:bg-brand-emerald-950 transition shadow-sm">
-                                            <i data-lucide="shield-check" class="w-4 h-4 mr-2"></i> Verifikasi
-                                        </button>
-                                    @endif
-                                </form>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-8 text-center text-brand-ink-soft">Belum ada penyelenggara.</td>
+                            <td colspan="5" class="px-6 py-8 text-center text-brand-ink-soft">
+                                Belum ada pendaftaran akun penyelenggara.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-            {{ $organizers->links('vendor.pagination.custom-dark') }}
-        </div>
+        @if ($organizers->hasPages())
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $organizers->links() }}
+            </div>
+        @endif
+        </turbo-frame>
 
         <!-- Detail Modal -->
         <div x-show="detailModalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>

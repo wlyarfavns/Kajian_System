@@ -11,64 +11,76 @@
                     <h2 class="text-lg font-bold text-brand-ink">Daftar Pemateri / Ustadz</h2>
                     <p class="text-sm text-brand-ink-soft">Kelola database profil asatidzah.</p>
                 </div>
-                <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
-                    <form action="{{ route('admin.speaker.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pemateri..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3">
+                <form method="GET" action="{{ route('admin.speaker.index') }}" class="flex w-full sm:w-auto" data-turbo-frame="data-table" x-data>
+                    <div class="relative w-full sm:w-64">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
                         </div>
-                    </form>
-                    <a href="{{ route('admin.speaker.create') }}" data-turbo="false" class="inline-flex items-center justify-center px-4 py-2 w-full sm:w-auto bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shrink-0">
-                        <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Tambah Pemateri
-                    </a>
-                </div>
+                        <input type="text" name="search" value="{{ request('search') }}" @input.debounce.500ms="$el.form.requestSubmit()" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-brand-emerald-500 focus:ring-1 focus:ring-brand-emerald-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari pemateri...">
+                    </div>
+                </form>
+                <a href="{{ route('admin.speaker.create') }}" class="inline-flex items-center justify-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2 shrink-0"></i> Tambah Pemateri
+                </a>
+            </div>
             </div>
 
 
+        <turbo-frame id="data-table">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
-                            <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Pemateri</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Pemateri / Ustadz</th>
                             <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @forelse($speakers as $speaker)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 font-medium text-brand-ink">{{ $speaker->name }}</td>
-                            <td class="px-6 py-4 text-right space-x-2">
-                                @php
-                                    $speakerData = [
-                                        'name' => $speaker->name,
-                                        'photo' => $speaker->photo ? Storage::url($speaker->photo) : null,
-                                        'description' => $speaker->description,
-                                        'created_at' => $speaker->created_at ? $speaker->created_at->format('d M Y') : '-',
-                                        'edit_url' => route('admin.speaker.edit', $speaker->id)
-                                    ];
-                                @endphp
-                                <button type="button" @click="detailModalOpen = true; selectedSpeaker = {{ json_encode($speakerData) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Detail">
-                                    <i data-lucide="eye" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Detail</span>
-                                </button>
-                                <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('admin.speaker.destroy', $speaker->id) }}'" class="inline-flex items-center px-3 py-1.5 border border-brand-danger text-sm font-medium rounded-md text-white bg-brand-danger hover:bg-red-700 transition" title="Hapus">
-                                    <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Hapus</span>
-                                </button>
-                            </td>
-                        </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                                    {{ $speakers->firstItem() + $loop->index }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        @if($speaker->photo)
+                                            <img src="{{ asset('storage/' . $speaker->photo) }}" class="h-10 w-10 rounded-full object-cover border border-gray-200" alt="{{ $speaker->name }}">
+                                        @else
+                                            <div class="h-10 w-10 rounded-full bg-brand-emerald-100 flex items-center justify-center text-brand-emerald-800 font-bold border border-brand-emerald-200">
+                                                {{ substr($speaker->name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                        <div class="ml-4 font-medium text-brand-ink">{{ $speaker->name }}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <a href="{{ route('admin.speaker.edit', $speaker->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit" data-turbo-frame="_top">
+                                        <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
+                                    </a>
+                                    <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('admin.speaker.destroy', $speaker->id) }}'" class="inline-flex items-center px-3 py-1.5 border border-brand-danger text-sm font-medium rounded-md text-white bg-brand-danger hover:bg-red-700 transition shadow-sm" title="Hapus">
+                                        <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Hapus</span>
+                                    </button>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="2" class="px-6 py-8 text-center text-brand-ink-soft">
-                                Belum ada data pemateri.
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="3" class="px-6 py-8 text-center text-brand-ink-soft">
+                                    Belum ada data pemateri yang ditambahkan.
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-                {{ $speakers->links('vendor.pagination.custom-dark') }}
-            </div>
+            @if ($speakers->hasPages())
+                <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                    {{ $speakers->links() }}
+                </div>
+            @endif
+        </turbo-frame>
         </div>
 
         <!-- Delete Confirmation Modal -->
@@ -199,7 +211,7 @@
                                 </div>
                                 
                                 <div class="w-full sm:w-auto flex justify-end">
-                                    <a :href="selectedSpeaker?.edit_url" data-turbo="false" class="inline-flex justify-center items-center px-4 py-2 border border-brand-emerald-900 text-sm font-medium rounded-lg text-brand-emerald-900 bg-white hover:bg-brand-emerald-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 transition shadow-sm w-full sm:w-auto">
+                                    <a :href="selectedSpeaker?.edit_url" class="inline-flex justify-center items-center px-4 py-2 border border-brand-emerald-900 text-sm font-medium rounded-lg text-brand-emerald-900 bg-white hover:bg-brand-emerald-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 transition shadow-sm w-full sm:w-auto">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         Edit Profil
                                     </a>

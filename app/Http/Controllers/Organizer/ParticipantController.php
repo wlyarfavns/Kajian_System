@@ -4,42 +4,51 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 class ParticipantController extends Controller
 {
-    public function index(\App\Models\Kajian $kajian, Request $request)
+    public function index(Request $request, \App\Models\Kajian $kajian)
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) {
             abort(403, 'Unauthorized action.');
         }
-        $search = $request->input('search');
-        $participants = \App\Models\KajianAttendee::with('user')
+        
+        $query = \App\Models\KajianAttendee::with('user')
             ->where('kajian_id', $kajian->id)
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('user', function ($uq) use ($search) {
-                    $uq->where('name', 'like', "%{$search}%")
-                       ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+            ->latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+            
+        $participants = $query->paginate(10)->withQueryString();
+        
         return view('organizer.participants', compact('kajian', 'participants'));
     }
     public function globalIndex(Request $request)
     {
         $organizerId = auth()->user()->organizer->id;
-        $search = $request->input('search');
-        $participants = \App\Models\KajianAttendee::with(['user', 'kajian'])
+        
+        $query = \App\Models\KajianAttendee::with(['user', 'kajian'])
             ->whereHas('kajian', function ($query) use ($organizerId) {
                 $query->where('organizer_id', $organizerId);
             })
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('user', function ($uq) use ($search) {
-                    $uq->where('name', 'like', "%{$search}%")
-                       ->orWhere('email', 'like', "%{$search}%");
+            ->latest();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                })->orWhereHas('kajian', function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
                 });
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+            });
+        }
+            
+        $participants = $query->paginate(10)->withQueryString();
         return view('organizer.participants_global', compact('participants'));
     }
     public function export()

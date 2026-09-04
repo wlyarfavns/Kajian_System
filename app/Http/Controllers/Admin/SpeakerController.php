@@ -8,13 +8,14 @@ class SpeakerController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $speakers = Speaker::when($search, function ($query, $search) {
-                return $query->where('name', 'like', "%{$search}%");
-            })
-            ->latest()
-            ->paginate(10)
-            ->appends(['search' => $search]);
+        $query = \App\Models\Speaker::latest();
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+        
+        $speakers = $query->paginate(10)->withQueryString();
         return view('admin.speaker.index', compact('speakers'));
     }
     public function create()

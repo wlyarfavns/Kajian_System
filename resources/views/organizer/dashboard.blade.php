@@ -457,7 +457,7 @@
                                 borderColor: '#10b981',
                                 backgroundColor: this.chartStyle === 'line' ? gradient : '#10b981',
                                 borderWidth: this.chartStyle === 'line' ? 3 : 0,
-                                tension: 0.4,
+                                tension: 0.1, // Set to 0.1 to make the line look more realistic (less artificially smooth)
                                 fill: true,
                                 borderRadius: this.chartStyle === 'bar' ? 4 : 0,
                                 pointBackgroundColor: '#ffffff',
