@@ -55,10 +55,26 @@
         }
     </style>
 </head>
-<body class="antialiased text-gray-800 bg-[#F8F9FA]" x-data="{ sidebarOpen: false }">
-    <div class="h-screen overflow-hidden flex w-full">
+<body class="antialiased text-gray-800 bg-[#F8F9FA]" 
+      x-data="{ 
+          expanded: localStorage.getItem('sidebar_expanded_admin') === null ? true : localStorage.getItem('sidebar_expanded_admin') === 'true', 
+          mobileOpen: false,
+          isMobile: window.innerWidth < 1024,
+          logoutModalOpen: false 
+      }"
+      @resize.window="isMobile = window.innerWidth < 1024; if(!isMobile) { mobileOpen = false; }">
+    <div class="h-screen overflow-hidden flex w-full relative">
+    
+    <!-- Mobile Backdrop -->
+    <div x-show="isMobile && mobileOpen" 
+         x-transition.opacity
+         class="fixed inset-0 bg-gray-900/60 z-30" 
+         @click="mobileOpen = false" 
+         style="display: none;"></div>
+
     <!-- Sidebar -->
-    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 sidebar-bg text-white transition-transform duration-300 ease-in-out lg:translate-x-0 lg:relative flex flex-col h-full shrink-0 overflow-hidden">
+    <aside :class="isMobile ? (mobileOpen ? 'w-64 fixed inset-y-0 left-0 z-40' : 'hidden') : (expanded ? 'w-64 relative' : 'w-20 relative')" 
+           class="sidebar-bg text-white transition-all duration-300 ease-in-out flex flex-col h-full shrink-0 overflow-visible z-20">
         
         <!-- Pattern SVG -->
         <svg class="sidebar-pattern" viewBox="0 0 256 1000" preserveAspectRatio="xMidYMid slice">
@@ -74,54 +90,61 @@
 
         <div class="relative z-10 flex flex-col h-full">
             <!-- Logo Area -->
-            <div class="h-16 flex items-center px-6 border-b border-white/10">
+            <div class="h-16 flex items-center border-b border-white/10 transition-all duration-300" :class="(isMobile || expanded) ? 'px-6 justify-start' : 'px-0 justify-center'">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-white text-[#0A2B20] flex items-center justify-center font-bold text-xl shadow-md">
+                    <div class="w-8 h-8 rounded-full bg-white text-[#0A2B20] flex items-center justify-center font-bold text-xl shadow-md shrink-0">
                         K
                     </div>
-                    <h1 class="text-xl font-bold tracking-tight text-[#E7C77E]">KajianKu</h1>
+                    <h1 x-show="isMobile || expanded" class="text-xl font-bold tracking-tight text-[#E7C77E] whitespace-nowrap">KajianKu</h1>
                 </div>
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-3">
-                <a href="{{ url('/admin') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->is('admin') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 {{ request()->is('admin') ? 'text-[#E7C77E]' : '' }}"></i> Dashboard
+            <nav class="flex-1 overflow-y-auto py-6 space-y-3" :class="(isMobile || expanded) ? 'px-4' : 'px-2'">
+                <a href="{{ url('/admin') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->is('admin') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 {{ request()->is('admin') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Dashboard</span>
                 </a>
                 
-                <a href="{{ route('admin.user.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.user.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="users" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.user.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola User
+                <a href="{{ route('admin.user.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.user.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="users" class="w-5 h-5 shrink-0 {{ request()->routeIs('admin.user.*') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Kelola User</span>
                 </a>
 
-                <a href="{{ route('admin.organizer.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.organizer.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="shield-check" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.organizer.*') ? 'text-[#E7C77E]' : '' }}"></i> Verifikasi Organizer
+                <a href="{{ route('admin.organizer.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.organizer.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="shield-check" class="w-5 h-5 shrink-0 {{ request()->routeIs('admin.organizer.*') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Verifikasi Organizer</span>
                 </a>
                 
-                <a href="{{ route('admin.kajian.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.kajian.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="calendar-check" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.kajian.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Kajian
+                <a href="{{ route('admin.kajian.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.kajian.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="calendar-check" class="w-5 h-5 shrink-0 {{ request()->routeIs('admin.kajian.*') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Kelola Kajian</span>
                 </a>
 
-                <a href="{{ route('admin.mosque.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.mosque.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="map-pin" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.mosque.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Masjid
+                <a href="{{ route('admin.mosque.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.mosque.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="map-pin" class="w-5 h-5 shrink-0 {{ request()->routeIs('admin.mosque.*') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Kelola Masjid</span>
                 </a>
 
-                <a href="{{ route('admin.speaker.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.speaker.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="mic" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.speaker.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Pemateri
+                <a href="{{ route('admin.speaker.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.speaker.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="mic" class="w-5 h-5 shrink-0 {{ request()->routeIs('admin.speaker.*') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Kelola Pemateri</span>
                 </a>
 
-                <a href="{{ route('admin.category.index') }}" class="flex items-center px-4 py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.category.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}">
-                    <i data-lucide="layers" class="w-5 h-5 mr-3 {{ request()->routeIs('admin.category.*') ? 'text-[#E7C77E]' : '' }}"></i> Kelola Kategori
+                <a href="{{ route('admin.category.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('admin.category.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                    <i data-lucide="layers" class="w-5 h-5 shrink-0 {{ request()->routeIs('admin.category.*') ? 'text-[#E7C77E]' : '' }}" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                    <span x-show="isMobile || expanded" class="whitespace-nowrap">Kelola Kategori</span>
                 </a>
             </nav>
 
             <!-- Profile & Settings / Logout Area -->
             <div class="p-4 border-t border-white/10 flex flex-col gap-2">
                 <!-- Profile -->
-                <div class="flex items-center gap-3 py-2 px-2 justify-start">
+                <div class="flex items-center gap-3 py-2" :class="(isMobile || expanded) ? 'px-2 justify-start' : 'px-0 justify-center'">
                     <div class="w-10 h-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center shrink-0">
                         <i data-lucide="user" class="w-5 h-5 text-[#E7C77E]"></i>
                     </div>
-                    <div class="text-left overflow-hidden">
+                    <div x-show="isMobile || expanded" class="text-left overflow-hidden">
                         <p class="text-sm font-bold text-white leading-none truncate">{{ Auth::user()->name }}</p>
                         <p class="text-xs text-[#B7C9BE] mt-1">Administrator</p>
                     </div>
@@ -129,24 +152,23 @@
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl">
-                        <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> Keluar
+                    <button type="submit" class="w-full flex items-center py-3 text-sm font-medium text-[#B7C9BE] hover:text-white hover:bg-red-500/20 hover:shadow-md transition-all rounded-xl" :class="(isMobile || expanded) ? 'px-4 justify-start' : 'px-0 justify-center'">
+                        <i data-lucide="log-out" class="w-5 h-5 shrink-0" :class="(isMobile || expanded) ? 'mr-3' : 'mr-0'"></i> 
+                        <span x-show="isMobile || expanded" class="whitespace-nowrap">Keluar</span>
                     </button>
                 </form>
             </div>
         </div>
     </aside>
 
-    <!-- Mobile overlay -->
-    <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden" style="display: none;"></div>
-
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden w-full relative">
         
         <!-- Topbar -->
-        <header class="h-16 px-6 flex items-center justify-between shrink-0 bg-white border-b border-gray-200">
+        <header class="h-16 px-4 lg:px-6 flex items-center justify-between shrink-0 bg-white border-b border-gray-200 relative z-20">
             <div class="flex items-center">
-                <button @click="sidebarOpen = true" class="mr-4 p-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100">
+                <!-- Menu Button -->
+                <button @click="if(isMobile) { mobileOpen = !mobileOpen; } else { expanded = !expanded; localStorage.setItem('sidebar_expanded_admin', expanded); }" class="mr-4 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
             </div>
@@ -193,3 +215,4 @@
     @stack('scripts')
 </body>
 </html>
+
