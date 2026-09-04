@@ -68,20 +68,13 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($kajian->status === 'published' || $kajian->status === 'ongoing' || $kajian->status === 'finished')
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
-                                {{ $kajian->speaker->name ?? '-' }}
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-brand-ink font-medium">
-                                    {{ \Carbon\Carbon::parse($kajian->start_at)->translatedFormat('d M Y') }}
-                                </div>
-                                <div class="text-xs text-brand-ink-soft mt-1">
-                                    {{ \Carbon\Carbon::parse($kajian->start_at)->format('H:i') }} WIB 
-                                    <span class="mx-1">•</span> 
-                                    {{ $kajian->mosque->name ?? 'Lokasi tidak diketahui' }}
-                                </div>
+                                    <a href="{{ route('organizer.kajian.qrcode', $kajian->slug) }}" data-turbo="false" class="inline-flex items-center px-3 py-1.5 border border-brand-emerald-200 text-sm font-medium rounded-md text-brand-emerald-900 bg-brand-emerald-50 hover:bg-brand-emerald-100 transition shadow-sm" title="Lihat Barcode">
+                                        <i data-lucide="qr-code" class="w-4 h-4 sm:mr-1.5"></i>
+                                        <span class="hidden sm:inline">Barcode</span>
+                                    </a>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">-</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                 <div class="flex items-center justify-end gap-2">
