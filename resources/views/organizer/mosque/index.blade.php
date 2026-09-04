@@ -22,6 +22,7 @@
                     <i data-lucide="plus-circle" class="w-4 h-4 mr-2 shrink-0"></i> Tambah Masjid
                 </a>
             </div>
+        </div>
 
         <turbo-frame id="data-table">
         <div class="overflow-x-auto">
