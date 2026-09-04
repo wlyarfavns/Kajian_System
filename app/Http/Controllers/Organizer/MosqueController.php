@@ -8,7 +8,7 @@ class MosqueController extends Controller
 {
     public function index()
     {
-        $mosques = Mosque::where('organizer_id', Auth::user()->organizer->id)->latest()->paginate(3);
+        $mosques = Mosque::where('organizer_id', Auth::user()->organizer->id)->latest()->paginate(10);
         return view('organizer.mosque.index', compact('mosques'));
     }
     public function create()

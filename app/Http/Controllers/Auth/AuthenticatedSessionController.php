@@ -12,17 +12,26 @@ class AuthenticatedSessionController extends Controller
     {
         return view('auth.login');
     }
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
         $request->session()->regenerate();
         $role = $request->user()->role;
+        
+        $url = '/';
         if ($role === 'admin') {
-            return redirect('/admin');
+            $url = '/admin';
         } elseif ($role === 'organizer') {
-            return redirect('/organizer');
+            $url = '/organizer';
+        } else {
+            $url = session()->pull('url.intended', '/');
         }
-        return redirect()->intended('/');
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['redirect' => $url]);
+        }
+        
+        return redirect()->intended($url);
     }
     public function destroy(Request $request): RedirectResponse
     {

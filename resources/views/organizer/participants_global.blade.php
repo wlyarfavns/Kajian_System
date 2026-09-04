@@ -9,8 +9,14 @@
                 <h2 class="text-lg font-bold text-brand-ink">Daftar Semua Peserta</h2>
                 <p class="text-sm text-brand-ink-soft">Melihat seluruh jamaah yang mendaftar pada kajian Anda.</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex space-x-2">
-                <a href="{{ route('organizer.peserta.export') }}" data-turbo="false" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition">
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
+                <form action="{{ route('organizer.peserta.global') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                </form>
+                <a href="{{ route('organizer.peserta.export') }}" data-turbo="false" class="inline-flex items-center justify-center px-4 py-2 w-full sm:w-auto bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition shrink-0">
                     <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Data
                 </a>
             </div>
@@ -76,10 +82,8 @@
             </table>
         </div>
         
-        @if($participants->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-                {{ $participants->links() }}
-            </div>
-        @endif
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+            {{ $participants->links('vendor.pagination.custom-dark') }}
+        </div>
     </div>
 </x-organizer-layout>

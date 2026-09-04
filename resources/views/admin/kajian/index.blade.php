@@ -17,9 +17,19 @@
         }
     }">
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
-            <div class="p-6 border-b border-gray-200">
-                <h2 class="text-lg font-bold text-brand-ink">Moderasi Kajian Masuk</h2>
-                <p class="text-sm text-brand-ink-soft">Tinjau dan verifikasi kajian baru yang dikirimkan oleh penyelenggara.</p>
+            <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                <div>
+                    <h2 class="text-lg font-bold text-brand-ink">Moderasi Kajian Masuk</h2>
+                    <p class="text-sm text-brand-ink-soft">Tinjau dan verifikasi kajian baru yang dikirimkan oleh penyelenggara.</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex w-full sm:w-auto">
+                    <form action="{{ route('admin.kajian.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul atau organizer..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             @if(session('success'))
@@ -75,7 +85,7 @@
                                     'address' => $kajian->address ?? '-',
                                     'date' => $kajian->start_at ? $kajian->start_at->translatedFormat('d F Y') : '-',
                                     'time' => $kajian->start_at ? $kajian->start_at->format('H:i') . ' - ' . $kajian->end_at->format('H:i') . ' WIB' : '-',
-                                    'poster' => $kajian->poster ? Storage::url($kajian->poster) : null,
+                                    'poster' => ($kajian->poster && Storage::disk('public')->exists($kajian->poster)) ? Storage::url($kajian->poster) : null,
                                     'category' => $kajian->category->name ?? '-',
                                     'is_verified' => $kajian->is_verified,
                                     'status' => $kajian->status,
@@ -98,11 +108,9 @@
                 </table>
             </div>
 
-            @if($kajians->hasPages())
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-                    {{ $kajians->links() }}
-                </div>
-            @endif
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+                {{ $kajians->links('vendor.pagination.custom-dark') }}
+            </div>
         </div>
 
         <!-- Detail Modal -->

@@ -4,9 +4,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = \App\Models\User::orderBy('created_at', 'desc')->paginate(10);
+        $search = $request->input('search');
+
+        $users = \App\Models\User::when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                             ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $search]);
+
         return view('admin.user.index', compact('users'));
     }
     public function create()

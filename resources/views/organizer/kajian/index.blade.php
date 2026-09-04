@@ -9,9 +9,17 @@
                 <h2 class="text-lg font-bold text-brand-ink">Daftar Kajian</h2>
                 <p class="text-sm text-brand-ink-soft">Kelola semua jadwal kajian yang Anda selenggarakan.</p>
             </div>
-            <a href="{{ route('organizer.kajian.create') }}" data-turbo="false" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900">
-                <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Tambah Kajian
-            </a>
+            <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
+                <form action="{{ route('organizer.kajian.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari judul kajian..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                </form>
+                <a href="{{ route('organizer.kajian.create') }}" data-turbo="false" class="inline-flex items-center justify-center px-4 py-2 w-full sm:w-auto bg-brand-emerald-900 text-white text-sm font-medium rounded-lg hover:bg-brand-emerald-950 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-emerald-900 shrink-0">
+                    <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i> Tambah Kajian
+                </a>
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -88,11 +96,9 @@
             </table>
         </div>
 
-        @if ($kajians->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
-                {{ $kajians->links() }}
-            </div>
-        @endif
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+            {{ $kajians->links('vendor.pagination.custom-dark') }}
+        </div>
 
         <!-- Delete Modal -->
         <div x-show="deleteModalOpen" style="display: none;" class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">

@@ -4,26 +4,42 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 class ParticipantController extends Controller
 {
-    public function index(\App\Models\Kajian $kajian)
+    public function index(\App\Models\Kajian $kajian, Request $request)
     {
         if ($kajian->organizer_id !== auth()->user()->organizer->id) {
             abort(403, 'Unauthorized action.');
         }
+        $search = $request->input('search');
         $participants = \App\Models\KajianAttendee::with('user')
             ->where('kajian_id', $kajian->id)
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->latest()
-            ->paginate(3);
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('organizer.participants', compact('kajian', 'participants'));
     }
-    public function globalIndex()
+    public function globalIndex(Request $request)
     {
         $organizerId = auth()->user()->organizer->id;
+        $search = $request->input('search');
         $participants = \App\Models\KajianAttendee::with(['user', 'kajian'])
             ->whereHas('kajian', function ($query) use ($organizerId) {
                 $query->where('organizer_id', $organizerId);
             })
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->latest()
-            ->paginate(3);
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('organizer.participants_global', compact('participants'));
     }
     public function export()

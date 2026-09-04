@@ -115,10 +115,6 @@
                     <span x-show="expanded && !isMobile" class="whitespace-nowrap">Kelola Kajian</span>
                 </a>
                 
-                <a href="{{ route('organizer.mosque.index') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('organizer.mosque.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
-                    <i data-lucide="map-pin" class="w-5 h-5 shrink-0 {{ request()->routeIs('organizer.mosque.*') ? 'text-[#E7C77E]' : '' }}" :class="(expanded && !isMobile) ? 'mr-3' : 'mr-0'"></i> 
-                    <span x-show="expanded && !isMobile" class="whitespace-nowrap">Data Masjid</span>
-                </a>
 
                 <a href="{{ route('organizer.peserta.global') }}" class="flex items-center py-3.5 text-sm font-medium transition-all duration-200 rounded-xl {{ request()->routeIs('organizer.peserta.*') ? 'bg-white/15 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/10 ring-1 ring-white/5' : 'text-[#B7C9BE] hover:text-white hover:bg-white/10 hover:shadow-lg' }}" :class="(expanded && !isMobile) ? 'px-4 justify-start' : 'px-0 justify-center'">
                     <i data-lucide="users" class="w-5 h-5 shrink-0 {{ request()->routeIs('organizer.peserta.*') ? 'text-[#E7C77E]' : '' }}" :class="(expanded && !isMobile) ? 'mr-3' : 'mr-0'"></i> 
@@ -157,63 +153,7 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <!-- Notifications -->
-                <div x-data="{ notifOpen: false }" class="relative">
-                    @php
-                        $unreadNotifications = Auth::user()->unreadNotifications;
-                        $unreadCount = $unreadNotifications->count();
-                    @endphp
-                    <button @click="notifOpen = !notifOpen" @click.outside="notifOpen = false" class="relative p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        @if($unreadCount > 0)
-                            <span class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
-                            </span>
-                        @endif
-                    </button>
-
-                    <div x-show="notifOpen" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 scale-95"
-                         x-transition:enter-end="opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="opacity-100 scale-100"
-                         x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
-                         style="display: none;">
-                        <div class="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
-                            <h3 class="font-bold text-gray-900">Notifikasi</h3>
-                            @if($unreadCount > 0)
-                                <form action="{{ route('notifications.readAll') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="text-xs text-brand-emerald-600 hover:text-brand-emerald-800 font-medium">Tandai semua dibaca</button>
-                                </form>
-                            @endif
-                        </div>
-                        
-                        <div class="max-h-96 overflow-y-auto">
-                            @forelse(Auth::user()->notifications()->take(10)->get() as $notification)
-                                <div class="px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors {{ $notification->read_at ? 'opacity-60' : 'bg-brand-emerald-50/30' }}">
-                                    <p class="text-sm text-gray-800">{!! $notification->data['message'] !!}</p>
-                                    <div class="flex justify-between items-center mt-2">
-                                        <span class="text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
-                                        @if(!$notification->read_at)
-                                            <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="text-xs text-brand-emerald-600 font-medium hover:underline">Tandai dibaca</button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="px-4 py-6 text-center text-gray-500 text-sm">
-                                    Belum ada notifikasi
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
+                <!-- Notifications removed -->
                 
                 <!-- Profile -->
                 <div class="flex items-center gap-3">

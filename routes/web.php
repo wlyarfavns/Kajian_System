@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
 });
 Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(function () {
     Route::get('/', [OrganizerDashboardController::class, 'index']);
+    Route::get('/dashboard/realtime', [OrganizerDashboardController::class, 'realtime'])->name('organizer.dashboard.realtime');
     Route::get('/kajian/{kajian}/qrcode', [OrganizerKajianController::class, 'qrcode'])->name('organizer.kajian.qrcode');
     Route::resource('kajian', OrganizerKajianController::class)->names('organizer.kajian');
     Route::get('/kajian/{kajian}/peserta', [OrganizerParticipantController::class, 'index'])->name('organizer.kajian.peserta');
@@ -49,6 +50,7 @@ Route::prefix('organizer')->middleware(['auth', 'role:organizer'])->group(functi
 });
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index']);
+    Route::get('/dashboard/realtime', [AdminDashboardController::class, 'realtime'])->name('admin.dashboard.realtime');
     Route::resource('category', AdminCategoryController::class)->names('admin.category');
     Route::resource('speaker', AdminSpeakerController::class)->names('admin.speaker');
     Route::resource('mosque', AdminMosqueController::class)->names('admin.mosque');

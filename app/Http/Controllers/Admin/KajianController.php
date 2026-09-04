@@ -5,9 +5,21 @@ use Illuminate\Http\Request;
 use App\Models\Kajian;
 class KajianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kajians = Kajian::with('organizer')->where('status', '!=', 'draft')->latest()->paginate(5);
+        $search = $request->input('search');
+        $kajians = Kajian::with('organizer')->where('status', '!=', 'draft')
+            ->when($search, function ($query, $search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhereHas('organizer', function ($oq) use ($search) {
+                          $oq->where('name', 'like', "%{$search}%");
+                      });
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('admin.kajian.index', compact('kajians'));
     }
     public function verify($id)

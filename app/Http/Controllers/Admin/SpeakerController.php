@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class SpeakerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $speakers = Speaker::latest()->paginate(10);
+        $search = $request->input('search');
+        $speakers = Speaker::when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('admin.speaker.index', compact('speakers'));
     }
     public function create()

@@ -145,10 +145,6 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <button class="relative p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border-2 border-white"></span>
-                </button>
                 
                 <!-- Profile -->
                 <div class="flex items-center gap-3">

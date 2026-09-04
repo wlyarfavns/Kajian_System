@@ -4,9 +4,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 class MosqueController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $mosques = \App\Models\Mosque::with('organizer')->latest()->paginate(10);
+        $search = $request->input('search');
+        $mosques = \App\Models\Mosque::with('organizer')
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                             ->orWhere('address', 'like', "%{$search}%")
+                             ->orWhereHas('organizer', function ($oq) use ($search) {
+                                 $oq->where('name', 'like', "%{$search}%");
+                             });
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('admin.mosque.index', compact('mosques'));
     }
     public function create()

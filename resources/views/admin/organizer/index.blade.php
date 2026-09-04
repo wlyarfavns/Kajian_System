@@ -4,9 +4,19 @@
     </x-slot>
 
     <div x-data="{ detailModalOpen: false, selectedOrganizer: null }" class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
-        <div class="p-6 border-b border-gray-200">
-            <h2 class="text-lg font-bold text-brand-ink">Daftar Akun Penyelenggara</h2>
-            <p class="text-sm text-brand-ink-soft">Kelola status verifikasi akun organizer agar mereka bisa membuat kajian publik.</p>
+        <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+                <h2 class="text-lg font-bold text-brand-ink">Daftar Akun Penyelenggara</h2>
+                <p class="text-sm text-brand-ink-soft">Kelola status verifikasi akun organizer agar mereka bisa membuat kajian publik.</p>
+            </div>
+            <div class="mt-4 sm:mt-0 flex w-full sm:w-auto">
+                <form action="{{ route('admin.organizer.index') }}" method="GET" class="relative w-full sm:w-64" data-turbo="false">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..." spellcheck="false" autocomplete="off" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-emerald-900 focus:border-brand-emerald-900 transition">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -71,11 +81,9 @@
             </table>
         </div>
 
-        @if ($organizers->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200">
-                {{ $organizers->links() }}
-            </div>
-        @endif
+        <div class="px-6 py-4 border-t border-gray-200 flex justify-center">
+            {{ $organizers->links('vendor.pagination.custom-dark') }}
+        </div>
 
         <!-- Detail Modal -->
         <div x-show="detailModalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>

@@ -4,9 +4,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $categories = \App\Models\Category::latest()->paginate(10);
+        $search = $request->input('search');
+        $categories = \App\Models\Category::when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('admin.category.index', compact('categories'));
     }
     public function store(Request $request)

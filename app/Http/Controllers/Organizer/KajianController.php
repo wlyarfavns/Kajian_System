@@ -13,7 +13,14 @@ class KajianController extends Controller
     public function index(Request $request)
     {
         $organizerId = auth()->user()->organizer->id;
-        $kajians = Kajian::where('organizer_id', $organizerId)->latest()->paginate(3);
+        $search = $request->input('search');
+        $kajians = Kajian::where('organizer_id', $organizerId)
+            ->when($search, function ($query, $search) {
+                return $query->where('title', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(10)
+            ->appends(['search' => $search]);
         return view('organizer.kajian.index', compact('kajians'));
     }
     public function create()

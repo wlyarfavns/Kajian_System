@@ -202,7 +202,7 @@
                 <p style="color:var(--ink-soft); font-size:14px; margin:0;">Ahlan wa sahlan, silakan masuk ke akun Anda</p>
             </div>
 
-            <form method="POST" action="{{ route('login') }}" style="display:flex; flex-direction:column; gap:16px;">
+            <form id="login-form" method="POST" action="{{ route('login') }}" style="display:flex; flex-direction:column; gap:16px;">
                 @csrf
 
                 <!-- Email -->
@@ -215,6 +215,7 @@
                         </svg>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus class="login-input" style="width:100%; padding:12px 18px 12px 42px; border-radius:14px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-family:inherit; font-size:14px; outline:none; transition:all 0.2s;">
                     </div>
+                    <div id="email-error" style="margin-top:6px; color:#dc2626; font-size:12px; display:none;"></div>
                     <x-input-error :messages="$errors->get('email')" style="margin-top:6px; color:#dc2626; font-size:12px;" />
                 </div>
 
@@ -239,6 +240,7 @@
                             </svg>
                         </button>
                     </div>
+                    <div id="password-error" style="margin-top:6px; color:#dc2626; font-size:12px; display:none;"></div>
                     <x-input-error :messages="$errors->get('password')" style="margin-top:6px; color:#dc2626; font-size:12px;" />
                 </div>
                 
@@ -254,6 +256,73 @@
                             icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
                         }
                     }
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const form = document.getElementById('login-form');
+                        if (form) {
+                            form.addEventListener('submit', async function(e) {
+                                e.preventDefault();
+                                
+                                const btn = form.querySelector('button[type="submit"]');
+                                const originalText = btn.innerHTML;
+                                
+                                // Reset errors
+                                document.getElementById('email-error').style.display = 'none';
+                                document.getElementById('email-error').innerHTML = '';
+                                document.getElementById('password-error').style.display = 'none';
+                                document.getElementById('password-error').innerHTML = '';
+                                
+                                // Hide old server errors if any
+                                document.querySelectorAll('.text-sm.text-red-600').forEach(el => el.style.display = 'none');
+                                
+                                btn.innerHTML = '<svg style="animation: spin 1s linear infinite; width:20px; height:20px; margin-right:8px; display:inline-block; vertical-align:middle;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...';
+                                btn.style.pointerEvents = 'none';
+                                btn.style.opacity = '0.8';
+
+                                const formData = new FormData(form);
+
+                                try {
+                                    const response = await fetch(form.action, {
+                                        method: 'POST',
+                                        body: formData,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json'
+                                        }
+                                    });
+
+                                    const data = await response.json();
+
+                                    if (response.ok) {
+                                        window.location.href = data.redirect || '/';
+                                    } else if (response.status === 422) {
+                                        // Validation failed
+                                        if (data.errors.email) {
+                                            document.getElementById('email-error').innerHTML = data.errors.email[0];
+                                            document.getElementById('email-error').style.display = 'block';
+                                        }
+                                        if (data.errors.password) {
+                                            document.getElementById('password-error').innerHTML = data.errors.password[0];
+                                            document.getElementById('password-error').style.display = 'block';
+                                        }
+                                        btn.innerHTML = originalText;
+                                        btn.style.pointerEvents = 'auto';
+                                        btn.style.opacity = '1';
+                                    } else {
+                                        alert('Terjadi kesalahan. Silakan coba lagi.');
+                                        btn.innerHTML = originalText;
+                                        btn.style.pointerEvents = 'auto';
+                                        btn.style.opacity = '1';
+                                    }
+                                } catch (error) {
+                                    alert('Gagal terhubung ke server. Periksa koneksi internet Anda.');
+                                    btn.innerHTML = originalText;
+                                    btn.style.pointerEvents = 'auto';
+                                    btn.style.opacity = '1';
+                                }
+                            });
+                        }
+                    });
                 </script>
 
                 <!-- Remember Me -->
