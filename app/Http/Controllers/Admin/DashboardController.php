@@ -28,6 +28,8 @@ class DashboardController extends Controller
         $recentKajians = \App\Models\Kajian::with(['mosque', 'category'])->withCount('attendees')->latest()->take(5)->get();
         $recentOrganizers = \App\Models\Organizer::with('user')->withCount('kajians')->latest()->take(5)->get();
         $recentMosques = \App\Models\Mosque::with('kajians')->withCount('kajians')->latest()->take(5)->get();
+        $unverifiedKajians = \App\Models\Kajian::with('organizer')->where('is_verified', false)->latest()->take(5)->get();
+        $unverifiedOrganizers = \App\Models\Organizer::where('is_verified', false)->latest()->take(5)->get();
         $unverifiedKajianCount = \App\Models\Kajian::where('is_verified', false)->count();
         $unverifiedOrganizerCount = \App\Models\Organizer::where('is_verified', false)->count();
         $chartDailyLabels = [];
@@ -66,6 +68,8 @@ class DashboardController extends Controller
             'userMingguIni',
             'unverifiedKajianCount',
             'unverifiedOrganizerCount',
+            'unverifiedKajians',
+            'unverifiedOrganizers',
             'chartDailyLabels',
             'chartDailyData',
             'chartWeeklyLabels',
@@ -145,6 +149,21 @@ class DashboardController extends Controller
             ];
         });
         
+        $unverifiedKajiansRaw = \App\Models\Kajian::with('organizer')->where('is_verified', false)->latest()->take(5)->get();
+        $unverifiedKajians = $unverifiedKajiansRaw->map(function($k) {
+            return [
+                'title' => $k->title,
+                'organizer_name' => $k->organizer->name ?? '-'
+            ];
+        });
+        
+        $unverifiedOrganizersRaw = \App\Models\Organizer::where('is_verified', false)->latest()->take(5)->get();
+        $unverifiedOrganizers = $unverifiedOrganizersRaw->map(function($org) {
+            return [
+                'name' => $org->name
+            ];
+        });
+        
         $unverifiedKajianCount = \App\Models\Kajian::where('is_verified', false)->count();
         $unverifiedOrganizerCount = \App\Models\Organizer::where('is_verified', false)->count();
         $chartDailyLabels = [];
@@ -184,6 +203,8 @@ class DashboardController extends Controller
             'userMingguIni',
             'unverifiedKajianCount',
             'unverifiedOrganizerCount',
+            'unverifiedKajians',
+            'unverifiedOrganizers',
             'chartDailyLabels',
             'chartDailyData',
             'chartWeeklyLabels',

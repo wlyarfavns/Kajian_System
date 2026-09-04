@@ -27,7 +27,7 @@
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Logo & Nama</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Penyelenggara</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Email/User</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-center">Status Verifikasi</th>
                         <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
@@ -40,18 +40,9 @@
                                 {{ $organizers->firstItem() + $loop->index }}
                             </td>
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    @if($organizer->logo)
-                                        <img src="{{ asset('storage/' . $organizer->logo) }}" class="h-10 w-10 rounded-full object-cover border border-gray-200" alt="{{ $organizer->name }}">
-                                    @else
-                                        <div class="h-10 w-10 rounded-full bg-brand-emerald-100 flex items-center justify-center text-brand-emerald-800 font-bold border border-brand-emerald-200">
-                                            {{ substr($organizer->name, 0, 1) }}
-                                        </div>
-                                    @endif
-                                    <div class="ml-4">
-                                        <div class="text-sm font-medium text-brand-ink">{{ $organizer->name }}</div>
-                                        <div class="text-xs text-gray-500">Bergabung: {{ $organizer->created_at->format('d M Y') }}</div>
-                                    </div>
+                                <div class="flex flex-col">
+                                    <div class="text-sm font-medium text-brand-ink">{{ $organizer->name }}</div>
+                                    <div class="text-xs text-gray-500">Bergabung: {{ $organizer->created_at->format('d M Y') }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">

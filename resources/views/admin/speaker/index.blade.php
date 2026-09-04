@@ -33,7 +33,8 @@
                     <thead>
                         <tr class="bg-gray-50 border-b border-gray-200">
                             <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
-                            <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Pemateri / Ustadz</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Pemateri / Ustadz</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-center">Total Kajian</th>
                             <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -45,15 +46,13 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        @if($speaker->photo)
-                                            <img src="{{ asset('storage/' . $speaker->photo) }}" class="h-10 w-10 rounded-full object-cover border border-gray-200" alt="{{ $speaker->name }}">
-                                        @else
-                                            <div class="h-10 w-10 rounded-full bg-brand-emerald-100 flex items-center justify-center text-brand-emerald-800 font-bold border border-brand-emerald-200">
-                                                {{ substr($speaker->name, 0, 1) }}
-                                            </div>
-                                        @endif
-                                        <div class="ml-4 font-medium text-brand-ink">{{ $speaker->name }}</div>
+                                        <div class="font-medium text-brand-ink">{{ $speaker->name }}</div>
                                     </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-emerald-50 text-brand-emerald-700">
+                                        {{ $speaker->kajians_count }} Kajian
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                     <a href="{{ route('admin.speaker.edit', $speaker->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit" data-turbo-frame="_top">
@@ -66,7 +65,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-6 py-8 text-center text-brand-ink-soft">
+                                <td colspan="4" class="px-6 py-8 text-center text-brand-ink-soft">
                                     Belum ada data pemateri yang ditambahkan.
                                 </td>
                             </tr>

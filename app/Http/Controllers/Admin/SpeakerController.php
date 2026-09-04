@@ -8,7 +8,7 @@ class SpeakerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = \App\Models\Speaker::latest();
+        $query = \App\Models\Speaker::withCount('kajians')->latest();
         
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;

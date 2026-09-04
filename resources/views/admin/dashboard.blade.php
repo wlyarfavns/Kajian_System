@@ -98,7 +98,9 @@
             <div class="lg:col-span-1 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-bold text-gray-900">Tugas & Peringatan</h3>
-                    <a href="{{ route('admin.kajian.index') }}" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100">View All</a>
+                    <a href="{{ route('admin.kajian.index') }}" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 flex items-center transition-colors">
+                        <i data-lucide="list" class="w-4 h-4 mr-1"></i> View All
+                    </a>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -111,14 +113,14 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50 text-sm">
-                            <template x-if="metrics.unverifiedKajianCount > 0">
+                            <template x-for="uk in lists.unverifiedKajians" :key="uk.title">
                                 <tr>
                                     <td class="py-4 px-4 whitespace-nowrap flex items-center text-gray-700 font-medium">
                                         <div class="w-2 h-2 rounded-full bg-gray-300 mr-2 border border-gray-400"></div> Menunggu
                                     </td>
-                                    <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold">
+                                    <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold truncate max-w-[200px]" :title="'Review Kajian: ' + uk.title">
                                         <a href="{{ route('admin.kajian.index') }}" class="hover:text-blue-600 transition-colors">
-                                            Review <span x-text="metrics.unverifiedKajianCount"></span> Kajian Baru
+                                            Review Kajian: <span x-text="uk.title"></span>
                                         </a>
                                     </td>
                                     <td class="py-4 px-4 whitespace-nowrap flex justify-end">
@@ -129,14 +131,14 @@
                                 </tr>
                             </template>
 
-                            <template x-if="metrics.unverifiedOrganizerCount > 0">
+                            <template x-for="uo in lists.unverifiedOrganizers" :key="uo.name">
                                 <tr>
                                     <td class="py-4 px-4 whitespace-nowrap flex items-center text-gray-700 font-medium">
                                         <div class="w-2 h-2 rounded-full bg-gray-300 mr-2 border border-gray-400"></div> Pendaftaran
                                     </td>
-                                    <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold">
+                                    <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold truncate max-w-[200px]" :title="'Verifikasi Organizer: ' + uo.name">
                                         <a href="{{ route('admin.organizer.index') }}" class="hover:text-blue-600 transition-colors">
-                                            Verifikasi <span x-text="metrics.unverifiedOrganizerCount"></span> Organizer
+                                            Verifikasi Organizer: <span x-text="uo.name"></span>
                                         </a>
                                     </td>
                                     <td class="py-4 px-4 whitespace-nowrap flex justify-end">
@@ -166,15 +168,15 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                 <h3 class="text-lg font-bold text-gray-900" x-text="activeTab === 'kajian' ? 'Daftar Kajian' : (activeTab === 'organizer' ? 'Daftar Penyelenggara' : 'Daftar Masjid')">Daftar Kajian</h3>
                 
-                <div class="flex items-center space-x-2 text-sm text-gray-500 bg-gray-50 rounded-lg p-1">
-                    <button type="button" @click="activeTab = 'kajian'" :class="activeTab === 'kajian' ? 'bg-white text-blue-600 shadow-sm border-gray-200' : 'hover:text-gray-700 border-transparent'" class="px-4 py-1.5 font-medium rounded-md transition-colors flex items-center border">
-                        <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> Kajian
+                <div class="flex items-center space-x-2 text-sm text-gray-500 bg-gray-50 rounded-lg p-1 overflow-x-auto max-w-full hide-scrollbar">
+                    <button type="button" @click="activeTab = 'kajian'" :class="activeTab === 'kajian' ? 'bg-white text-blue-600 shadow-sm border-gray-200' : 'hover:text-gray-700 border-transparent'" class="px-4 py-1.5 font-medium rounded-md transition-colors flex items-center border whitespace-nowrap shrink-0">
+                        <i data-lucide="calendar" class="w-4 h-4 mr-2 shrink-0"></i> Kajian
                     </button>
-                    <button type="button" @click="activeTab = 'organizer'" :class="activeTab === 'organizer' ? 'bg-white text-blue-600 shadow-sm border-gray-200' : 'hover:text-gray-700 border-transparent'" class="px-4 py-1.5 font-medium rounded-md transition-colors flex items-center border">
-                        <i data-lucide="users" class="w-4 h-4 mr-2"></i> Penyelenggara
+                    <button type="button" @click="activeTab = 'organizer'" :class="activeTab === 'organizer' ? 'bg-white text-blue-600 shadow-sm border-gray-200' : 'hover:text-gray-700 border-transparent'" class="px-4 py-1.5 font-medium rounded-md transition-colors flex items-center border whitespace-nowrap shrink-0">
+                        <i data-lucide="users" class="w-4 h-4 mr-2 shrink-0"></i> Penyelenggara
                     </button>
-                    <button type="button" @click="activeTab = 'mosque'" :class="activeTab === 'mosque' ? 'bg-white text-blue-600 shadow-sm border-gray-200' : 'hover:text-gray-700 border-transparent'" class="px-4 py-1.5 font-medium rounded-md transition-colors flex items-center border">
-                        <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i> Lokasi
+                    <button type="button" @click="activeTab = 'mosque'" :class="activeTab === 'mosque' ? 'bg-white text-blue-600 shadow-sm border-gray-200' : 'hover:text-gray-700 border-transparent'" class="px-4 py-1.5 font-medium rounded-md transition-colors flex items-center border whitespace-nowrap shrink-0">
+                        <i data-lucide="map-pin" class="w-4 h-4 mr-2 shrink-0"></i> Lokasi
                     </button>
                 </div>
             </div>
@@ -213,6 +215,15 @@
                                 <td colspan="6" class="py-4 px-4 whitespace-nowrap text-center text-gray-500 font-medium">Belum ada kajian</td>
                             </tr>
                         </template>
+                        <template x-if="lists.recentKajians.length >= 5">
+                            <tr>
+                                <td colspan="6" class="py-4 px-4 whitespace-nowrap text-center bg-gray-50/50">
+                                    <a href="{{ route('admin.kajian.index') }}" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center">
+                                        Lihat Semua Kajian <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
 
@@ -247,6 +258,15 @@
                         <template x-if="lists.recentOrganizers.length === 0">
                             <tr>
                                 <td colspan="5" class="py-4 px-4 whitespace-nowrap text-center text-gray-500 font-medium">Belum ada penyelenggara</td>
+                            </tr>
+                        </template>
+                        <template x-if="lists.recentOrganizers.length >= 5">
+                            <tr>
+                                <td colspan="5" class="py-4 px-4 whitespace-nowrap text-center bg-gray-50/50">
+                                    <a href="{{ route('admin.organizer.index') }}" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center">
+                                        Lihat Semua Penyelenggara <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                                    </a>
+                                </td>
                             </tr>
                         </template>
                     </tbody>
@@ -301,6 +321,15 @@
                         <template x-if="lists.recentMosques.length === 0">
                             <tr>
                                 <td colspan="5" class="py-4 px-4 whitespace-nowrap text-center text-gray-500 font-medium">Belum ada masjid</td>
+                            </tr>
+                        </template>
+                        <template x-if="lists.recentMosques.length >= 5">
+                            <tr>
+                                <td colspan="5" class="py-4 px-4 whitespace-nowrap text-center bg-gray-50/50">
+                                    <a href="{{ route('admin.mosque.index') }}" class="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors inline-flex items-center">
+                                        Lihat Semua Lokasi Masjid <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                                    </a>
+                                </td>
                             </tr>
                         </template>
                     </tbody>
@@ -377,6 +406,20 @@
                             kajians_count: {{ $mosque->kajians_count }}
                         },
                         @endforeach
+                    ],
+                    unverifiedKajians: [
+                        @foreach($unverifiedKajians as $uk)
+                        {
+                            title: "{{ addslashes($uk->title) }}"
+                        },
+                        @endforeach
+                    ],
+                    unverifiedOrganizers: [
+                        @foreach($unverifiedOrganizers as $uo)
+                        {
+                            name: "{{ addslashes($uo->name) }}"
+                        },
+                        @endforeach
                     ]
                 },
                 
@@ -437,6 +480,8 @@
                                 this.lists.recentKajians = data.recentKajians;
                                 this.lists.recentOrganizers = data.recentOrganizers;
                                 this.lists.recentMosques = data.recentMosques;
+                                this.lists.unverifiedKajians = data.unverifiedKajians;
+                                this.lists.unverifiedOrganizers = data.unverifiedOrganizers;
                                 
                                 // Update Chart Data
                                 this.chartDataStore.harian.labels = data.chartDailyLabels;

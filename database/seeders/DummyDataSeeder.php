@@ -31,6 +31,15 @@ class DummyDataSeeder extends Seeder
             ['user_id' => $orgUser->id],
             ['name' => 'Takmir Masjid', 'is_verified' => true]
         );
+
+        $unverifiedOrgUser = User::firstOrCreate(
+            ['email' => 'baru@kajianku.test'],
+            ['name' => 'Takmir Masjid Baru', 'password' => Hash::make('password'), 'role' => 'organizer']
+        );
+        $unverifiedOrganizer = Organizer::firstOrCreate(
+            ['user_id' => $unverifiedOrgUser->id],
+            ['name' => 'DKM Masjid Assalam (Baru)', 'is_verified' => false]
+        );
         $cats = ['Aqidah', 'Fiqih', 'Keluarga', 'Bisnis', 'Tahsin'];
         $categories = [];
         foreach ($cats as $c) {
@@ -78,6 +87,32 @@ class DummyDataSeeder extends Seeder
                 'is_free' => rand(0, 1) ? true : false,
                 'price' => rand(0, 1) ? 0 : 50000,
                 'is_family_friendly' => rand(0, 1) ? true : false,
+            ]);
+        }
+        
+        // Add unverified Kajians
+        for ($i = 1; $i <= 2; $i++) {
+            $date = Carbon::now()->addDays(rand(2, 5))->setTime(rand(8, 20), 0);
+            $cat = $categories[array_rand($categories)];
+            $mosque = $mosques[array_rand($mosques)];
+            Kajian::create([
+                'title' => 'Kajian Baru ' . $cat->name . ' (Butuh Review) ' . $i,
+                'organizer_id' => $organizer->id,
+                'mosque_id' => $mosque->id,
+                'speaker_id' => $speakers[array_rand($speakers)]->id,
+                'category_id' => $cat->id,
+                'description' => "Ini adalah kajian baru yang baru didaftarkan dan menunggu verifikasi dari admin.",
+                'start_at' => $date,
+                'end_at' => (clone $date)->addHours(2),
+                'address' => $mosque->address,
+                'latitude' => $mosque->latitude,
+                'longitude' => $mosque->longitude,
+                'audience' => 'umum',
+                'status' => 'published',
+                'is_verified' => false,
+                'is_free' => true,
+                'price' => 0,
+                'is_family_friendly' => true,
             ]);
         }
         Favorite::firstOrCreate(['user_id' => $jamaah->id, 'kajian_id' => $kajiansData[0]->id]);

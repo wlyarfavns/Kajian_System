@@ -78,15 +78,15 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
-                                    <a href="{{ route('admin.user.edit', $user->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit Akun" data-turbo-frame="_top">
-                                        <i data-lucide="edit-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
+                                    <a href="{{ route('admin.user.edit', $user->id) }}" class="inline-flex items-center justify-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit Akun" data-turbo-frame="_top">
+                                        <i data-lucide="edit-2" class="w-4 h-4 mr-1.5 shrink-0"></i> <span>Edit</span>
                                     </a>
                                     <button type="button" @click="openDeleteModal({{ json_encode([
                                         'id' => $user->id,
                                         'name' => $user->name,
                                         'delete_url' => route('admin.user.destroy', $user->id)
-                                    ]) }})" class="inline-flex items-center px-3 py-1.5 border border-red-200 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 transition" title="Hapus Akun">
-                                        <i data-lucide="trash-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Hapus</span>
+                                    ]) }})" class="inline-flex items-center justify-center px-3 py-1.5 border border-red-200 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 transition" title="Hapus Akun">
+                                        <i data-lucide="trash-2" class="w-4 h-4 mr-1.5 shrink-0"></i> <span>Hapus</span>
                                     </button>
                                 </td>
                             </tr>

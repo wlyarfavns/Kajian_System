@@ -23,8 +23,8 @@
                         <input type="text" name="search" value="{{ request('search') }}" @input.debounce.500ms="$el.form.requestSubmit()" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-brand-emerald-500 focus:ring-1 focus:ring-brand-emerald-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari nama, email...">
                     </div>
                 </form>
-                <a href="{{ route('organizer.kajian.peserta.export', $kajian->id) }}" data-turbo="false" class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition shadow-sm">
-                    <i data-lucide="download" class="w-4 h-4 mr-2 shrink-0"></i> Export Excel
+                <a href="{{ route('organizer.kajian.peserta.export', $kajian->slug) }}" data-turbo="false" class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-300 text-sm font-medium rounded-lg text-brand-ink hover:bg-gray-50 transition shadow-sm">
+                    <i data-lucide="download" class="w-4 h-4 mr-2"></i> Export Data
                 </a>
             </div>
         </div>

@@ -81,10 +81,10 @@
                                     <a href="{{ route('organizer.kajian.peserta', $kajian->slug) }}" class="inline-flex items-center justify-center p-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition shadow-sm" title="Kelola Peserta" data-turbo-frame="_top">
                                         <i data-lucide="users" class="w-4 h-4"></i>
                                     </a>
-                                    <a href="{{ route('organizer.kajian.edit', $kajian->id) }}" class="inline-flex items-center justify-center p-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition shadow-sm" title="Edit Kajian" data-turbo-frame="_top">
+                                    <a href="{{ route('organizer.kajian.edit', $kajian->slug) }}" class="inline-flex items-center justify-center p-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition shadow-sm" title="Edit Kajian" data-turbo-frame="_top">
                                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                                     </a>
-                                    <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('organizer.kajian.destroy', $kajian->id) }}'; kajianTitle = '{{ addslashes($kajian->title) }}'" class="inline-flex items-center justify-center p-2 border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition shadow-sm" title="Hapus Kajian">
+                                    <button type="button" @click="deleteModalOpen = true; deleteFormAction = '{{ route('organizer.kajian.destroy', $kajian->slug) }}'; kajianTitle = '{{ addslashes($kajian->title) }}'" class="inline-flex items-center justify-center p-2 border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition shadow-sm" title="Hapus Kajian">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 </div>
