@@ -158,7 +158,7 @@
   <div class="auth-wrapper">
     <div class="auth-card">
             
-            <x-auth-session-status style="margin-bottom: 16px; color: var(--jade-800); font-weight: 600; font-size: 14px; text-align: center;" :status="session('status')" />
+            <div id="statusMessage" style="display: none; margin-bottom: 16px; color: var(--jade-800); font-weight: 600; font-size: 14px; text-align: center; background: #eef2ff; border: 1px solid #c7d2fe; padding: 12px; border-radius: 12px;"></div>
 
             @if (session('reset_link') && env('MAIL_MAILER') === 'log')
                 <div style="background: #eef2ff; border: 1px solid #c7d2fe; color: #4338ca; padding: 12px; border-radius: 12px; margin-bottom: 16px; text-align: left; font-size: 13px;">
@@ -185,7 +185,7 @@
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('password.email') }}" style="display:flex; flex-direction:column; gap:16px;">
+            <form id="forgotPasswordForm" method="POST" action="{{ route('password.email') }}" style="display:flex; flex-direction:column; gap:16px;">
                 @csrf
 
                 <!-- Email -->
@@ -198,15 +198,98 @@
                         </svg>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus class="login-input">
                     </div>
+                    <div id="emailError" style="display:none; margin-top:6px; color:#dc2626; font-size:12px;"></div>
                     <x-input-error :messages="$errors->get('email')" style="margin-top:6px; color:#dc2626; font-size:12px;" />
                 </div>
 
-                <button type="submit" class="btn-solid" style="margin-top: 8px;">Kirim Tautan Reset</button>
+                <button id="submitBtn" type="submit" class="btn-solid" style="margin-top: 8px;">Kirim Tautan Reset</button>
                 
             </form>
 
         </div>
     </div>
 </header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('forgotPasswordForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const emailError = document.getElementById('emailError');
+    const emailInput = document.getElementById('email');
+
+    if(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // reset messages
+            statusMessage.style.display = 'none';
+            statusMessage.textContent = '';
+            emailError.style.display = 'none';
+            emailError.textContent = '';
+            
+            // hide traditional error if exists
+            const serverErrors = document.querySelectorAll('.text-sm.text-red-600');
+            serverErrors.forEach(el => el.style.display = 'none');
+
+            // disable button
+            submitBtn.disabled = true;
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = 'Mengirim...';
+            submitBtn.style.opacity = '0.7';
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => {
+                return response.json().then(data => ({status: response.status, body: data}));
+            })
+            .then(res => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.style.opacity = '1';
+
+                if (res.status === 200) {
+                    statusMessage.style.color = 'var(--jade-800)';
+                    statusMessage.style.backgroundColor = '#eef2ff';
+                    statusMessage.style.borderColor = '#c7d2fe';
+                    statusMessage.textContent = res.body.status || 'Tautan reset kata sandi telah dikirim ke email Anda.';
+                    statusMessage.style.display = 'block';
+                    emailInput.value = ''; 
+                } else if (res.status === 422) {
+                    if (res.body.errors && res.body.errors.email) {
+                        emailError.textContent = res.body.errors.email[0];
+                        emailError.style.display = 'block';
+                    }
+                } else {
+                    statusMessage.style.color = '#dc2626';
+                    statusMessage.style.backgroundColor = '#fee2e2';
+                    statusMessage.style.borderColor = '#f87171';
+                    statusMessage.textContent = res.body.message || 'Terjadi kesalahan. Silakan coba lagi.';
+                    statusMessage.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.style.opacity = '1';
+                statusMessage.style.color = '#dc2626';
+                statusMessage.style.backgroundColor = '#fee2e2';
+                statusMessage.style.borderColor = '#f87171';
+                statusMessage.textContent = 'Terjadi kesalahan jaringan. Periksa koneksi Anda.';
+                statusMessage.style.display = 'block';
+            });
+        });
+    }
+});
+</script>
+
 </body>
 </html>

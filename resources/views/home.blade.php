@@ -138,7 +138,10 @@
         
         <div class="kcard-media" style="height:150px; background: linear-gradient(rgba(15, 81, 55, 0.7), rgba(15, 81, 55, 0.9)), url('{{ asset('images/about_mosque.jpg') }}') center/cover; position:relative; display:flex; align-items:flex-end; padding:16px;">
           <span class="ribbon" style="background:var(--gold); color:var(--paper); padding:4px 12px; border-radius:8px; font-size:12px; font-weight:700; position:absolute; top:16px; left:16px; letter-spacing:1px; text-transform:uppercase;">{{ $kajian->category->name ?? 'Kajian' }}</span>
-          <div class="kcard-save" style="position:absolute; top:16px; right:16px; width:32px; height:32px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer;">♥</div>
+          @php
+              $isFavorited = auth()->check() ? $kajian->favoritedBy->contains('user_id', auth()->id()) : false;
+          @endphp
+          <div class="kcard-save" style="position:absolute; top:16px; right:16px; width:32px; height:32px; background:rgba(255,255,255,0.2); backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; color:{{ $isFavorited ? 'red' : '#fff' }}; cursor:pointer; transition: color 0.3s;" onclick="toggleFavorite(this, '{{ $kajian->slug }}')">♥</div>
         </div>
         
         <div class="kcard-body" style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1;">
@@ -198,6 +201,34 @@
 </section>
 
 <script>
+function toggleFavorite(element, slug) {
+    fetch(`/kajian/${slug}/favorite`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data) {
+            if (data.status === 'added') {
+                element.style.color = 'red';
+            } else if (data.status === 'removed') {
+                element.style.color = '#fff';
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     // Don't auto-request if we already have lat/lng or if user explicitly declined (we can use sessionStorage)

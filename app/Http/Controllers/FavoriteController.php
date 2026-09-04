@@ -14,19 +14,33 @@ class FavoriteController extends Controller
             ->paginate(10);
         return view('user.saved', compact('favorites'));
     }
-    public function toggle(Kajian $kajian)
+    public function toggle(Request $request, Kajian $kajian)
     {
+        if (!Auth::check()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['error' => 'Unauthenticated'], 401);
+            }
+            return redirect()->route('login');
+        }
+
         $favorite = Favorite::where('user_id', Auth::id())
             ->where('kajian_id', $kajian->id)
             ->first();
+            
         if ($favorite) {
             $favorite->delete();
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['status' => 'removed']);
+            }
             return back()->with('status', 'Kajian dihapus dari daftar tersimpan.');
         } else {
             Favorite::create([
                 'user_id' => Auth::id(),
                 'kajian_id' => $kajian->id,
             ]);
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['status' => 'added']);
+            }
             return back()->with('status', 'Kajian berhasil disimpan!');
         }
     }

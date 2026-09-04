@@ -17,6 +17,7 @@ class User extends Authenticatable
         'photo',
         'latitude',
         'longitude',
+        'google_id',
     ];
     protected $hidden = [
         'password',

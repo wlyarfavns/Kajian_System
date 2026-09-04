@@ -12,7 +12,7 @@ class PasswordResetLinkController extends Controller
     {
         return view('auth.forgot-password');
     }
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email'],
@@ -23,9 +23,20 @@ class PasswordResetLinkController extends Controller
         );
 
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+        if ($status == Password::RESET_LINK_SENT) {
+            if ($request->wantsJson()) {
+                return response()->json(['status' => __($status)]);
+            }
+            return back()->with('status', __($status));
+        }
+
+        if ($request->wantsJson()) {
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
+        }
+
+        return back()->withInput($request->only('email'))
+                    ->withErrors(['email' => __($status)]);
     }
 }

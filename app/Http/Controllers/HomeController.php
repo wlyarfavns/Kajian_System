@@ -10,16 +10,16 @@ class HomeController extends Controller
         $lat = $request->query('lat');
         $lng = $request->query('lng');
         $categories = Category::orderBy('name')->get();
-        $query = Kajian::with(['organizer', 'mosque', 'speaker', 'category']);
+        $query = Kajian::with(['organizer', 'mosque', 'speaker', 'category', 'favoritedBy']);
         if ($lat && $lng) {
             $kajians = clone $query;
-            $kajians = $kajians->nearby($lat, $lng, 5)->get();
+            $kajians = $kajians->nearby($lat, $lng, 5)->take(3)->get();
             if ($kajians->isEmpty()) {
                 $fallbackQuery = clone $query;
-                $kajians = $fallbackQuery->nearby($lat, $lng, 10)->get();
+                $kajians = $fallbackQuery->nearby($lat, $lng, 10)->take(3)->get();
             }
         } else {
-            $kajians = $query->nearby(null, null)->get();
+            $kajians = $query->nearby(null, null)->take(3)->get();
         }
         return view('home', compact('kajians', 'categories', 'lat', 'lng'));
     }
