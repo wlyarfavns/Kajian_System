@@ -29,29 +29,34 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider w-16">No</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Nama Masjid</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Penyelenggara</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider">Alamat</th>
-                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right">Aksi</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider whitespace-nowrap w-16">No</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider whitespace-nowrap">Nama Masjid</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider whitespace-nowrap">Penyelenggara</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider whitespace-nowrap">Alamat</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-center whitespace-nowrap">Link Maps</th>
+                        <th class="px-6 py-4 text-xs font-semibold text-brand-ink-soft uppercase tracking-wider text-right whitespace-nowrap">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($mosques as $mosque)
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 text-sm text-brand-ink font-medium">
+                            <td class="px-6 py-4 text-sm text-brand-ink font-medium whitespace-nowrap">
                                 {{ $mosques->firstItem() + $loop->index }}
                             </td>
-                            <td class="px-6 py-4 font-medium text-brand-ink">
+                            <td class="px-6 py-4 font-medium text-brand-ink whitespace-nowrap">
                                 {{ $mosque->name }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-brand-ink whitespace-nowrap">{{ $mosque->organizer->name ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{{ Str::limit($mosque->address, 50) }}</td>
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
                                 @if($mosque->google_maps_url)
-                                    <a href="{{ $mosque->google_maps_url }}" target="_blank" class="text-xs text-blue-500 ml-2 hover:underline">
-                                        <i data-lucide="external-link" class="w-3 h-3 inline"></i> Maps
+                                    <a href="{{ $mosque->google_maps_url }}" target="_blank" class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">
+                                        <i data-lucide="map-pin" class="w-3 h-3 mr-1"></i> Maps
                                     </a>
+                                @else
+                                    <span class="text-xs text-gray-400 italic">-</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-sm text-brand-ink">{{ $mosque->organizer->name ?? '-' }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($mosque->address, 50) }}</td>
                             <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                 <a href="{{ route('admin.mosque.edit', $mosque->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit" data-turbo-frame="_top">
                                     <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
