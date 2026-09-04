@@ -77,7 +77,7 @@
                                         {{ ucfirst($user->role) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-right space-x-2">
+                                <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                     <a href="{{ route('admin.user.edit', $user->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit Akun" data-turbo-frame="_top">
                                         <i data-lucide="edit-2" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
                                     </a>
@@ -160,3 +160,4 @@
         </div>
     </div>
 </x-admin-layout>
+

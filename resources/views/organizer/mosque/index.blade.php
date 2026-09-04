@@ -49,7 +49,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($mosque->address, 50) }}</td>
-                            <td class="px-6 py-4 text-right space-x-2">
+                            <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                 @php
                                     $mosqueData = [
                                         'name' => $mosque->name,
@@ -174,3 +174,4 @@
         </div>
     </div>
 </x-organizer-layout>
+

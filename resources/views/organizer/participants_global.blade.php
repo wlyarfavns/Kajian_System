@@ -63,7 +63,7 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Dibatalkan</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-right">
+                            <td class="px-6 py-4 text-right whitespace-nowrap">
                                 @if($attendee->status === 'registered')
                                     <!-- Here we can add a check-in form later if needed -->
                                     <button type="button" class="inline-flex items-center px-3 py-1.5 border border-brand-emerald-900 text-sm font-medium rounded-md text-white bg-brand-emerald-900 hover:bg-brand-emerald-950 transition">
@@ -97,3 +97,4 @@
         </turbo-frame>
     </div>
 </x-organizer-layout>
+

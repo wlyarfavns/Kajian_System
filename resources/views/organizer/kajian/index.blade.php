@@ -83,7 +83,7 @@
                                     {{ $kajian->mosque->name ?? 'Lokasi tidak diketahui' }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-right space-x-2">
+                            <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('organizer.kajian.peserta', $kajian->slug) }}" class="inline-flex items-center justify-center p-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition shadow-sm" title="Kelola Peserta" data-turbo-frame="_top">
                                         <i data-lucide="users" class="w-4 h-4"></i>
@@ -161,3 +161,4 @@
         </div>
     </div>
 </x-organizer-layout>
+

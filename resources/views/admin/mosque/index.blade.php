@@ -52,7 +52,7 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-brand-ink">{{ $mosque->organizer->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($mosque->address, 50) }}</td>
-                            <td class="px-6 py-4 text-right space-x-2">
+                            <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                 <a href="{{ route('admin.mosque.edit', $mosque->id) }}" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-brand-ink bg-white hover:bg-gray-50 transition" title="Edit" data-turbo-frame="_top">
                                     <i data-lucide="edit" class="w-4 h-4 sm:mr-1.5"></i> <span class="hidden sm:inline">Edit</span>
                                 </a>
@@ -120,3 +120,4 @@
         </div>
     </div>
 </x-admin-layout>
+

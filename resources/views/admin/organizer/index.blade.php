@@ -68,7 +68,7 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-right space-x-2">
+                            <td class="px-6 py-4 text-right whitespace-nowrap space-x-2">
                                 @php
                                     $orgData = [
                                         'name' => $organizer->name,
@@ -214,3 +214,4 @@
         </div>
     </div>
 </x-admin-layout>
+
