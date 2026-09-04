@@ -105,23 +105,23 @@
                     <table class="w-full text-left whitespace-nowrap">
                         <thead>
                             <tr class="text-xs font-bold text-gray-400 border-b border-gray-100">
-                                <th class="pb-3 px-4 font-medium">Tipe</th>
-                                <th class="pb-3 px-4 font-medium">Judul</th>
-                                <th class="pb-3 px-4 font-medium text-right">Status</th>
+                                <th class="pb-3 px-4 whitespace-nowrap font-medium">Tipe</th>
+                                <th class="pb-3 px-4 whitespace-nowrap font-medium">Judul</th>
+                                <th class="pb-3 px-4 whitespace-nowrap font-medium text-right">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50 text-sm">
                             <template x-if="metrics.unverifiedKajianCount > 0">
                                 <tr>
-                                    <td class="py-4 px-4 flex items-center text-gray-700 font-medium">
+                                    <td class="py-4 px-4 whitespace-nowrap flex items-center text-gray-700 font-medium">
                                         <div class="w-2 h-2 rounded-full bg-gray-300 mr-2 border border-gray-400"></div> Menunggu
                                     </td>
-                                    <td class="py-4 px-4 text-gray-900 font-bold">
+                                    <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold">
                                         <a href="{{ route('admin.kajian.index') }}" class="hover:text-blue-600 transition-colors">
                                             Review <span x-text="metrics.unverifiedKajianCount"></span> Kajian Baru
                                         </a>
                                     </td>
-                                    <td class="py-4 px-4 flex justify-end">
+                                    <td class="py-4 px-4 whitespace-nowrap flex justify-end">
                                         <span class="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md flex items-center w-max">
                                             <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div> Awaiting
                                         </span>
@@ -131,15 +131,15 @@
 
                             <template x-if="metrics.unverifiedOrganizerCount > 0">
                                 <tr>
-                                    <td class="py-4 px-4 flex items-center text-gray-700 font-medium">
+                                    <td class="py-4 px-4 whitespace-nowrap flex items-center text-gray-700 font-medium">
                                         <div class="w-2 h-2 rounded-full bg-gray-300 mr-2 border border-gray-400"></div> Pendaftaran
                                     </td>
-                                    <td class="py-4 px-4 text-gray-900 font-bold">
+                                    <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold">
                                         <a href="{{ route('admin.organizer.index') }}" class="hover:text-blue-600 transition-colors">
                                             Verifikasi <span x-text="metrics.unverifiedOrganizerCount"></span> Organizer
                                         </a>
                                     </td>
-                                    <td class="py-4 px-4 flex justify-end">
+                                    <td class="py-4 px-4 whitespace-nowrap flex justify-end">
                                         <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-md flex items-center w-max">
                                             <div class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></div> Pending
                                         </span>
@@ -149,7 +149,7 @@
 
                             <template x-if="metrics.unverifiedKajianCount == 0 && metrics.unverifiedOrganizerCount == 0">
                                 <tr>
-                                    <td colspan="3" class="py-6 px-4 text-center text-gray-500 flex flex-col items-center">
+                                    <td colspan="3" class="py-6 px-4 whitespace-nowrap text-center text-gray-500 flex flex-col items-center">
                                         <i data-lucide="check-circle" class="w-8 h-8 text-emerald-400 mb-2"></i>
                                         Semua tugas sudah diselesaikan!
                                     </td>
@@ -184,33 +184,33 @@
                 <table class="w-full text-left whitespace-nowrap" x-show="activeTab === 'kajian'" style="display: none;" x-transition>
                     <thead>
                         <tr class="text-xs font-bold text-gray-400 border-b border-gray-100 uppercase tracking-wider">
-                            <th class="pb-3 px-4 font-medium">Nama Kajian</th>
-                            <th class="pb-3 px-4 font-medium">Tanggal & Waktu</th>
-                            <th class="pb-3 px-4 font-medium">Lokasi</th>
-                            <th class="pb-3 px-4 font-medium">Status</th>
-                            <th class="pb-3 px-4 font-medium">Kategori</th>
-                            <th class="pb-3 px-4 font-medium text-right">Pendaftar</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Nama Kajian</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Tanggal & Waktu</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Lokasi</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Status</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Kategori</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium text-right">Pendaftar</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50 text-sm">
                         <template x-for="k in lists.recentKajians" :key="k.title">
                             <tr>
-                                <td class="py-4 px-4 text-gray-900 font-bold" x-text="k.title"></td>
-                                <td class="py-4 px-4 text-gray-600 font-medium" x-text="k.start_at"></td>
-                                <td class="py-4 px-4 text-gray-600 font-medium" x-text="k.mosque_name"></td>
-                                <td class="py-4 px-4">
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold" x-text="k.title"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-600 font-medium" x-text="k.start_at"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-600 font-medium" x-text="k.mosque_name"></td>
+                                <td class="py-4 px-4 whitespace-nowrap">
                                     <span class="text-xs font-bold px-2 py-1 rounded-md flex items-center w-max"
                                           :class="getStatusColorClass(k.status_label)">
                                         <div class="w-1.5 h-1.5 rounded-full mr-1.5" :class="getStatusDotClass(k.status_label)"></div> <span x-text="k.status_label"></span>
                                     </span>
                                 </td>
-                                <td class="py-4 px-4 text-gray-600 font-medium" x-text="k.category_name"></td>
-                                <td class="py-4 px-4 text-gray-900 font-bold text-right" x-text="k.attendees_count"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-600 font-medium" x-text="k.category_name"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold text-right" x-text="k.attendees_count"></td>
                             </tr>
                         </template>
                         <template x-if="lists.recentKajians.length === 0">
                             <tr>
-                                <td colspan="6" class="py-4 px-4 text-center text-gray-500 font-medium">Belum ada kajian</td>
+                                <td colspan="6" class="py-4 px-4 whitespace-nowrap text-center text-gray-500 font-medium">Belum ada kajian</td>
                             </tr>
                         </template>
                     </tbody>
@@ -220,20 +220,20 @@
                 <table class="w-full text-left whitespace-nowrap" x-show="activeTab === 'organizer'" style="display: none;" x-transition>
                     <thead>
                         <tr class="text-xs font-bold text-gray-400 border-b border-gray-100 uppercase tracking-wider">
-                            <th class="pb-3 px-4 font-medium">Nama Penyelenggara</th>
-                            <th class="pb-3 px-4 font-medium">Telepon</th>
-                            <th class="pb-3 px-4 font-medium">Alamat</th>
-                            <th class="pb-3 px-4 font-medium">Status Verifikasi</th>
-                            <th class="pb-3 px-4 font-medium text-right">Total Kajian</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Nama Penyelenggara</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Telepon</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Alamat</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Status Verifikasi</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium text-right">Total Kajian</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50 text-sm">
                         <template x-for="org in lists.recentOrganizers" :key="org.name">
                             <tr>
-                                <td class="py-4 px-4 text-gray-900 font-bold" x-text="org.name"></td>
-                                <td class="py-4 px-4 text-gray-600 font-medium" x-text="org.phone"></td>
-                                <td class="py-4 px-4 text-gray-600 font-medium truncate max-w-[200px]" x-text="org.address"></td>
-                                <td class="py-4 px-4">
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold" x-text="org.name"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-600 font-medium" x-text="org.phone"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-600 font-medium truncate max-w-[200px]" x-text="org.address"></td>
+                                <td class="py-4 px-4 whitespace-nowrap">
                                     <template x-if="org.is_verified">
                                         <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">Terverifikasi</span>
                                     </template>
@@ -241,12 +241,12 @@
                                         <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md">Belum Verifikasi</span>
                                     </template>
                                 </td>
-                                <td class="py-4 px-4 text-gray-900 font-bold text-right" x-text="org.kajians_count"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold text-right" x-text="org.kajians_count"></td>
                             </tr>
                         </template>
                         <template x-if="lists.recentOrganizers.length === 0">
                             <tr>
-                                <td colspan="5" class="py-4 px-4 text-center text-gray-500 font-medium">Belum ada penyelenggara</td>
+                                <td colspan="5" class="py-4 px-4 whitespace-nowrap text-center text-gray-500 font-medium">Belum ada penyelenggara</td>
                             </tr>
                         </template>
                     </tbody>
@@ -256,18 +256,18 @@
                 <table class="w-full text-left whitespace-nowrap" x-show="activeTab === 'mosque'" style="display: none;" x-transition>
                     <thead>
                         <tr class="text-xs font-bold text-gray-400 border-b border-gray-100 uppercase tracking-wider">
-                            <th class="pb-3 px-4 font-medium">Nama Masjid</th>
-                            <th class="pb-3 px-4 font-medium">Fasilitas</th>
-                            <th class="pb-3 px-4 font-medium">Alamat</th>
-                            <th class="pb-3 px-4 font-medium text-center">Link Maps</th>
-                            <th class="pb-3 px-4 font-medium text-right">Total Kajian</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Nama Masjid</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Fasilitas</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium">Alamat</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium text-center">Link Maps</th>
+                            <th class="pb-3 px-4 whitespace-nowrap font-medium text-right">Total Kajian</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50 text-sm">
                         <template x-for="mosque in lists.recentMosques" :key="mosque.name">
                             <tr>
-                                <td class="py-4 px-4 text-gray-900 font-bold" x-text="mosque.name"></td>
-                                <td class="py-4 px-4">
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold" x-text="mosque.name"></td>
+                                <td class="py-4 px-4 whitespace-nowrap">
                                     <template x-if="mosque.facilities_display.length > 0">
                                         <div class="flex flex-wrap gap-1 max-w-[250px]">
                                             <template x-for="facility in mosque.facilities_display">
@@ -284,8 +284,8 @@
                                         <span class="text-gray-400 font-medium">-</span>
                                     </template>
                                 </td>
-                                <td class="py-4 px-4 text-gray-600 font-medium truncate max-w-[200px]" x-text="mosque.address"></td>
-                                <td class="py-4 px-4 text-center">
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-600 font-medium truncate max-w-[200px]" x-text="mosque.address"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-center">
                                     <template x-if="mosque.maps_link">
                                         <a :href="mosque.maps_link" target="_blank" class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium text-xs">
                                             <i data-lucide="map" class="w-4 h-4 mr-1.5"></i> Buka Maps
@@ -295,12 +295,12 @@
                                         <span class="text-gray-400 text-xs">-</span>
                                     </template>
                                 </td>
-                                <td class="py-4 px-4 text-gray-900 font-bold text-right" x-text="mosque.kajians_count"></td>
+                                <td class="py-4 px-4 whitespace-nowrap text-gray-900 font-bold text-right" x-text="mosque.kajians_count"></td>
                             </tr>
                         </template>
                         <template x-if="lists.recentMosques.length === 0">
                             <tr>
-                                <td colspan="5" class="py-4 px-4 text-center text-gray-500 font-medium">Belum ada masjid</td>
+                                <td colspan="5" class="py-4 px-4 whitespace-nowrap text-center text-gray-500 font-medium">Belum ada masjid</td>
                             </tr>
                         </template>
                     </tbody>
@@ -537,4 +537,5 @@
     </script>
     @endpush
 </x-admin-layout>
+
 
